@@ -1,0 +1,14 @@
+# Converts an output file with antenna radiation patterns created in simulations
+# with rise (usually Antennas.dat), and given as the first parameter, to
+# postscript (Antennas.dat.ps).
+#
+# The postscript file is created in the same location as the .dat
+# Script can be called from any location; provide a path to the .dat file.
+
+touch Antenna-dat2ps
+echo "set term post">>Antenna-dat2ps
+echo "set out \"$1.ps\"">>Antenna-dat2ps
+echo "plot" \"$1\" "ps 0.1">>Antenna-dat2ps
+gnuplot Antenna-dat2ps
+rm Antenna-dat2ps
+gv $1.ps

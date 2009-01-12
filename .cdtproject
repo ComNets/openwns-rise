@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse-cdt version="2.0"?>
+
+<cdtproject id="org.eclipse.cdt.make.core.make">
+<extension point="org.eclipse.cdt.core.BinaryParser" id="org.eclipse.cdt.core.ELF"/>
+<data>
+<item id="org.eclipse.cdt.core.pathentry">
+<pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+<pathentry kind="src" path="" excluding="{arch}/|include/"/>
+<pathentry kind="out" path=""/>
+<pathentry kind="inc" path="" include="include"/>
+<pathentry kind="inc" path="" include="include/SGOOSE"/>
+</item>
+<item id="cdt_indexer">
+<indexEnabled indexValue="false"/>
+<indexerProblemsEnabled indexProblemsValue="0"/>
+</item>
+<item id="cdt_resolver">
+<custom value="false"/>
+</item>
+<item id="org.eclipse.cdt.make.core.buildtargets">
+<buildTargets>
+<target name="build-lib-dbg" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+<buildCommand>scons</buildCommand>
+<buildArguments>no-color=1</buildArguments>
+<buildTarget>build-lib-dbg</buildTarget>
+<stopOnError>false</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="build-lib-dbg parallel" targetID="org.eclipse.cdt.make.MakeTargetBuilder" path="">
+<buildCommand>scons</buildCommand>
+<buildArguments>no-color=1 -j10</buildArguments>
+<buildTarget>build-lib-dbg</buildTarget>
+<stopOnError>false</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+</buildTargets>
+</item>
+</data>
+</cdtproject>
