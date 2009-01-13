@@ -39,7 +39,7 @@ class AllMI2PERTables:
         self.MI2PER['No'] = {}
         
         self.MI2PER['Turbo_UMTS-1/3'] = {}
-        self.MI2PER['Turbo_UMTS-2/3'] = {}
+        self.MI2PER['Turbo_UMTS-1/2'] = {}
         self.MI2PER['Turbo_UMTS-2/3'] = {}
         self.MI2PER['Turbo_UMTS-5/6'] = {}
         
