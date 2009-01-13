@@ -25,6 +25,8 @@
 #
 ###############################################################################
 
+# The data of these tables can not be published under LGPL.
+# Therefore the tables remain empty.
 
 class AllMI2PERTables:
 
@@ -33,6 +35,26 @@ class AllMI2PERTables:
     def __init__(self):
 
         self.MI2PER = {}
+        self.MI2PER['UNDEFINED_CODING'] = {}
+        self.MI2PER['No'] = {}
+        
+        self.MI2PER['Turbo_UMTS-1/3'] = {}
+        self.MI2PER['Turbo_UMTS-2/3'] = {}
+        self.MI2PER['Turbo_UMTS-2/3'] = {}
+        self.MI2PER['Turbo_UMTS-5/6'] = {}
+        
+        self.MI2PER['RCPC_BENQ-1/3'] = {}
+        self.MI2PER['RCPC_BENQ-1/2'] = {}
+        self.MI2PER['RCPC_BENQ-2/3'] = {}
+        
+        self.MI2PER['LDPC_SEUK-1/2'] = {}
+        self.MI2PER['LDPC_SEUK-2/3'] = {}
+        self.MI2PER['LDPC_SEUK-3/4'] = {}
+        
+        self.MI2PER['Turbo_EAB-1/3'] = {}
+        self.MI2PER['Turbo_EAB-1/2'] = {}
+        self.MI2PER['Turbo_EAB-2/3'] = {}
+        
         self.MI2PER['WIMAX-1/2'] = {}
         self.MI2PER['WIMAX-2/3'] = {}
         self.MI2PER['WIMAX-3/4'] = {}
