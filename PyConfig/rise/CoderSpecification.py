@@ -93,9 +93,21 @@ class CoderMapping(object):
             # choose one of the methods for MI2PER mapping
             # TODO: choose formula if it exists, table else [rs].
             if mapping == "Table":
-                import rise.AllMI2PERTables
-                sizeregistrytmp = rise.AllMI2PERTables.allMI2PERTables.MI2PER[coderName] # full table for all CWLs
-                CWLTableTmp = rise.AllMI2PERTables.allMI2PERTables.MI2PER[coderName].keys() # vector of all CWLs
+                
+                # Workaround for open source publication (mue)
+                try:
+                    import rise.AllMI2PERTables
+                    # full table for all CWLs
+                    sizeregistrytmp = rise.AllMI2PERTables.allMI2PERTables.MI2PER[coderName] 
+                    # vector of all CWLs
+                    CWLTableTmp = rise.AllMI2PERTables.allMI2PERTables.MI2PER[coderName].keys() 
+                except ImportError:
+                    import rise.allmi2pertables
+                    # full table for all CWLs
+                    sizeregistrytmp = rise.allmi2pertables.allMI2PERTables.MI2PER[coderName] 
+                    # vector of all CWLs
+                    CWLTableTmp = rise.allmi2pertables.allMI2PERTables.MI2PER[coderName].keys()
+
                 CWLTableTmp.sort()
                 self.coderMap.append(TableCoder( coderName = coderName,
                                                  rate = rate,

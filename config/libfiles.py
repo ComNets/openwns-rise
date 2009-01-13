@@ -322,6 +322,7 @@ pyconfigs = [
 'rise/__init__.py',
 'rise/SNR2MI.py',
 'rise/Mobility.py',
+'rise/allmi2pertables.py',
 ]
 dependencies =  []
 Return('libname srcFiles hppFiles pyconfigs dependencies')
