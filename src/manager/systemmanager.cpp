@@ -57,6 +57,19 @@ SystemManager::SystemManager(const string &aSystemName,
 	} else {
 		log.switchOff();
 	}
+	//const wns::pyconfig::View& wraparoundConfig = pyConfigView.getView("wraparoundShiftVectors")
+	int shiftListLength = pyConfigView.len("wraparoundShiftVectors");
+	MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): "<<shiftListLength<<" wraparoundShiftVectors");
+	//std::cout<<"rise::SystemManager(): "<<shiftListLength<<" wraparoundShiftVectors"<<std::endl;
+	for(int i=0; i<shiftListLength; i++) {
+	  const wns::pyconfig::View& shiftVectorConfig = pyConfigView.getView("wraparoundShiftVectors", i);
+	  double x = shiftVectorConfig.get<double>("x");
+	  double y = shiftVectorConfig.get<double>("y");
+	  //std::cout<<"rise::SystemManager(): (x,y)=("<<x<<","<<y<<")"<<std::endl;
+	  wraparoundShiftVector.push_back(wns::geometry::Vector(x,y,0.0));
+	  MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): wraparoundShift["<<i<<"]=("<<x<<","<<y<<")");
+	  //wraparaoundShiftVector.push_back(wns::geometry::Vector::Vector(x,y,0.0));
+	}
 }
 
 SystemManager::~SystemManager()
@@ -69,6 +82,12 @@ wns::pyconfig::View
 SystemManager::getConfigFile() const
 {
 	return pyConfigView;
+}
+
+const SystemManager::WraparoundShiftVectorContainer*
+SystemManager::getWraparoundShiftVectors() const
+{
+	return &wraparoundShiftVector;
 }
 
 SystemManager::StationContainer SystemManager::getAllStations() const

@@ -82,6 +82,8 @@ Scenario::getSceneryFile(const std::string& filename) const
 Scenario::ScenarioSize
 Scenario::fetchScenarioSize(const wns::pyconfig::View& config)
 {
+    // sizeX,sizeY should become obsolete
+    // better use xmin,xmax,ymin,ymax (boundingbox)
     const double sizeX = config.get<double>("sizeX");
     const double sizeY = config.get<double>("sizeY");
     return ScenarioSize(sizeX, sizeY, 0);

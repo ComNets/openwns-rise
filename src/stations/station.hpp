@@ -207,6 +207,8 @@ namespace rise {
 		 */
 		virtual bool isInitialized() const;
 
+	  //virtual void initializeWraparound();
+
 		/**
 		 * @brief Vector with pointers to Antennas
 		 */

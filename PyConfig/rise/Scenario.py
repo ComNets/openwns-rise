@@ -25,7 +25,11 @@
 #
 ###############################################################################
 
-from openwns.interface import Interface, abstractmethod
+
+from wns.Sealed import Sealed
+from wns import Interface, abstractmethod
+from openwns.geometry.position import Position, Vector, Line, BoundingBox
+from wns.PyConfig import attrsetter
 
 class IScenario(Interface):
 
@@ -51,26 +55,40 @@ class IScenario(Interface):
         """ Finalize the scenario. After the scenario has been built by buildScenarion
         final polishing may take place here."""
 
-class ScenarioBase(IScenario):
+class ScenarioBase(Sealed, IScenario):
 
-    sizeX = None
-    sizeY = None
+    sizeX = None # obsolete, only for backward compatibility [rs]
+    sizeY = None # obsolete, only for backward compatibility [rs]
+    boundingBox = None
 
-    def __init__(self, sizeX, sizeY):
+    #def __init__(self, sizeX, sizeY):
+    def __init__(self, xmin=None, xmax=None, ymin=None, ymax=None):
+        Sealed.__init__(self)
         IScenario.__init__(self)
+        if ymax!=None:
+            self.boundingBox = BoundingBox(xmin, xmax, ymin, ymax, 0.0, 0.0)
+        else:
+            self.boundingBox = BoundingBox() # auto resize
+	self.sizeX = (self.boundingBox.xmax-self.boundingBox.xmin)
+	self.sizeY = (self.boundingBox.ymax-self.boundingBox.ymin)
 
-	self.sizeX = sizeX
-	self.sizeY = sizeY
-
+    def setBoundingBox(self, xmin, xmax, ymin, ymax, zmin=0.0, zmax=0.0):
+        self.boundingBox = BoundingBox(xmin, xmax, ymin, ymax, zmin, zmax)
+ 	self.sizeX = (self.boundingBox.xmax-self.boundingBox.xmin)
+	self.sizeY = (self.boundingBox.ymax-self.boundingBox.ymin)       
     def getXMax(self):
-        return self.sizeX
-
+        return self.boundingBox.xmax
     def getYMax(self):
-        return self.sizeY
+        return self.boundingBox.ymax
+    def getXMin(self):
+        return self.boundingBox.xmin
+    def getYMin(self):
+        return self.boundingBox.ymin
 
 class Scenario(ScenarioBase):
-    def __init__(self, sizeX, sizeY):
-        ScenarioBase.__init__(self, sizeX, sizeY)
+    #def __init__(self, sizeX, sizeY):
+    def __init__(self, **kw):
+        ScenarioBase.__init__(self, **kw)
 
     def getPositions(self): pass
     def getMobilityObstructions(self): pass

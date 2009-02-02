@@ -29,9 +29,19 @@ from Scenario import Scenario
 
 class System(object):
     Scenario = None
+    wraparoundShiftVectors = None
 
     def __init__(self, scenario):
         self.Scenario = scenario
+        self.wraparoundShiftVectors = []
+
+    def setWraparoundShiftVectors(self, vlist):
+        self.wraparoundShiftVectors = vlist
+        #print "RISE.System.setWraparoundShiftVectors():"
+        #for v in vlist:
+        #    print "  wraparoundShiftVector = %s"%v.toString(3)
+    def getWraparoundShiftVectors(self):
+        return self.wraparoundShiftVectors
 
 class DropIn(System):
     def __init__(self):

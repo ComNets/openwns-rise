@@ -38,6 +38,7 @@ class Receiver(object):
     receiverNoiseFigure = None
     logger = None
     FTFadingStrategy = None # None will switch fading off; FTFadingOff() at least gives measurements
+    wraparaoundShiftVectors = None # None or empty list means wraparound off
 
     def __init__(self, propagation, propagationCharacteristicName, parentLogger = None, **kwds):
         self.propagation = propagation
