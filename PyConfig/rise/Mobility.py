@@ -230,41 +230,30 @@ class ThereAndBack(EventList):
         stepTime = float( 1.0 / float(stepsPerSecond))
         stepBack = self._vectorScalMul(self._vectorScalDiv(self._vectorSub(firstPoint, secondPoint), distance), v)
         stepThere = self._vectorScalMul(self._vectorScalDiv(self._vectorSub(secondPoint, firstPoint), distance), v)
-#        print "Back: " + str(stepBack.x) + "," + str(stepBack.y) + "," + str(stepBack.z)
-#        print "There: " + str(stepThere.x) + "," + str(stepThere.y) + "," + str(stepThere.z)
         start = firstPoint
         end = secondPoint
         pos = start
         while timeNow < endTime:
             pos = self._vectorAdd(pos, self._vectorScalMul(stepThere, stepTime))
-            #print timeNow
-            #print str(pos.x) + "," + str(pos.y) + "," + str(pos.z)
             travelledDistance = self._distance(start, pos)
             if travelledDistance > distance:
                 # Turn around
-#                print "Before: " + str(stepThere.x) + "," + str(stepThere.y) + "," + str(stepThere.z)
                 (stepThere, stepBack) = self._swap(stepThere, stepBack)
                 (start, end) = self._swap(start, end)
-#                print "After: " + str(stepThere.x) + "," + str(stepThere.y) + "," + str(stepThere.z)
 
                 # Go back (now go to because we swapped) the distance you travelled to much
                 travelledToMuch = travelledDistance - distance
                 remainingTravelTime = float(travelledToMuch / v)
                 pos = self._vectorAdd(pos, self._vectorScalMul(stepThere, remainingTravelTime))
                 timeNow += waitTimeAtEndPoint
-#                print "TURNAROUND " + str(pos.x) + "," + str(pos.y) + "," + str(pos.z)
             timeNow += stepTime
             self.addWaypoint(timeNow, pos)
 
     def _swap(self, a, b):
-#        print "Beforea: " + str(a.x) + "," + str(a.y) + "," + str(a.z)
-#        print "Beforeb: " + str(b.x) + "," + str(b.y) + "," + str(b.z)
         tmpa = Position(a.x, a.y, a.z)
         tmpb = Position(b.x, b.y, b.z)
         a = tmpb
         b = tmpa
-#        print "Aftera: " + str(a.x) + "," + str(a.y) + "," + str(a.z)
-#        print "Afterb: " + str(b.x) + "," + str(b.y) + "," + str(b.z)
         return (a,b)
     def _distance(self, p1, p2):
         sqrDistance = pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2) + pow(p1.z - p2.z, 2)
