@@ -112,8 +112,9 @@ PhyModeMapper::getBestPhyModeIndex(double sinr /* dB */) const
 }
 
 wns::Ratio
-PhyModeMapper::getMinSINRRatio(const wns::service::phy::phymode::PhyModeInterface& phyMode) const
+PhyModeMapper::getMinSINRRatio(const wns::service::phy::phymode::PhyModeInterfacePtr phyMode) const
 {
+	assure(phyMode != wns::service::phy::phymode::PhyModeInterfacePtr(),"invalid phyModePtr");
 	wns::Ratio ratio;
 	ratio.set_dB(getMinSINR(phyMode)); // double dB
 	return ratio;
@@ -121,9 +122,10 @@ PhyModeMapper::getMinSINRRatio(const wns::service::phy::phymode::PhyModeInterfac
 
 /** @brief find required (minimum) SINR [dB] for a certain PhyMode */
 double
-PhyModeMapper::getMinSINR(const wns::service::phy::phymode::PhyModeInterface& phyMode) const
+PhyModeMapper::getMinSINR(const wns::service::phy::phymode::PhyModeInterfacePtr phyMode) const
 {
-	const rise::plmapping::PhyMode& aPhyMode = static_cast<const rise::plmapping::PhyMode&>(phyMode);
+	assure(phyMode != wns::service::phy::phymode::PhyModeInterfacePtr(),"invalid phyModePtr");
+	const rise::plmapping::PhyMode& aPhyMode = static_cast<const rise::plmapping::PhyMode&>(*phyMode);
 	double minSINR = phyModeSINRRangeRegistry.find(aPhyMode).min();
 	if (minSINR<minimumSINR) { minSINR=minimumSINR; }
 	return minSINR;
@@ -131,9 +133,10 @@ PhyModeMapper::getMinSINR(const wns::service::phy::phymode::PhyModeInterface& ph
 
 /** @brief find possible SINR range for a certain PhyMode */
 wns::service::phy::phymode::SINRRange
-PhyModeMapper::getSINRRange(const wns::service::phy::phymode::PhyModeInterface& phyMode) const
+PhyModeMapper::getSINRRange(const wns::service::phy::phymode::PhyModeInterfacePtr phyMode) const
 {
-	const rise::plmapping::PhyMode& aPhyMode = static_cast<const rise::plmapping::PhyMode&>(phyMode);
+	assure(phyMode != wns::service::phy::phymode::PhyModeInterfacePtr(),"invalid phyModePtr");
+	const rise::plmapping::PhyMode& aPhyMode = static_cast<const rise::plmapping::PhyMode&>(*phyMode);
 	return phyModeSINRRangeRegistry.find(aPhyMode);
 }
 
@@ -156,13 +159,13 @@ PhyModeMapper::getPhyModeCount() const
 }
 
 PhyModeMapper::PhyModeVector
-PhyModeMapper::getListofPhyModes() const
+PhyModeMapper::getListOfPhyModes() const
 {
 	return phyModeVector;
 }
 
 const std::vector< wns::service::phy::phymode::PhyModeInterfacePtr >
-PhyModeMapper::getListofPhyModePtr() const
+PhyModeMapper::getListOfPhyModePtr() const
 {
 	std::vector< wns::service::phy::phymode::PhyModeInterfacePtr > phyModePtrVector(phyModeCount);
 	for(unsigned int i=0; i<phyModeCount; i++) {
@@ -247,7 +250,7 @@ PhyModeMapper::printSwitchingPoints() const
 	line << "[ "<<getMinimumSINR()<<" ";
 	for(unsigned int phymodeIndex=1; phymodeIndex<phyModeCount; phymodeIndex++) {
 		wns::service::phy::phymode::PhyModeInterfacePtr phyModePtr = getPhyModeForIndex(phymodeIndex);
-		double min = getSINRRange(*phyModePtr).min();
+		double min = getSINRRange(phyModePtr).min();
 		line <<min<<" ";
 	}
 	line<<"]";

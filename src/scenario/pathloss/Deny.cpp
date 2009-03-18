@@ -56,9 +56,10 @@ Deny::~Deny()
 {}
 
 
-wns::Ratio Deny::calculatePathloss(const antenna::Antenna&,
-				   const antenna::Antenna&,
+wns::Ratio Deny::calculatePathloss(const antenna::Antenna& antenna1,
+				   const antenna::Antenna& antenna2,
 				   const wns::Frequency&) const
 {
-    throw Exception("Pathloss: distance out of range.");
+  assure(0,"Pathloss: distance out of range: d="<<(antenna1.getPosition() - antenna2.getPosition()).abs()<<"m");
+  throw Exception("Pathloss: distance out of range.");
 }
