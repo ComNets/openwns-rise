@@ -25,7 +25,7 @@
 #
 ###############################################################################
 
-from openwns.interface import abstractmethod
+from openwns.interface import abstractmethod, Interface
 
 class IScenarioBuilder(Interface):
 
