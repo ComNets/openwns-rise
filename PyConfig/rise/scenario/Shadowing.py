@@ -33,7 +33,7 @@ import rise.Antenna
 import random
 #random.seed(22)
 
-from Numeric import *
+from numpy import *
 
 class No:
     __plugin__ = 'None'
