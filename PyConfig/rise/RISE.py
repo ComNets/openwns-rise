@@ -46,7 +46,7 @@ class RISE(Module):
 
     def __init__(self):
         super(RISE, self).__init__("rise", "rise")
-	self.numProbes = 20
+        self.numProbes = 20
         self.debug = Debug() # all False
         self.propagationCache = PropagationCache()
         self.eventDrivenSim = True

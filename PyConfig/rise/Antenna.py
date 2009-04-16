@@ -33,8 +33,8 @@ class Antenna(object):
     patternOutputFile = "Antenna.dat"
 
     def __init__(self, plugin, _coordOffset):
-	self.__plugin__ = plugin
-	self.coordOffset = _coordOffset
+        self.__plugin__ = plugin
+        self.coordOffset = _coordOffset
 
 
 class Internal(Antenna):

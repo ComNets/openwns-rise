@@ -590,7 +590,7 @@ class Manhattan(ScenarioBase):
             rec1 = BaseElement()
             rec2 = BaseElement()
             rec3 = BaseElement()
-            
+
             rec = [rec1, rec2, rec3]
             rec[2].bsPos = [(Position(0, 0, self.nodeHeight),2) ]
             rec[2].rnPos = [(Position( - self.xStepSize , 0, self.nodeHeight),3),

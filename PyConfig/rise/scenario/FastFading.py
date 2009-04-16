@@ -31,9 +31,9 @@ class No:
 
 class Rice:
     def __init__(self, variance = 3.0):
-	self.variance = variance
-    __plugin__ = 'Rice'
-    variance   = None
+        self.variance = variance
+        __plugin__ = 'Rice'
+        variance   = None
 
 ### This cannot be done here, but in the OFDMA Receiver
 #class FTFading(Sealed):

@@ -41,10 +41,10 @@ class Receiver(object):
 
     def __init__(self, propagation, propagationCharacteristicName, parentLogger = None, **kwds):
         self.propagation = propagation
-	self.propagationCharacteristicName = propagationCharacteristicName
-	self.propagationCharacteristicId = propagation.getId(propagationCharacteristicName)
+        self.propagationCharacteristicName = propagationCharacteristicName
+        self.propagationCharacteristicId = propagation.getId(propagationCharacteristicName)
         self.FTFadingStrategy = FTFadingOff()
-	self.logger = Logger("RISE", "PHY.Receiver", True, parentLogger)
+        self.logger = Logger("RISE", "PHY.Receiver", True, parentLogger)
         attrsetter(self, kwds)
 
 

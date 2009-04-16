@@ -33,7 +33,7 @@ class Roadmap(object):
     streets = None
     crossings = None
     logger = None
-    
+
     def __init__(self, name, streets, crossings):
         """Reads the .roadmap-style description of the roadmap"""
         self.name = name
@@ -68,12 +68,12 @@ def readFromFile(name):
                                   probMatrix = obj[4]
                                   ))
     return streets, crossings
-        
+
 
 class MapObject(object):
     ID = None
     connections = None
-    
+
     def __init__(self, ID, connections):
         self.ID = ID
         assert isinstance(connections, list)

@@ -59,8 +59,8 @@ class ScenarioBase(IScenario):
     def __init__(self, sizeX, sizeY):
         IScenario.__init__(self)
 
-	self.sizeX = sizeX
-	self.sizeY = sizeY
+        self.sizeX = sizeX
+        self.sizeY = sizeY
 
     def getXMax(self):
         return self.sizeX

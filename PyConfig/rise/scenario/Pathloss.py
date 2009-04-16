@@ -60,12 +60,12 @@ class Map(Pathloss):
     sceneryMapName = None
     interpolationType = None
 
-    def __init__(self, sceneryMapName,
-		 interpolationType = 'NearestNeighbour',
+    def __init__(self, sceneryMapName, 
+         interpolationType = 'NearestNeighbour',
                  minPathloss = "0.0 dB"):
-	super(Map, self).__init__(minPathloss)
-	self.sceneryMapName = sceneryMapName
-	self.interpolationType = interpolationType
+        super(Map, self).__init__(minPathloss)
+        self.sceneryMapName = sceneryMapName
+        self.interpolationType = interpolationType
 
 class UserDef(Pathloss):
     validFrequencies = None
@@ -85,9 +85,9 @@ class UserDef(Pathloss):
         """validFrequncies = wns.Interval(a,b)
            distanceUnit = 'km' | 'm'
         """
-	super(UserDef, self).__init__(minPathloss)
-	self.validFrequencies = validFrequencies
-	self.validDistances = validDistances
+        super(UserDef, self).__init__(minPathloss)
+        self.validFrequencies = validFrequencies
+        self.validDistances = validDistances
         if distanceUnit == "m":
             self.distNormFactor = 1
         elif distanceUnit == "km":
@@ -112,21 +112,21 @@ class SingleSlope(UserDef):
                  distFactor,
                  distanceUnit,
                  minPathloss = "0.0 dB",
-		 outOfMinRange = Deny,
-		 outOfMaxRange = Deny):
+         outOfMinRange = Deny,
+         outOfMaxRange = Deny):
         """validFrequncies = wns.Interval(a,b)
            distanceUnit = 'km' | 'm'
         """
-	super(SingleSlope, self).__init__(validFrequencies,
+        super(SingleSlope, self).__init__(validFrequencies,
                                           validDistances,
                                           distanceUnit,
                                           minPathloss,
                                           outOfMinRange,
                                           outOfMaxRange)
 
-	self.offset = offset
-	self.freqFactor = freqFactor
-	self.distFactor = distFactor
+        self.offset = offset
+        self.freqFactor = freqFactor
+        self.distFactor = distFactor
 
 class PyFunction(SingleSlope):
     __plugin__ = 'PyFunction'
@@ -136,56 +136,56 @@ class PyFunction(SingleSlope):
     sizeY = None
 
     def __init__(self,validFrequencies,
-                 validDistances,
-                 offset,
-                 freqFactor,
-                 distFactor,
-                 distanceUnit,
-                 minPathloss = "0.0 dB",
-		 outOfMinRange = Deny,
-		 outOfMaxRange = Deny,
-		 scenarioWrap = False,
-	    	 sizeX = 0,
-	    	 sizeY = 0):
+                validDistances,
+                offset,
+                freqFactor,
+                distFactor,
+                distanceUnit,
+                minPathloss = "0.0 dB",
+                outOfMinRange = Deny,
+                outOfMaxRange = Deny,
+                scenarioWrap = False,
+                sizeX = 0,
+                sizeY = 0):
         super(PyFunction, self).__init__(validFrequencies,
-                                         validDistances,
-                                         offset,
-                                         freqFactor,
-                                         distFactor,
-                                         distanceUnit,
-                                         minPathloss,
-                                         outOfMinRange,
-                                         outOfMaxRange)
+                    validDistances,
+                    offset,
+                    freqFactor,
+                    distFactor,
+                    distanceUnit,
+                    minPathloss,
+                    outOfMinRange,
+                    outOfMaxRange)
         self.offset = offset
-	self.scenarioWrap = scenarioWrap
-	self.sizeX = sizeX
-	self.sizeY = sizeY
+        self.scenarioWrap = scenarioWrap
+        self.sizeX = sizeX
+        self.sizeY = sizeY
 
     def calculateDistance(self, sourceX, sourceY, targetX, targetY):
-	if(self.scenarioWrap):
-		#print "calculateDistance: dx1: ", math.fabs(sourceX - targetX),
-		#print " dx2: ", self.sizeX - math.fabs(sourceX - targetX),
-		#print " dy1: ", math.fabs(sourceY - targetY),
-		#print " dy2: ", self.sizeY - math.fabs(sourceY - targetY)
-		d_x = min(math.fabs(sourceX - targetX), self.sizeX - math.fabs(sourceX - targetX))
-                d_y = min(math.fabs(sourceY - targetY), self.sizeY - math.fabs(sourceY - targetY))
-	else:
-		d_x = sourceX-targetX
-		d_y = sourceY-targetY
-	return(math.sqrt(d_x**2 + d_y**2))
+        if(self.scenarioWrap):
+        #print "calculateDistance: dx1: ", math.fabs(sourceX - targetX),
+        #print " dx2: ", self.sizeX - math.fabs(sourceX - targetX),
+        #print " dy1: ", math.fabs(sourceY - targetY),
+        #print " dy2: ", self.sizeY - math.fabs(sourceY - targetY)
+            d_x = min(math.fabs(sourceX - targetX), self.sizeX - math.fabs(sourceX - targetX))
+            d_y = min(math.fabs(sourceY - targetY), self.sizeY - math.fabs(sourceY - targetY))
+        else:
+            d_x = sourceX-targetX
+            d_y = sourceY-targetY
+        return(math.sqrt(d_x**2 + d_y**2))
 
     def calculatePathloss(self, sourceX, sourceY, targetX, targetY, frequency, baseHeight):
-	distance = self.calculateDistance(sourceX, sourceY, targetX, targetY)
-	if(distance == 0):
-		distance = 0.1
+        distance = self.calculateDistance(sourceX, sourceY, targetX, targetY)
+        if(distance == 0):
+            distance = 0.1
         pl = fromdB(self.offset) + self.freqFactor * math.log(frequency,10) + self.distFactor * math.log(distance,10)
         return(dB(pl))
-	
+
     def getFreqFactor(self):
-	return(self.freqFactor)
+        return(self.freqFactor)
     
     def getDistFactor(self):
-	return(self.distFactor)
+        return(self.distFactor)
 
 class MultiSlope(UserDef):
 
@@ -195,22 +195,22 @@ class MultiSlope(UserDef):
         distFactor = None
         distRange = None
 
-    __plugin__ = 'MultiSlope'
-    validFrequencies = None
-    validDistances = None
-    outOfMinRange = None
-    outOfMaxRange = None
+        __plugin__ = 'MultiSlope'
+        validFrequencies = None
+        validDistances = None
+        outOfMinRange = None
+        outOfMaxRange = None
 
-    ranges = None
+        ranges = None
 
     def __init__(self, validFrequencies,
                  validDistances,
                  ranges,
                  distanceUnit,
                  minPathloss = "0.0 dB",
-		 outOfMinRange = Deny,
-		 outOfMaxRange = Deny):
-	super(MultiSlope, self).__init__(validFrequencies,
+        outOfMinRange = Deny,
+        outOfMaxRange = Deny):
+        super(MultiSlope, self).__init__(validFrequencies,
                                          validDistances,
                                          distanceUnit,
                                          minPathloss,
@@ -249,9 +249,9 @@ class MultiModel(Pathloss):
         offset = None
         modelConfig = None
 
-    __plugin__ = 'MultiModel'
+        __plugin__ = 'MultiModel'
 
-    ranges = None
+        ranges = None
 
     def __init__(self, ranges):
         self.ranges = []
@@ -271,7 +271,7 @@ class MultiModel(Pathloss):
 class Umts3003Outdoor(SingleSlope):
 
     def __init__(self, minPathloss = "0.0 dB"):
-	super(Umts3003Outdoor, self).__init__(validFrequencies = Interval(150, 2100),
+        super(Umts3003Outdoor, self).__init__(validFrequencies = Interval(150, 2100),
                                               validDistances = Interval(0, 20000),
                                               offset = "49 dB",
                                               freqFactor = 30,
@@ -285,7 +285,7 @@ class Umts3003Vehicular(Pathloss):
     __plugin__ = 'Umts3003Vehicular'
 
     def __init__(self, minPathloss = "0.0 dB"):
-	super(Umts3003Vehicular, self).__init__(minPathloss)
+        super(Umts3003Vehicular, self).__init__(minPathloss)
 
 # The following classes are for unit tests
 

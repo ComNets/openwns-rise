@@ -53,12 +53,12 @@ class Station(object):
 # not used anywhere:
 class BaseStation(Station):
     def __init__(self, _antennas, _receiver, _transmitter, parentLogger = None):
-	super(BaseStation, self).__init__(_antennas, _receiver, _transmitter, parentLogger)
+        super(BaseStation, self).__init__(_antennas, _receiver, _transmitter, parentLogger)
 
 # used in OFDMAPhy, but can be replaced by simple Station
 class MobileStation(Station):
     def __init__(self, _antennas, _receiver, _transmitter, parentLogger = None):
-	super(MobileStation, self).__init__(_antennas, _receiver, _transmitter, parentLogger)
+        super(MobileStation, self).__init__(_antennas, _receiver, _transmitter, parentLogger)
 
 # not used anywhere:
 class RelayStation(Station):

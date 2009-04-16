@@ -36,15 +36,15 @@ class Transmitter(object):
 
     def __init__(self, propagation, propagationCharacteristicName, parentLogger = None):
         self.propagation = propagation
-	self.propagationCharacteristicName = propagationCharacteristicName
-	self.propagationCharacteristicId = propagation.getId(propagationCharacteristicName)
-	self.logger = Logger("RISE", "PHY.Transmitter", True, parentLogger)
+        self.propagationCharacteristicName = propagationCharacteristicName
+        self.propagationCharacteristicId = propagation.getId(propagationCharacteristicName)
+        self.logger = Logger("RISE", "PHY.Transmitter", True, parentLogger)
 
 class TransmitterDropIn(Transmitter):
     def __init__(self, propagation = DropInPropagation.getInstance(), propagationCharacteristicName = "DropIn", parentLogger = None):
-	super(TransmitterDropIn, self).__init__(propagation, propagationCharacteristicName)
+        super(TransmitterDropIn, self).__init__(propagation, propagationCharacteristicName)
         self.logger = Logger("RISE", "PHY.TransmitterDropIn", True, parentLogger)
 
 class SCTransmitterDropIn(Transmitter):
     def __init__(self, propagation = DropInPropagation.getInstance(), propagationCharacteristicName = "DropIn", parentLogger = None):
-	super(SCTransmitterDropIn, self).__init__(propagation, propagationCharacteristicName)
+        super(SCTransmitterDropIn, self).__init__(propagation, propagationCharacteristicName)

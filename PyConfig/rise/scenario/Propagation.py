@@ -133,7 +133,7 @@ class Propagation:
         return self.__ids.len()
 
     def getId(self, name):
-	return self.__ids.getId(name)
+        return self.__ids.getId(name)
 
     def findId(self, name):
         return self.__ids.findId(name)
@@ -142,8 +142,8 @@ class Propagation:
         return self.__ids.findName(id)
 
     def clear(self):
-	self.__pairs = {}
-	self.__ids = IdRegistry()
+        self.__pairs = {}
+        self.__ids = IdRegistry()
 
 class DropInPropagation:
     __instance = None

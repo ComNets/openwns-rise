@@ -195,4 +195,4 @@ class Hexagonal(ScenarioBase):
             if group in groupList:
                 self.rnPositions.append((rnpos,group))
 
-        
+

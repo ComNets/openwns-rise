@@ -40,8 +40,8 @@ class No:
 
 class Map:
     def __init__(self, sceneryMapName, interpolationType = 'NearestNeighbour'):
-	self.sceneryMapName = sceneryMapName
-	self.interpolationType = interpolationType
+        self.sceneryMapName = sceneryMapName
+        self.interpolationType = interpolationType
     __plugin__ = 'Map'
     sceneryMapName = None
     interpolationType = None
@@ -70,7 +70,7 @@ class SpatialCorrelated:
         self.correlationDistance = correlationDistance
         self.shadowSigma = shadowSigma
         self.nSamples = nSamples
-	self.symmetric = symmetric
+        self.symmetric = symmetric
 
         self.c = sqrt(2.0/nSamples)
 
@@ -85,23 +85,23 @@ class SpatialCorrelated:
         t = -pi/2+rnd[nSamples:nSamples*2]*pi
         self.f[0] = fr * cos(t)
         self.f[1] = fr * sin(t)
-	
+ 
         fr = (log(2)/correlationDistance)/(2*pi) * sqrt(1/power(rnd[nSamples*2:nSamples*3], 2) - 1)
         t = -pi/2+rnd[nSamples*3:nSamples*4]*pi
         self.f[2] = fr * cos(t)
         self.f[3] = fr * sin(t)
 
-	if(self.symmetric):
-		self.f[0] = self.f[2]
-		self.f[3] = self.f[1]
-	
-	self.f = transpose(self.f)
-	
-	if(self.symmetric):
-	        self.theta = rnd[nSamples*4:nSamples*5] * 2 * pi
-		self.theta[nSamples/2:nSamples] = self.theta[0:(nSamples/2)]
-	else:
-		self.theta = rnd[nSamples*4:nSamples*5] * 2 * pi
+        if(self.symmetric):
+            self.f[0] = self.f[2]
+            self.f[3] = self.f[1]
+        
+            self.f = transpose(self.f)
+        
+        if(self.symmetric):
+            self.theta = rnd[nSamples*4:nSamples*5] * 2 * pi
+            self.theta[nSamples/2:nSamples] = self.theta[0:(nSamples/2)]
+        else:
+            self.theta = rnd[nSamples*4:nSamples*5] * 2 * pi
 
     def getShadowing(self, x, y, u, v):
         shdw = dB(self.shadowSigma * (sum(self.c * cos(transpose(2*pi*dot(self.f, array([[x], [y], [u], [v]], Float))) + self.theta),1))[0])
@@ -118,9 +118,9 @@ class Objects(object):
                  yGridBlocks = 19,
                  scenario = None):
         self.obstructionList = obstructionList
-#	self.obstructionFileName = obstructionFileName
-	self.xGridBlocks = xGridBlocks
-	self.yGridBlocks = yGridBlocks
+#   self.obstructionFileName = obstructionFileName
+        self.xGridBlocks = xGridBlocks
+        self.yGridBlocks = yGridBlocks
         self.scenario = scenario
     __plugin__ = 'Objects'
     obstructionList = None

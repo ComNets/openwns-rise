@@ -26,7 +26,6 @@
 ###############################################################################
 
 from Scenario import Scenario
-
 class System(object):
     Scenario = None
 
