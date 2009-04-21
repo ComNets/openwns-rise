@@ -119,9 +119,6 @@ namespace rise { namespace plmapping {
 
 	};
 
-
-	inline double log2(double x) { return log(x)/log(2); }
-
 	/** @brief find the root (Nullstelle) of a function */
 	/** function must be static, if it is a member of a class */
 	/** @author Rainer Schoenen (rs@comnets.rwth-aachen.de) */
