@@ -56,12 +56,8 @@ wns::Ratio Pathloss::getPathloss(const antenna::Antenna& source,
       result = (*transform)(calculatePathloss(source, target, frequency));
     }
     catch(...)
-    //catch(const wns::Exception& e)
     { // probably out of range
-      // result = wns::Ratio(); // default can be checked
-      // std::cout << "Exception: " << std::string(e.what()) << std::endl;
       result = OutOfRangePathloss;
     }
     return result;
-    return (*transform)(calculatePathloss(source, target, frequency));
 }
