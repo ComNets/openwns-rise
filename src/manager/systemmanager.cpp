@@ -46,29 +46,31 @@ SystemManager::SystemManager(const string &aSystemName,
 	: systemName(aSystemName),
 	  scenario(NULL),
 	  stations(StationContainer()),
- 	  pyConfigView(config),
+	  pyConfigView(config),
 	  stationId(0),
 	  log(string("SystemManager (")+aSystemName+string(")"))
 {
 	const wns::pyconfig::View& riseConfig = RISE::getPyConfigView();
 	MetaSystemManager::getInstance()->attach(this);
- 	if (riseConfig.getView("debug").get<bool>("systemManager")) {
+	if (riseConfig.getView("debug").get<bool>("systemManager")) {
 		log.switchOn();
 	} else {
 		log.switchOff();
 	}
-	//const wns::pyconfig::View& wraparoundConfig = pyConfigView.getView("wraparoundShiftVectors")
-	int shiftListLength = pyConfigView.len("wraparoundShiftVectors");
-	MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): "<<shiftListLength<<" wraparoundShiftVectors");
-	//std::cout<<"rise::SystemManager(): "<<shiftListLength<<" wraparoundShiftVectors"<<std::endl;
-	for(int i=0; i<shiftListLength; i++) {
-	  const wns::pyconfig::View& shiftVectorConfig = pyConfigView.getView("wraparoundShiftVectors", i);
-	  double x = shiftVectorConfig.get<double>("x");
-	  double y = shiftVectorConfig.get<double>("y");
-	  //std::cout<<"rise::SystemManager(): (x,y)=("<<x<<","<<y<<")"<<std::endl;
-	  wraparoundShiftVector.push_back(wns::geometry::Vector(x,y,0.0));
-	  MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): wraparoundShift["<<i<<"]=("<<x<<","<<y<<")");
-	  //wraparaoundShiftVector.push_back(wns::geometry::Vector::Vector(x,y,0.0));
+	if (pyConfigView.knows("wraparoundShiftVectors")
+	    && !pyConfigView.isNone("wraparoundShiftVectors")) {
+	  int shiftListLength = pyConfigView.len("wraparoundShiftVectors");
+	  MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): "<<shiftListLength<<" wraparoundShiftVectors");
+	  //std::cout<<"rise::SystemManager(): "<<shiftListLength<<" wraparoundShiftVectors"<<std::endl;
+	  for(int i=0; i<shiftListLength; i++) {
+	    const wns::pyconfig::View& shiftVectorConfig = pyConfigView.getView("wraparoundShiftVectors", i);
+	    double x = shiftVectorConfig.get<double>("x");
+	    double y = shiftVectorConfig.get<double>("y");
+	    //std::cout<<"rise::SystemManager(): (x,y)=("<<x<<","<<y<<")"<<std::endl;
+	    wraparoundShiftVector.push_back(wns::geometry::Vector(x,y,0.0));
+	    MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): wraparoundShift["<<i<<"]=("<<x<<","<<y<<")");
+	    //wraparaoundShiftVector.push_back(wns::geometry::Vector::Vector(x,y,0.0));
+	  }
 	}
 }
 

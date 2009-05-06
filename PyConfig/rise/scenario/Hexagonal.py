@@ -192,6 +192,7 @@ def isInHexagon(position, radius, center, corrAngle = 0.0):
         Can be used to correct random placement of UTs within circle!=hexagon
     """
     assert 0 <= corrAngle <= 2.0*math.pi   # rotates hexagon by corrAngle. 0=radius to the right, flat top
+    #print "isInHexagon([%s],%d,[%s],%f) ?"%(position.toString(),radius,center.toString(),corrAngle)
     vector = (position-center)/radius      # from center to position; normalized
     length = vector.length2D()
     cos30deg = 0.86602540378443865         # =cos(30deg)=sin(60deg)
@@ -240,8 +241,11 @@ def plotScenarioWithGnuplot(positions,directory='positions.junk',grid=[],showLab
     labelStyle='textcolor linestyle 2 font "Helvetica,6"'
     arrowStyle='nohead back nofilled linestyle 1'
     positionLines={};
-    #for stationType in ['BS','RN','UT','RUT']:
-    for stationType in positions.keys():
+    #stationTypes = ['BS','RN','UT','RUT']
+    stationTypes = positions.keys()
+    sortedStationTypes = stationTypes
+    sortedStationTypes.sort()
+    for stationType in sortedStationTypes:
         positionLines[stationType] = ''
         #print "stationType=%s"%stationType
         for pos in positions[stationType]:
@@ -249,12 +253,14 @@ def plotScenarioWithGnuplot(positions,directory='positions.junk',grid=[],showLab
             #print "%s %s"%(stationType,pos.toLabeledString())
             if (pos.label != None) and (pos.label != ''):
                 label=pos.label
+            elif (pos.label == '-'):
+                label=''
             else:
                 label="%s_{%d}"%(stationType,labelTag)
-            if showLabels:
+            if showLabels and (label != '') and (label != '-'):
                 labelCommands = labelCommands+'set label %d "%s" at %d,%d,%d'%(labelTag,label,pos.x,pos.y,pos.z)+' centre norotate back %s nopoint offset character 0, -0.7, 0\n'%labelStyle
                 # front|back
-            labelTag=labelTag+1
+                labelTag=labelTag+1
             box.extendToIncludePosition(pos)
 
     for line in grid:
@@ -288,6 +294,7 @@ def plotScenarioWithGnuplot(positions,directory='positions.junk',grid=[],showLab
     gnuplotFile.write(labelCommands+"\n")
     gnuplotFile.write('set xrange [%d:%d]\n'%(box.xmin,box.xmax))
     gnuplotFile.write('set yrange [%d:%d]\n'%(box.ymin,box.ymax))
+    gnuplotFile.write("\n")
 
     plotString = 'plot [%03d:%03d][%03d:%03d] '%(box.xmin,box.xmax,box.ymin,box.ymax)
     plotString = plotString+'"BS.positions" using 1:2 with points pt 5 title "BS"'
@@ -299,7 +306,10 @@ def plotScenarioWithGnuplot(positions,directory='positions.junk',grid=[],showLab
          plotString = plotString+', "RUT.positions" using 1:2 with points pt 2 title "RUT"'
     if positions.has_key('P') and len(positions['P'])>0:
          plotString = plotString+', "P.positions" using 1:2 with points pt 3 title "P"'
+    if positions.has_key('WP') and len(positions['WP'])>0:
+         plotString = plotString+', "WP.positions" using 1:2 with points pt 0 ps 1.0 title "WP"'
     gnuplotFile.write(plotString+"\n")
+    gnuplotFile.write("\n")
     #gnuplotFile.write("\npause -1 \"Press a key to continue\"\n")
     gnuplotFile.close()
     # to plot: call:  cd positions.junk; gnuplot gnuplot_positions
