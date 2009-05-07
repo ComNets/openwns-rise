@@ -42,14 +42,16 @@ namespace rise { namespace scenario { namespace pathloss { namespace tests {
 	public wns::TestFixture
     {
 	CPPUNIT_TEST_SUITE( DenyTest );
-	CPPUNIT_TEST_EXCEPTION( testException, wns::Exception );
-	CPPUNIT_TEST( testCorrectException );
+      //CPPUNIT_TEST_EXCEPTION( testException, wns::Exception );
+      //CPPUNIT_TEST( testCorrectException );
+	CPPUNIT_TEST( testOutOfRange );
 	CPPUNIT_TEST_SUITE_END();
     public:
 	virtual void prepare();
 	virtual void cleanup();
 	void testException();
 	void testCorrectException();
+      void testOutOfRange();
     private:
 	Pathloss* pathloss;
 	bool deletePathloss;
@@ -105,5 +107,12 @@ namespace rise { namespace scenario { namespace pathloss { namespace tests {
 	catch (...) { throw; }
 #endif
     }
+
+      void DenyTest::testOutOfRange()
+      {
+	wns::Ratio pl = pathloss->getPathloss(*antenna1, *antenna2, 5000.0);
+	WNS_ASSERT_MAX_REL_ERROR( rise::scenario::pathloss::OutOfRangePathloss.get_dB(), pl.get_dB(), 1E-5);
+      }
+
 
 }}}}

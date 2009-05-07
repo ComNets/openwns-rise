@@ -47,7 +47,7 @@ namespace rise { namespace receiver {
     public:
 		PowerMeasurement(); // default constructor
 		PowerMeasurement(wns::Power rxPower, wns::Power interference, wns::Ratio omniAttenuation);
-		PowerMeasurement(rise::TransmissionObjectPtr t, wns::node::Interface* _sourceNode, wns::Power _rxPower, wns::Power _interference, wns::Ratio _omniAttenuation, int _subChannel=0);
+		PowerMeasurement(rise::TransmissionObjectPtr t, wns::node::Interface* _sourceNode, wns::Power _rxPower, wns::Power _interference, wns::Ratio _omniAttenuation, int _subChannel=0, int _beam=0);
 		virtual ~PowerMeasurement();
 		virtual const wns::Power getRxPower() const;
 		virtual const wns::Power getInterferencePower() const; // interference contains noise here
@@ -62,6 +62,7 @@ namespace rise { namespace receiver {
 		virtual const wns::service::phy::phymode::PhyModeInterfacePtr getPhyMode() const;
 
 		virtual const int getSubChannel() const; // OFDMA subchannel used
+		virtual const int getBeam() const; // MIMO/beamforming beam
 		virtual const rise::Station* getSourceStation() const; // transmitter station
 
 		virtual wns::node::Interface* getSourceNode() const; // transmitter node (only available for OFDMAPhy)
@@ -76,6 +77,7 @@ namespace rise { namespace receiver {
 		wns::service::phy::phymode::PhyModeInterfacePtr phyModePtr; // got from TransmissionObjectPtr; is a SmartPtr
 
 		int subChannel; // OFDMA subchannel used
+		int beam;       // MIMO/beamforming beam
 		rise::TransmissionObjectPtr transmissionObjectPtr;
 		rise::Station* transmitterStation; // transmitter station
 

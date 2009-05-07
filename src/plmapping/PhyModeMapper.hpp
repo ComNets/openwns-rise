@@ -56,7 +56,8 @@ namespace rise { namespace plmapping {
 	{
 	public:
 		/** @brief indexed list of all usable PhyModes, in order of quality */
-		typedef std::vector< wns::SmartPtr<PhyMode> > PhyModeVector;
+		typedef wns::SmartPtr<PhyMode> PhyModePtr;
+		typedef std::vector< PhyModePtr > PhyModeVector;
 
 	private:
 		unsigned int subCarriersPerSubChannel;
@@ -94,8 +95,6 @@ namespace rise { namespace plmapping {
 		virtual ~PhyModeMapper() {}
 
 		/** @brief find best PhyMode for a given SINR */
-		//virtual wns::SmartPtr<const wns::service::phy::phymode::PhyModeInterface>
-		//typedef wns::SmartPtr<const wns::service::phy::phymode::PhyModeInterface> PhyModeInterfacePtr;
 		virtual wns::service::phy::phymode::PhyModeInterfacePtr
 		getBestPhyMode(const wns::Ratio& sinr) const;
 
@@ -110,15 +109,15 @@ namespace rise { namespace plmapping {
 
 		/** @brief find required (minimum) SINR for a certain PhyMode */
 		virtual wns::Ratio
-		getMinSINRRatio(const wns::service::phy::phymode::PhyModeInterface& phyMode) const;
+		getMinSINRRatio(const wns::service::phy::phymode::PhyModeInterfacePtr phyMode) const;
 
 		/** @brief find required (minimum) SINR for a certain PhyMode */
 		virtual double
-		getMinSINR(const wns::service::phy::phymode::PhyModeInterface& phyMode) const;
+		getMinSINR(const wns::service::phy::phymode::PhyModeInterfacePtr phyMode) const;
 
 		/** @brief find possible SINR range for a certain PhyMode */
 		virtual wns::service::phy::phymode::SINRRange
-		getSINRRange(const wns::service::phy::phymode::PhyModeInterface& phyMode) const;
+		getSINRRange(const wns::service::phy::phymode::PhyModeInterfacePtr phyMode) const;
 
 		/** @brief best PhyMode of all available (most bits/symbol) */
 		//virtual wns::SmartPtr<const wns::service::phy::phymode::PhyModeInterface>
@@ -136,11 +135,11 @@ namespace rise { namespace plmapping {
 
 		/** @brief list (reference) of all available PhyModes */
 		virtual PhyModeVector
-		getListofPhyModes() const;
+		getListOfPhyModes() const;
 
 		/** @brief list (copy) of all available PhyModes */
 		virtual const std::vector< wns::service::phy::phymode::PhyModeInterfacePtr >
-		getListofPhyModePtr() const;
+		getListOfPhyModePtr() const;
 
 		/** @brief get PhyMode at index position. O(1) */
 		virtual wns::service::phy::phymode::PhyModeInterfacePtr
@@ -150,7 +149,7 @@ namespace rise { namespace plmapping {
 		virtual int
 		getIndexForPhyMode(const wns::service::phy::phymode::PhyModeInterface& phyMode) const;
 
-		/** @brief below this minimumSINR there is no useful transmission (PER too high) */
+		/** @brief below this minimumSINR [dB] there is no useful transmission (PER too high) */
 		virtual double getMinimumSINR() const { return minimumSINR; };
 
 		/** @brief tells if a useful transmission is possible */

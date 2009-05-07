@@ -30,53 +30,56 @@ using namespace rise::receiver;
 
 PowerMeasurement::PowerMeasurement()
     : wns::service::phy::power::PowerMeasurementInterface(),
-	  rxPower(),
-	  interference(),
-	  omniAttenuation(),
-	  noise(),
-	  txPower(),
-	  phyModePtr(NULL),
-	  //distance(0),
-	  subChannel(0),
-	  transmitterStation(NULL)
-	  //sourceNode(NULL),
-	  //systemManager(NULL)
+      rxPower(),
+      interference(),
+      omniAttenuation(),
+      noise(),
+      txPower(),
+      phyModePtr(NULL),
+      //distance(0),
+      subChannel(0),
+      beam(0),
+      transmitterStation(NULL)
+      //sourceNode(NULL),
+      //systemManager(NULL)
 {
 }
 
 // same interface values as OFDMAPhy::Station::receiveData()
 PowerMeasurement::PowerMeasurement(wns::Power rxPower, wns::Power interference, wns::Ratio omniAttenuation)
     : wns::service::phy::power::PowerMeasurementInterface(),
-	  rxPower(rxPower),
-	  interference(interference),
-	  omniAttenuation(omniAttenuation),
-	  noise(), // todo
-	  txPower(), // todo
-	  phyModePtr(), // todo
-	  //distance(0), // todo
-	  subChannel(0), // todo
-	  transmissionObjectPtr(NULL),
-	  transmitterStation(NULL)
-	  //sourceNode(NULL), // todo
-	  //systemManager(NULL)
+      rxPower(rxPower),
+      interference(interference),
+      omniAttenuation(omniAttenuation),
+      noise(), // todo
+      txPower(), // todo
+      phyModePtr(), // todo
+      //distance(0), // todo
+      subChannel(0), // todo
+      beam(0),
+      transmissionObjectPtr(NULL),
+      transmitterStation(NULL)
+      //sourceNode(NULL), // todo
+      //systemManager(NULL)
 {
 }
 
 // same interface values as OFDMAPhy::Station::receiveData()
-PowerMeasurement::PowerMeasurement(rise::TransmissionObjectPtr t, wns::node::Interface* _sourceNode, wns::Power _rxPower, wns::Power _interference, wns::Ratio _omniAttenuation, int _subChannel)
+PowerMeasurement::PowerMeasurement(rise::TransmissionObjectPtr t, wns::node::Interface* _sourceNode, wns::Power _rxPower, wns::Power _interference, wns::Ratio _omniAttenuation, int _subChannel, int _beam)
     : wns::service::phy::power::PowerMeasurementInterface(), // inherited
-	  rxPower(_rxPower),
-	  interference(_interference),
-	  omniAttenuation(_omniAttenuation),
-	  noise(), // todo
-	  //txPower(t->getTxPower()),
-	  //phyModePtr(),
-	  //distance(0), // todo
-	  subChannel(_subChannel),
-	  transmissionObjectPtr(t),
-	  transmitterStation(NULL),
-	  sourceNode(_sourceNode) // we need a node provider to get that ourself (rise:no, ofdmaphy:yes)
-	  //systemManager(NULL)
+      rxPower(_rxPower),
+      interference(_interference),
+      omniAttenuation(_omniAttenuation),
+      noise(), // todo
+      //txPower(t->getTxPower()),
+      //phyModePtr(),
+      //distance(0), // todo
+      subChannel(_subChannel),
+      beam(_beam),
+      transmissionObjectPtr(t),
+      transmitterStation(NULL),
+      sourceNode(_sourceNode) // we need a node provider to get that ourself (rise:no, ofdmaphy:yes)
+      //systemManager(NULL)
 {
 	// these are the useful things we can get from the TransmissionObjectPtr t:
 	assure(t,"transmissionObjectPtr==NULL");
@@ -206,6 +209,10 @@ const double PowerMeasurement::getDistance() const
 	// rise::Station* transmitterStation = transmitter->getStation();
 	assure(transmitterStation != NULL,"transmitterStation==NULL");
 	double distance = transmitterStation->getDistance(receiverStation);
+	// other way:
+	// wns::PositionableInterface* mobility via Layer2 class:
+	// mobility = getNode()->getService<wns::PositionableInterface*>("mobility");
+	// distance = mobility->getDistance( source->getService<wns::PositionableInterface*>("mobility") );
 	return distance;
 }
 */
@@ -217,7 +224,15 @@ const int PowerMeasurement::getSubChannel() const
 	return subChannel;
 }
 
-const rise::Station* PowerMeasurement::getSourceStation() const
+ // MIMO/beamforming beam
+const int PowerMeasurement::getBeam() const
+{
+	assure(false,"not yet implemented");
+	return beam;
+}
+
+const
+rise::Station* PowerMeasurement::getSourceStation() const
 {
 	// rise::Transmitter* transmitter    = transmissionObjectPtr->getTransmitter();
 	// rise::Station* transmitterStation = transmitter->getStation();
@@ -244,7 +259,7 @@ void PowerMeasurement::setSystemManager(rise::SystemManager* _systemManager) {
 
 std::string PowerMeasurement::getString() const
 {
-	std::stringstream line;
-	line << "[RxP="<<getRxPower()<<", I="<<getInterferencePower()<<", SINR="<<getSINR()<<"]";
-	return line.str();
+	std::stringstream s;
+	s << "[RxP="<<getRxPower()<<", I="<<getInterferencePower()<<", SINR="<<getSINR()<<"]";
+	return s.str();
 }

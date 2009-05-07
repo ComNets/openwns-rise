@@ -124,13 +124,7 @@ namespace rise { namespace scenario { namespace pathloss { namespace tests {
 
 	station1->moveTo(wns::Position(0, 0, 0));
 	station2->moveTo(wns::Position(BaseTestDistance, 0, 0));
-
-	WNS_ASSERT_ASSURE_EXCEPTION( pathloss->getPathloss(*antenna1, *antenna2, 0) );
-	WNS_ASSERT_ASSURE_EXCEPTION( pathloss->getPathloss(*antenna1, *antenna2, 999.99) );
-	CPPUNIT_ASSERT_NO_THROW( pathloss->getPathloss(*antenna1, *antenna2, 1000) );
-	CPPUNIT_ASSERT_NO_THROW( pathloss->getPathloss(*antenna1, *antenna2, 2000) );
-	WNS_ASSERT_ASSURE_EXCEPTION( pathloss->getPathloss(*antenna1, *antenna2, 2000.01) );
-
+	// There are no more exceptions here, because we need simulations for big scenarios also.
 	station2->moveTo(wns::Position(0, 0, 0));
 	WNS_ASSERT_MAX_REL_ERROR( 1.0, pathloss->getPathloss(*antenna1, *antenna2, BaseTestFrequency).get_dB(), 1E-5 );
 	station2->moveTo(wns::Position(0, 0.99, 0));

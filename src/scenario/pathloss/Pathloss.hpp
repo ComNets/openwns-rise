@@ -36,6 +36,8 @@
 
 namespace rise { namespace scenario { namespace pathloss {
 
+      static const wns::Ratio OutOfRangePathloss = wns::Ratio::from_dB(500);
+
     /**
      * @brief Base class for all pathloss models.
      *
@@ -74,15 +76,15 @@ namespace rise { namespace scenario { namespace pathloss {
 	 * @brief Pathloss calculation function for models not dependent on the
 	 * distance of source and target.
 	 *
-	 * For models dependent on the distance DistanceDepedent will provide 
+	 * For models dependent on the distance DistanceDepedent will provide
 	 * an implementation of this method.
 	 */
- 	virtual wns::Ratio calculatePathloss(const antenna::Antenna& source,
- 					     const antenna::Antenna& target,
- 					     const wns::Frequency& frequency) const = 0;
+	virtual wns::Ratio calculatePathloss(const antenna::Antenna& source,
+					     const antenna::Antenna& target,
+					     const wns::Frequency& frequency) const = 0;
 
 	/**
-	 * @brief Pathloss calculation function for models depentent on the
+	 * @brief Pathloss calculation function for models dependent on the
 	 * distance of source and target.
 	 *
 	 * For models not dependent on the distance DistanceIndependent will provide
