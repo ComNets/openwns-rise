@@ -101,8 +101,12 @@ class Manhattan(ScenarioBase):
                 columns>0),"Number of rows and columns have to be > 0"
 
         ScenarioBase.__init__(self,
-                              sizeX = (columns + 1) * streetWidth + columns * blockWidth,
-                              sizeY = (rows + 1) * streetWidth + rows * blockHeight)
+                              xmin = 0,
+                              xmax = (columns + 1) * streetWidth + columns * blockWidth,
+                              ymin = 0,
+                              ymax = (rows + 1) * streetWidth + rows * blockHeight),
+                              #sizeX = (columns + 1) * streetWidth + columns * blockWidth,
+                              #sizeY = (rows + 1) * streetWidth + rows * blockHeight)
 
         self.rows = rows
         self.columns = columns

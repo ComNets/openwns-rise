@@ -172,7 +172,7 @@ class ObjectsTest(Objects):
             Shape2D( pointA = [3.0,3.0,0.0], pointB = [8.0,4.0,0.0], attenuation = "4 dB"),
             Shape2D( pointA = [2.0,5.0,0.0], pointB = [4.0,7.0,0.0], attenuation = "5 dB"),
             ]
-        self.scenario = rise.Scenario.Scenario(500,500)
+        self.scenario = rise.Scenario.Scenario(xmin=0,ymin=0,xmax=500,ymax=500)
         self.antennas = [
             rise.Antenna.AntennaPosDropIn( [2,0,0] ),
             rise.Antenna.AntennaPosDropIn( [2,3,0] ),

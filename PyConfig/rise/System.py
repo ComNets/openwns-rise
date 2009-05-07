@@ -45,4 +45,4 @@ class System(object):
 
 class DropIn(System):
     def __init__(self):
-        super(DropIn, self).__init__(Scenario(500,500))
+        super(DropIn, self).__init__(Scenario(xmin=0,ymin=0,xmax=500,ymax=500))
