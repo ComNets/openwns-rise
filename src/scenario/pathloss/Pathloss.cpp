@@ -50,5 +50,14 @@ wns::Ratio Pathloss::getPathloss(const antenna::Antenna& source,
     assure(frequency > 0, "Illegal frequency (" + wns::Ttos(frequency) + " MHz) passed to Pathloss::getPathloss()");
     assure(frequency < std::numeric_limits<wns::Frequency>::infinity(),
 	   "Infinite frequency passed to Pathloss::getPathloss()");
-    return (*transform)(calculatePathloss(source, target, frequency));
+    wns::Ratio result;
+    try
+    { // out-of-range must be catched so that distant cells can be simulated
+      result = (*transform)(calculatePathloss(source, target, frequency));
+    }
+    catch(...)
+    { // probably out of range
+      result = OutOfRangePathloss;
+    }
+    return result;
 }
