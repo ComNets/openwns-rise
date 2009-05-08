@@ -195,13 +195,13 @@ class MultiSlope(UserDef):
         distFactor = None
         distRange = None
 
-        __plugin__ = 'MultiSlope'
-        validFrequencies = None
-        validDistances = None
-        outOfMinRange = None
-        outOfMaxRange = None
+    __plugin__ = 'MultiSlope'
+    validFrequencies = None
+    validDistances = None
+    outOfMinRange = None
+    outOfMaxRange = None
 
-        ranges = None
+    ranges = None
 
     def __init__(self, validFrequencies,
                  validDistances,
@@ -249,9 +249,9 @@ class MultiModel(Pathloss):
         offset = None
         modelConfig = None
 
-        __plugin__ = 'MultiModel'
+    __plugin__ = 'MultiModel'
 
-        ranges = None
+    ranges = None
 
     def __init__(self, ranges):
         self.ranges = []
