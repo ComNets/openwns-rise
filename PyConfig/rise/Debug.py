@@ -48,7 +48,7 @@ class Debug:
     environment          = None
 
     def __init__(self):
-	self.main                 = False
+        self.main                 = False
         self.systemManager        = False
         self.scenario             = False
         self.medium               = False
@@ -65,11 +65,11 @@ class Debug:
         self.umtsManager      	  = False
         self.H2ChannelInterface   = False
         self.IEEE80211ChannelInterface = False
-	self.simControl           = False
-	self.environment          = False
+        self.simControl           = False
+        self.environment          = False
 
     def allOn(self):
-	self.main                 = True
+        self.main                 = True
         self.systemManager        = True
         self.scenario             = True
         self.medium               = True
@@ -85,5 +85,5 @@ class Debug:
         self.umtsManager      	  = True
         self.H2ChannelInterface   = True
         self.IEEE80211ChannelInterface = True
-	self.simControl           = True
-	self.environment          = True
+        self.simControl           = True
+        self.environment          = True

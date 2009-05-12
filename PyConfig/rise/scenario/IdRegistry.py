@@ -38,7 +38,7 @@ class NameNotFoundError(Error):
 class IdNotFoundError(Error):
     def __init__(self, value):
         Error.__init__(self, value)
-    
+
 class IdRegistry:
 
     forward = None
@@ -47,7 +47,7 @@ class IdRegistry:
     def __init__(self):
         self.forward = {}
         self.backward = []
-    
+
     def registerName(self, name):
         if self.knowsName(name):
             return False

@@ -43,16 +43,16 @@ class MobilityBase(object):
     obstructionList = None # list of no-go areas :-)
 
     def __init__(self, coords=Position()):
-	 self.coords = coords
-         self.moveTimeStep = 0.01
-         self.obstructionList = []
+        self.coords = coords
+        self.moveTimeStep = 0.01
+        self.obstructionList = []
 
     def setCoords(self, coords):
-	 self.coords = coords
-	 self.checkBounds()
+        self.coords = coords
+        self.checkBounds()
 
     def getCoords(self):
-	 return self.coords
+        return self.coords
 
 
 class Mobility(MobilityBase):
@@ -80,8 +80,8 @@ class EventListEntry:
      position = None
      time = None
      def __init__(self, position, time):
-	  self.position = position
-	  self.time = time
+        self.position = position
+        self.time = time
 
 class EventList(MobilityBase):
      nameInMobilityFactory = "rise.mobility.EventList"
@@ -89,15 +89,15 @@ class EventList(MobilityBase):
      events = None
 
      def __init__(self, coords):
-	  super(EventList, self).__init__(coords)
-          self.logger=Logger("RISE Mobility","EventList",True)
-          self.events = []
+        super(EventList, self).__init__(coords)
+        self.logger=Logger("RISE Mobility","EventList",True)
+        self.events = []
 
      def addWaypoint(self, time, position):
-	  self.events.append(EventListEntry(position, time))
+        self.events.append(EventListEntry(position, time))
 
      def checkBounds(self):
-	  """do nothing, here you could check if the  coords are inside the scenario"""
+            """do nothing, here you could check if the  coords are inside the scenario"""
 
 class BrownianRect(Mobility):
      nameInMobilityFactory = "rise.mobility.BrownianRect"
@@ -107,24 +107,25 @@ class BrownianRect(Mobility):
      ymax = None
 
      def __init__(self, boundaries, obstructions = []):
-	  super(BrownianRect, self).__init__()
-	  """The boundaries have to be a set with the following entries:
-	  boundaries[0] = xmin
-	  boundaries[1] = ymin
-	  boundaries[2] = xmax
-	  boundaries[3] = ymax
-	  """
-	  assert (len(boundaries) == 4),"please specify 4 coordinates for scenario corners: xmin,ymin,xmax,ymax"
-	  self.xmin = boundaries[0]
-	  self.ymin = boundaries[1]
-	  self.xmax = boundaries[2]
-	  self.ymax = boundaries[3]
-          self.obstructionList = obstructions
-          while True:
-              self.setCoords(self.getRandomPosition())
-              if self.checkBounds():
-                  break
-	  self.logger = Logger("RISE Mobility","BrownianRect",True)
+        super(BrownianRect, self).__init__()
+        """The boundaries have to be a set with the following entries:
+        boundaries[0] = xmin
+        boundaries[1] = ymin
+        boundaries[2] = xmax
+        boundaries[3] = ymax
+        """
+        assert (len(boundaries) == 4),"please specify 4 coordinates for scenario corners: xmin,ymin,xmax,ymax"
+        self.logger = Logger("RISE Mobility","BrownianRect",True)
+        self.xmin = boundaries[0]
+        self.ymin = boundaries[1]
+        self.xmax = boundaries[2]
+        self.ymax = boundaries[3]
+        self.obstructionList = obstructions
+        while True:
+            self.setCoords(self.getRandomPosition())
+            if self.checkBounds():
+                break
+        
 
      def getRandomPosition(self):
          return Position(round(self.xmin + random.random()*(self.xmax-self.xmin) , 6),
@@ -150,38 +151,38 @@ class BrownianCirc(Mobility):
      maxDistance = None # radius of the permitted circular area
 
      def __init__(self, center, maxDistance, obstructions = []):
-	  super(BrownianCirc, self).__init__()
-	  self.center = center
-	  self.maxDistance = maxDistance
-          self.obstructionList = obstructions
-          while True:
-              self.setCoords(self.getRandomPosition())
-              if self.checkBounds():
-                  break
-	  self.logger = Logger("RISE Mobility","BrownianCirc",True)
+        super(BrownianCirc, self).__init__()
+        self.center = center
+        self.maxDistance = maxDistance
+        self.obstructionList = obstructions
+        while True:
+            self.setCoords(self.getRandomPosition())
+            if self.checkBounds():
+                break
+        self.logger = Logger("RISE Mobility","BrownianCirc",True)
 
      def getRandomPosition(self):
-	  angle = 2*math.pi * random.random()
-	  radius = self.maxDistance * math.sqrt(random.random())
-	  return Position(round(self.center.x+radius*math.sin(angle), 6),
-			  round(self.center.y+radius*math.cos(angle), 6),
-			  1.5)
+        angle = 2*math.pi * random.random()
+        radius = self.maxDistance * math.sqrt(random.random())
+        return Position(round(self.center.x+radius*math.sin(angle), 6),
+                round(self.center.y+radius*math.cos(angle), 6),
+                1.5)
 
      def checkBounds(self):
-	  myCoords = self.getCoords()
-	  distance  = math.sqrt((self.center.x-myCoords.x)**2 +
-				(self.center.y-myCoords.y)**2 )
-	  assert (distance <= self.maxDistance), "Coordinate out of maxDistance! (actual = %.2f m, target = %.2f m)" % (distance, self.maxDistance)
+        myCoords = self.getCoords()
+        distance  = math.sqrt((self.center.x-myCoords.x)**2 +
+                (self.center.y-myCoords.y)**2 )
+        assert (distance <= self.maxDistance), "Coordinate out of maxDistance! (actual = %.2f m, target = %.2f m)" % (distance, self.maxDistance)
 
-          if myCoords.x <= 0 or myCoords.y <=0:
-              return False
+        if myCoords.x <= 0 or myCoords.y <=0:
+            return False
 
-          positionObstructed = False
-          for obstruction in self.obstructionList:
-              if obstruction.containsPoint([ self.coords.x, self.coords.y, self.coords.z ]):
-                  positionObstructed = True
+            positionObstructed = False
+            for obstruction in self.obstructionList:
+                if obstruction.containsPoint([ self.coords.x, self.coords.y, self.coords.z ]):
+                    positionObstructed = True
 
-          return not positionObstructed
+            return not positionObstructed
 
 
 class BrownianEquiangularPolygon(BrownianCirc):
@@ -190,35 +191,34 @@ class BrownianEquiangularPolygon(BrownianCirc):
      angle = None
 
      def __init__(self, center, maxDistance, corners, angle, obstructions = []):
-          self.corners = corners
-          self.angle = angle
-	  super(BrownianEquiangularPolygon, self).__init__(center, maxDistance)
-	  self.logger = Logger("RISE Mobility","BrownianEquiangularPolygon",True)
+        self.corners = corners
+        self.angle = angle
+        super(BrownianEquiangularPolygon, self).__init__(center, maxDistance)
+        self.logger = Logger("RISE Mobility","BrownianEquiangularPolygon",True)
 
      def getRandomPosition(self):
-	  angle = 2*math.pi * random.random()
-	  radius = self.maxDistance * math.sqrt(random.random()) * math.cos(math.pi/self.corners)
-	  return Position(round(self.center.x+radius*math.sin(angle), 6),
-			  round(self.center.y+radius*math.cos(angle), 6),
-			  1.5)
+        angle = 2*math.pi * random.random()
+        radius = self.maxDistance * math.sqrt(random.random()) * math.cos(math.pi/self.corners)
+        return Position(round(self.center.x+radius*math.sin(angle), 6),
+              round(self.center.y+radius*math.cos(angle), 6),
+              1.5)
 
 class Roadmap(Mobility):
      nameInMobilityFactory = "rise.mobility.Roadmap"
      roadMap = None
 
      def __init__(self, name, streets, crossings):
-	 super(Roadmap, self).__init__()
-	 self.roadMap = rise.Roadmap.Roadmap(name, streets, crossings)
-	 self.logger = Logger("RISE Mobility","Roadmap",True)
+        super(Roadmap, self).__init__()
+        self.roadMap = rise.Roadmap.Roadmap(name, streets, crossings)
+        self.logger = Logger("RISE Mobility","Roadmap",True)
 
 class Component( openwns.node.Component ):
      mobility = None
 
      def __init__(self, node, name, mobility):
-          super(Component, self).__init__(node,name)
-          self.nameInComponentFactory = "rise.mobility.Component"
-          self.mobility = mobility
-
+        super(Component, self).__init__(node,name)
+        self.nameInComponentFactory = "rise.mobility.Component"
+        self.mobility = mobility
 class ThereAndBack(EventList):
     # waitTimeAtEndPoint timeperiod to wait at an endpoint in secoonds.
     def __init__(self, firstPoint, secondPoint, velocity, endTime, waitTimeAtEndPoint=0, startToMoveTime = 0.0,  stepsPerSecond=1000):

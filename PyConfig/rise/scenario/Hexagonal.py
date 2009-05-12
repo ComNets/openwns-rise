@@ -656,4 +656,4 @@ class OLD_Hexagonal(ScenarioBase):
             if group in groupList:
                 self.rnPositions.append((rnpos,group))
 
-        
+
