@@ -105,8 +105,6 @@ class Manhattan(ScenarioBase):
                               xmax = (columns + 1) * streetWidth + columns * blockWidth,
                               ymin = 0,
                               ymax = (rows + 1) * streetWidth + rows * blockHeight),
-                              #sizeX = (columns + 1) * streetWidth + columns * blockWidth,
-                              #sizeY = (rows + 1) * streetWidth + rows * blockHeight)
 
         self.rows = rows
         self.columns = columns

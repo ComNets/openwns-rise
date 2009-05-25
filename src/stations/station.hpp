@@ -32,6 +32,7 @@
 #include <RISE/scenario/Scenario.hpp>
 #include <RISE/scenario/scenerymap/SceneryMap.hpp>
 #include <RISE/scenario/mobility/Mobility.hpp>
+#include <RISE/manager/systemmanager.hpp>
 
 #include <WNS/Positionable.hpp>
 #include <WNS/PositionObserver.hpp>
@@ -207,7 +208,7 @@ namespace rise {
 		 */
 		virtual bool isInitialized() const;
 
-	  //virtual void initializeWraparound();
+		//virtual void initializeWraparound();
 
 		/**
 		 * @brief Vector with pointers to Antennas

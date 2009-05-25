@@ -26,10 +26,10 @@
 ###############################################################################
 
 
-from wns.Sealed import Sealed
-from wns import Interface, abstractmethod
+from openwns.pyconfig import Sealed
+from openwns.interface import Interface, abstractmethod
 from openwns.geometry.position import Position, Vector, Line, BoundingBox
-from wns.PyConfig import attrsetter
+from openwns.pyconfig import attrsetter
 
 class IScenario(Interface):
 
@@ -61,7 +61,6 @@ class ScenarioBase(Sealed, IScenario):
     sizeY = None # obsolete, only for backward compatibility [rs]
     boundingBox = None
 
-    #def __init__(self, sizeX, sizeY):
     def __init__(self, xmin=None, xmax=None, ymin=None, ymax=None):
         Sealed.__init__(self)
         IScenario.__init__(self)
@@ -86,9 +85,8 @@ class ScenarioBase(Sealed, IScenario):
         return self.boundingBox.ymin
 
 class Scenario(ScenarioBase):
-    #def __init__(self, sizeX, sizeY):
-    def __init__(self, **kw):
-        ScenarioBase.__init__(self, **kw)
+    def __init__(self, **restOfArgs):
+        ScenarioBase.__init__(self, **restOfArgs)
 
     def getPositions(self): pass
     def getMobilityObstructions(self): pass

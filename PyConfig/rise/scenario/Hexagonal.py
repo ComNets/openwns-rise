@@ -28,7 +28,6 @@
 import math
 import random
 import os
-#from wns import Position
 from openwns.geometry.position import Position, Vector, Line, BoundingBox
 from wns.Distribution import Fixed
 from wns.PyConfig import attrsetter
@@ -102,38 +101,6 @@ def getFirstPhantomPosition(coreCells,gridDistance):
     xyVector = transformHexCoordinates(i,j,gridDistance)
     #print "getFirstPhantomPosition(): cc=%d, (i,j)=(%d,%d), (x,y)=(%.3f,%.3f) l=%.3f"%(coreCells,i,j,xyVector.x,xyVector.y,xyVector.length())
     return xyVector
-
-def OLD_hexagonalGrid(nCircles, radius, center, corrAngle = 0):
-    """ return list of BS positions
-        given the number of nCircles around the center cell.
-        radius is in Meters [m]
-        center is a Position(x,y,z)
-        corrAngle is in radiant [0..2pi]
-        corrAngle can be 0 (default) or e.g. math.pi/6.0 ( = 30 degrees)
-    """
-    assert nCircles >= 0
-    assert radius > 0
-    assert 0 <= corrAngle <= 2.0*math.pi # rotates the final result by corrAngle
-
-    posList = [center] # central BS position
-
-    # TODO: instead of this "repeat-and-search-if-double" approach
-    # we can do it faster
-    for i in xrange(nCircles):
-        posListLen = len(posList)
-        for n in xrange(posListLen):
-            for newPos in aequiAngular(6, radius, posList[n], corrAngle):
-                alreadyInList = False
-                for pos in posList:
-                    #if (pos == newPos): # does not work with doubles
-                    v = pos-newPos # distance
-                    if (v.length2D()<1.0):
-                        alreadyInList = True
-                        break
-                if not alreadyInList:
-                    posList.append(newPos)
-    #print "Created %d Positions on Grid"%len(posList)
-    return posList
 
 def hexagonalGrid(nCircles, radius, center, corrAngle = 0):
     """ return list of BS positions
@@ -319,12 +286,8 @@ def plotScenarioWithGnuplot(positions,directory='positions.junk',grid=[],showLab
 
 
 class PlotableScenario(ScenarioBase):
-    #boundingBox    = None # already in ScenarioBase
     def __init__(self):
-        #self.boundingBox = BoundingBox() # already in ScenarioBase
         pass
-
-    #def plotScenarioWithGnuplot(positions,directory='positions.junk',grid=[],showLabels=None,title=None):
 
     def plotScenarioWithMatlab(positions,directory='positions.junk',grid=[],showLabels=None,title=None):
         """ TODO: implement this """
@@ -456,7 +419,7 @@ class Hexagonal(PlotableScenario,Wraparound):
     def getHexagonHeight():
         return self.cellRadius*math.srqt(3.0)*0.5
 
-    # Wiederverwendungsabstand (Abstand zwischen Basisstationen) im hexagonalen Szenario
+    # Reuse distance (distance between base stations) in hexagonal scenario
     def getInterfererDistance():
         """ Reuse distance (Wiederverwendungsabstand) """
         # from Walke, "Mobile Radio Networks"
@@ -532,128 +495,4 @@ class Hexagonal(PlotableScenario,Wraparound):
 
     def finalizeScenario(self):
         pass
-
-class OLD_Hexagonal(ScenarioBase):
-    center       = None
-    nCircles     = None
-    dAP_AP       = None
-    dAP_RN       = None
-    cellRadius   = None
-    nRN          = None
-    corrAngle    = None
-    rnShiftAngle = None
-    cellRadiusRn = None
-
-    bsPositions  = None
-    rnPositions  = None
-    nSectorsBS  = None
-    sectorAngle = None
-    nodeHeight  = 5
-    def __init__(self,
-                 center,
-                 nCircles,
-                 dAP_AP,
-                 dAP_RN,
-                 cellRadius,
-                 nRN,
-                 nSectorsBS = 1,
-                 corrAngle = 0,
-                 rnShiftAngle = 0
-                 ):
-        self.center       = center
-        self.nCircles     = nCircles
-        self.dAP_AP       = dAP_AP
-        self.dAP_RN       = dAP_RN
-        self.cellRadius   = cellRadius
-        self.nRN          = nRN
-        self.corrAngle    = corrAngle
-        self.rnShiftAngle = rnShiftAngle
-        self.nSectorsBS   = nSectorsBS
-        self.sectorAngle  = math.pi/nSectorsBS
-
-        self.__createHexagonalScenario()
-
-        xValues = [ pos.x for pos,group in self.bsPositions+self.rnPositions ]
-        yValues = [ pos.y for pos,group in self.bsPositions+self.rnPositions ]
-
-        ScenarioBase.__init__(self,
-                              sizeX = max(xValues) + self.cellRadius,
-                              sizeY = max(yValues) + self.cellRadius)
-
-    def __createHexagonalScenario(self):
-        class baseElement:
-            bsPos = None
-            rnPos = None
-
-            def __init__(self):
-                self.bsPos = []
-                self.rnPos = []
-
-            def offset(self, xOffset, yOffset):
-                bsCopy = [ (Position(bsPos.x + xOffset, bsPos.y + yOffset, bsPos.z), group) for bsPos,group in self.bsPos ]
-                rnCopy = [ (Position(rnPos.x + xOffset, rnPos.y + yOffset, rnPos.z), group) for rnPos,group in self.rnPos ]
-                return { 'BS' : bsCopy, 'RN' : rnCopy }
-
-
-        be = baseElement()
-        group = 1
-        for i in xrange(self.nSectorsBS):
-            be.bsPos.append( (Position(0, 0, self.nodeHeight), group))
-            group+=1
-
-        for i in xrange(self.nSectorsBS*self.nRN):
-            rnAngle =  2*math.pi/(self.nRN * self.nSectorsBS) + self.rnShiftAngle * math.pi/180.0
-            be.rnPos.append( (Position(self.dAP_RN*math.cos(rnAngle/2+i*rnAngle), self.dAP_RN*math.sin(rnAngle/2+i*rnAngle), self.nodeHeight), group))
-            group+=1
-
-        recPositions = hexagonalGrid(nCircles = self.nCircles,
-                                         radius = self.dAP_AP,
-                                         center = self.center,
-                                         corrAngle = self.corrAngle)
-        self.bsPositions = []
-        self.rnPositions = []
-        for rec in recPositions:
-            tmp = be.offset(rec.x, rec.y)
-            self.bsPositions += tmp['BS']
-            self.rnPositions += tmp['RN']
-
-
-    def getPositions(self):
-        positions = {}
-        positions['BS'] = self.bsPositions
-        positions['RN'] = self.rnPositions
-        return positions
-
-    def getMobilityObstructions(self):
-        return []
-
-    def getCellRadius(self):
-        return self.cellRadius
-
-    def buildScenario(self):
-        pass
-
-    def finalizeScenario(self):
-        pass
-
-    def filterNodes(self, nodeType = 'RAP', groupList = [0]):
-        """ Filters the nodes for limited simulations, by classifying the node types
-        (BS, RN, RAP (both) and the group numbers (list)"""
-        if nodeType == "BS":
-            self.rnPositions = []
-        elif nodeType == "RN":
-            self.bsPositions = []
-        print groupList
-        bs = self.bsPositions
-        self.bsPositions = []
-        for bspos,group in bs:
-            if group in groupList:
-                self.bsPositions.append((bspos,group))
-
-        rn = self.rnPositions
-        self.rnPositions = []
-        for rnpos,group in rn:
-            if group in groupList:
-                self.rnPositions.append((rnpos,group))
-
 

@@ -59,18 +59,15 @@ SystemManager::SystemManager(const string &aSystemName,
 	}
 	if (pyConfigView.knows("wraparoundShiftVectors")
 	    && !pyConfigView.isNone("wraparoundShiftVectors")) {
-	  int shiftListLength = pyConfigView.len("wraparoundShiftVectors");
-	  MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): "<<shiftListLength<<" wraparoundShiftVectors");
-	  //std::cout<<"rise::SystemManager(): "<<shiftListLength<<" wraparoundShiftVectors"<<std::endl;
-	  for(int i=0; i<shiftListLength; i++) {
-	    const wns::pyconfig::View& shiftVectorConfig = pyConfigView.getView("wraparoundShiftVectors", i);
-	    double x = shiftVectorConfig.get<double>("x");
-	    double y = shiftVectorConfig.get<double>("y");
-	    //std::cout<<"rise::SystemManager(): (x,y)=("<<x<<","<<y<<")"<<std::endl;
-	    wraparoundShiftVector.push_back(wns::geometry::Vector(x,y,0.0));
-	    MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): wraparoundShift["<<i<<"]=("<<x<<","<<y<<")");
-	    //wraparaoundShiftVector.push_back(wns::geometry::Vector::Vector(x,y,0.0));
-	  }
+		int shiftListLength = pyConfigView.len("wraparoundShiftVectors");
+		MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): "<<shiftListLength<<" wraparoundShiftVectors");
+		for(int i=0; i<shiftListLength; i++) {
+			const wns::pyconfig::View& shiftVectorConfig = pyConfigView.getView("wraparoundShiftVectors", i);
+			double x = shiftVectorConfig.get<double>("x");
+			double y = shiftVectorConfig.get<double>("y");
+			wraparoundShiftVector.push_back(wns::geometry::Vector(x,y,0.0));
+			MESSAGE_SINGLE(NORMAL, log, "rise::SystemManager(): wraparoundShift["<<i<<"]=("<<x<<","<<y<<")");
+		}
 	}
 }
 

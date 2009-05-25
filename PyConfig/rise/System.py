@@ -30,15 +30,13 @@ class System(object):
     Scenario = None
     wraparoundShiftVectors = None
 
-    def __init__(self, scenario):
+    def __init__(self, scenario, wraparoundShiftVectors = []):
         self.Scenario = scenario
-        self.wraparoundShiftVectors = []
+        self.wraparoundShiftVectors = wraparoundShiftVectors
 
     def setWraparoundShiftVectors(self, vlist):
         self.wraparoundShiftVectors = vlist
-        #print "RISE.System.setWraparoundShiftVectors():"
-        #for v in vlist:
-        #    print "  wraparoundShiftVector = %s"%v.toString(3)
+
     def getWraparoundShiftVectors(self):
         return self.wraparoundShiftVectors
 

@@ -255,11 +255,10 @@ void Station::initializeShadowingMap()
 	}
 }
 
-
 /*
 void Station::initializeWraparound()
 {
-  //const WraparoundShiftVectorContainer* wraparaoundShiftVector = &(getSystemManager()->getWraparoundShiftVectors());
+  //const rise::SystemManager::WraparoundShiftVectorContainer* wraparaoundShiftVector = &(getSystemManager()->getWraparoundShiftVectors());
   MESSAGE_SINGLE(NORMAL, log, "initializeWraparound()");
 }
 */

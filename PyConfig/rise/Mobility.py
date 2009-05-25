@@ -27,7 +27,6 @@
 
 from openwns.distribution import Normal
 from openwns.logger import Logger
-#from openwns import Position
 from openwns.geometry.position import Position
 import openwns.node
 import rise.Roadmap
