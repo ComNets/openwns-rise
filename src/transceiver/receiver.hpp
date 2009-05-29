@@ -44,7 +44,7 @@
 #include <list>
 
 namespace rise { namespace antenna {
- 	class Antenna;
+	class Antenna;
 }}
 
 namespace rise { namespace medium {
@@ -146,7 +146,7 @@ namespace rise
 		   Function checks if the list 'TransmissionObjects' contains
 		   the given TransmissionObject.
 		*/
-  		virtual bool contains(TransmissionObjectPtr);
+		virtual bool contains(TransmissionObjectPtr);
 
 		bool isActive() const
 		{
@@ -248,7 +248,7 @@ namespace rise
 				return antenna;
 			}
 		//! Returns the total loss between the Receiver and a given Transmitter
- 		virtual wns::Ratio getLoss( Transmitter* t);
+		virtual wns::Ratio getLoss( Transmitter* t);
 
 	protected:
 		/**

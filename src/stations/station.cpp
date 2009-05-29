@@ -136,7 +136,6 @@ void Station::initialize()
 {
 	initializePathlossMap();
 	initializeShadowingMap();
-	//initializeWraparound();
 	initialized = true;
 }
 
@@ -255,10 +254,3 @@ void Station::initializeShadowingMap()
 	}
 }
 
-/*
-void Station::initializeWraparound()
-{
-  //const rise::SystemManager::WraparoundShiftVectorContainer* wraparaoundShiftVector = &(getSystemManager()->getWraparoundShiftVectors());
-  MESSAGE_SINGLE(NORMAL, log, "initializeWraparound()");
-}
-*/
