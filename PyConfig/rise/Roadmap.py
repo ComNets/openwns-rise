@@ -26,7 +26,7 @@
 ###############################################################################
 
 from openwns.logger import Logger
-from openwns import Position
+from openwns.geometry.position import Position
 
 class Roadmap(object):
     name = None

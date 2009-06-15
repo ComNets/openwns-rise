@@ -25,7 +25,7 @@
 #
 ###############################################################################
 
-from openwns import Position
+from openwns.geometry.position import Position
 
 class RAP:
 

@@ -26,7 +26,7 @@
 ###############################################################################
 
 import math
-from openwns import Position
+from openwns.geometry.position import Position
 from openwns.interface import Interface, abstractmethod
 import rise.scenario.Nodes
 

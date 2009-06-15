@@ -28,7 +28,7 @@
 import os
 import math
 
-from openwns import Position
+from openwns.geometry.position import Position
 from rise.Roadmap import Roadmap, Street, Crossing
 import rise.scenario.Shadowing
 from rise.Scenario import ScenarioBase
