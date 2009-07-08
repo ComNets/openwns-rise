@@ -66,7 +66,7 @@ class SpatialCorrelated:
     c = None
     symmetric = None
 
-    def __init__(self, shadowSigma, correlationDistance, nSamples = 500, symmetric = True):
+    def __init__(self, shadowSigma, correlationDistance, nSamples = 500, symmetric = True, seed = None):
         self.correlationDistance = correlationDistance
         self.shadowSigma = shadowSigma
         self.nSamples = nSamples
@@ -75,11 +75,13 @@ class SpatialCorrelated:
         self.c = sqrt(2.0/nSamples)
 
         # random numbers for later on
+        if seed is not None:
+            random.seed(seed)
         rnd = []
         for i in xrange(5*nSamples):
             rnd.append(random.random())
         rnd = array(rnd)
-        self.f = zeros((4, nSamples), Float)
+        self.f = zeros((4, nSamples))
 
         fr = (log(2)/correlationDistance)/(2*pi) * sqrt(1/power(rnd[0:nSamples], 2) - 1)
         t = -pi/2+rnd[nSamples:nSamples*2]*pi
@@ -104,7 +106,7 @@ class SpatialCorrelated:
             self.theta = rnd[nSamples*4:nSamples*5] * 2 * pi
 
     def getShadowing(self, x, y, u, v):
-        shdw = dB(self.shadowSigma * (sum(self.c * cos(transpose(2*pi*dot(self.f, array([[x], [y], [u], [v]], Float))) + self.theta),1))[0])
+        shdw = dB(self.shadowSigma * (sum(self.c * cos(transpose(2*pi*dot(self.f, array([[x], [y], [u], [v]]))) + self.theta),1))[0])
         return(shdw)
 
     def getShadowSigma(self):
