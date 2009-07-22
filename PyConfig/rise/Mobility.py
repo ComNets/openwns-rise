@@ -148,22 +148,22 @@ class BrownianCirc(Mobility):
      nameInMobilityFactory = "rise.mobility.BrownianCirc"
      center = None # center of the permitted circular area
      maxDistance = None # radius of the permitted circular area
+     nSectors = None
 
-     def __init__(self, center, maxDistance, obstructions = []):
-        super(BrownianCirc, self).__init__()
-        self.center = center
-        self.maxDistance = maxDistance
-        self.obstructionList = obstructions
-        countTrials = 0
-        while (countTrials<1000):
-            self.setCoords(self.getRandomPosition())
-            if self.checkBounds():
-                break
-        assert (countTrials<1000), "BrownianCirc: maximum number of trials exceeded: %d"%countTrials
-        self.logger = Logger("RISE Mobility","BrownianCirc",True)
+     def __init__(self, center, maxDistance,nSectors,obstructions = []):
+          super(BrownianCirc, self).__init__()
+          self.center = center
+          self.maxDistance = maxDistance
+          self.nSectors = nSectors
+          self.obstructionList = obstructions
+          while True:
+              self.setCoords(self.getRandomPosition())
+              if self.checkBounds():
+                  break
+          self.logger = Logger("RISE Mobility","BrownianCirc",True)
 
      def getRandomPosition(self):
-        angle = 2*math.pi * random.random()
+        angle =  2.0 / self.nSectors * math.pi * random.random()
         radius = self.maxDistance * math.sqrt(random.random())
         return Position(round(self.center.x+radius*math.sin(angle), 6),
                 round(self.center.y+radius*math.cos(angle), 6),
@@ -173,10 +173,14 @@ class BrownianCirc(Mobility):
         myCoords = self.getCoords()
         distance  = math.sqrt((self.center.x-myCoords.x)**2 +
                 (self.center.y-myCoords.y)**2 )
+	    #angle = math.atan2((myCoords.y-self.center.y),(myCoords.x-self.center.x))
         assert (distance <= self.maxDistance), "Coordinate out of maxDistance! (actual = %.2f m, target = %.2f m)" % (distance, self.maxDistance)
+	  	#if(self.nSectors>1):
+			#assert (angle <= math.pi/2), "Coordinate out of angle! (actual = %.2f m, target = %.2f m)" % (angle, math.pi/2)
+			#assert (angle >= math.pi/2-(2*math.pi/self.nSectors)), "Coordinate out of angle! (actual = %.2f m, target = %.2f m)" % (angle, math.pi/2-(2*math.pi/self.nSectors))
 
         #if myCoords.x <= 0 or myCoords.y <=0:
-        #    return False
+            #return False
 
         positionObstructed = False
         for obstruction in self.obstructionList:
