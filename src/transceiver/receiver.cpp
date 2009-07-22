@@ -53,22 +53,22 @@ ReceiverBase::ReceiverBase(Station* s,
 						   Demodulator *demodulator,
 						   Decoder *decoder,
 						   wns::Ratio rnf) :
- 	receiverId(nextid++),
- 	demodulator(demodulator),
+	receiverId(nextid++),
+	demodulator(demodulator),
 	decoder(decoder),
- 	totalRxPower(),
- 	propCache(0),
- 	receiverNoiseFigure(rnf),
+	totalRxPower(),
+	propCache(0),
+	receiverNoiseFigure(rnf),
 	active(false),
- 	midFrequency(0),
- 	log("ReceiverBase")
+	midFrequency(0),
+	log("ReceiverBase")
 	//log(config.getView("logger")) // no wns::pyconfig::View here !
 {
- 	assure(s, "No valid station provided");
-  	totalRxPower.setDirty();
-  	configureLogger(); // name="ReceiverBase(receiverId)"
+	assure(s, "No valid station provided");
+	totalRxPower.setDirty();
+	configureLogger(); // name="ReceiverBase(receiverId)"
 	this->startObserving(s);
-  	initiatePropCache();
+	initiatePropCache();
 }
 
 ReceiverBase::~ReceiverBase()
@@ -84,19 +84,19 @@ void ReceiverBase::initiatePropCache()
 	MESSAGE_END();
 	wns::pyconfig::View pyConfigView = RISE::getPyConfigView();
 	std::string cache = pyConfigView.get<std::string>("propagationCache.cache");
- 	if(cache==std::string("hash"))
- 		propCache = new HashCache(this);
- 	else if(cache==std::string("H2"))
- 		propCache = new H2Cache(this);
- 	else if(cache==std::string("idVector"))
- 		propCache = new IdVectorCache(this);
- 	else if(cache==std::string("vector"))
- 		propCache = new VectorCache(this);
- 	else if(cache==std::string("no"))
- 		propCache = new NoCache(this);
+	if(cache==std::string("hash"))
+		propCache = new HashCache(this);
+	else if(cache==std::string("H2"))
+		propCache = new H2Cache(this);
+	else if(cache==std::string("idVector"))
+		propCache = new IdVectorCache(this);
+	else if(cache==std::string("vector"))
+		propCache = new VectorCache(this);
+	else if(cache==std::string("no"))
+		propCache = new NoCache(this);
 	else {
 		throw(wns::Exception(std::string("No such cache strategy available: ")+cache));
- 	}
+	}
 }
 
 
@@ -168,10 +168,10 @@ wns::Power ReceiverBase::getTotalRxPower()
 
 wns::Power ReceiverBase::getInterference(const TransmissionObjectPtr& t)
 {
-  	wns::Power rxPower = getRxPower(t);
-  	assert(this->contains(t));
- 	wns::Power Interference = getTotalRxPower() - rxPower;
- 	assert(Interference>=getNoise()*.99); // should at least contain Noise
+	wns::Power rxPower = getRxPower(t);
+	assert(this->contains(t));
+	wns::Power Interference = getTotalRxPower() - rxPower;
+	assert(Interference>=getNoise()*.99); // should at least contain Noise
 	return Interference; // I+N
 }
 
@@ -225,15 +225,15 @@ void ReceiverBase::writeCacheEntry(PropCacheEntry& cacheEntry,
 	MESSAGE_END();
 	cacheEntry.setPathloss(pl);
 	cacheEntry.setShadowing(sh);
-  	// receive antenna gain  at transmitter's position
-  	// which beam does receiver use to listen to the transmitter
-  	wns::Ratio r1 = getAntenna()->getGain(txA->getPosition(),
-  									 rise::antenna::PatternPtr());
-  	// transmit antenna gain at receiver's position
-  	// which beam does transmitter use to send to this receiver
-  	wns::Ratio r2 = txA->getGain(getAntenna()->getPosition(),
- 								 rise::antenna::PatternPtr());
-  	cacheEntry.setAntennaGain(r1 + r2);
+	// receive antenna gain  at transmitter's position
+	// which beam does receiver use to listen to the transmitter
+	wns::Ratio r1 = getAntenna()->getGain(txA->getPosition(),
+									 rise::antenna::PatternPtr());
+	// transmit antenna gain at receiver's position
+	// which beam does transmitter use to send to this receiver
+	wns::Ratio r2 = txA->getGain(getAntenna()->getPosition(),
+								 rise::antenna::PatternPtr());
+	cacheEntry.setAntennaGain(r1 + r2);
 	cacheEntry.setValid(true);
 }
 

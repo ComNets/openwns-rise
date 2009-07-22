@@ -66,14 +66,14 @@ Station::createAntenna()
 {
 	wns::pyconfig::View antennaView = pyConfigView.getView("antennas", 0);
 	assure(pyConfigView.len("antennas") == 1, "Only one antenna supported at the moment!");
- 	std::string s = antennaView.get<std::string>("__plugin__");
- 	if (s=="Internal"|| s=="Antenna3D"|| s=="Planet")
- 		pd_antenna = new antenna::Static(antennaView, this);
- 	else {
- 		wns::Exception e;
- 		e << "No such antenna type";
- 		throw e;
- 	}
+	std::string s = antennaView.get<std::string>("__plugin__");
+	if (s=="Internal"|| s=="Antenna3D"|| s=="Planet")
+		pd_antenna = new antenna::Static(antennaView, this);
+	else {
+		wns::Exception e;
+		e << "No such antenna type";
+		throw e;
+	}
 }
 
 
@@ -87,9 +87,9 @@ Station::setMobility(rise::scenario::mobility::MobilityInterface* _mobility)
 	this->positionChanged();
 
 	// Now everything is complete, so we can say:
- 	MESSAGE_BEGIN(NORMAL, log, m, "Created at position ");
+	MESSAGE_BEGIN(NORMAL, log, m, "Created at position ");
 	m << this->getPosition();
- 	MESSAGE_END();
+	MESSAGE_END();
 }
 
 scenario::mobility::MobilityInterface*
@@ -141,14 +141,14 @@ void Station::initialize()
 
 int32_t Station::getStationId() const
 {
- 	assure(stationId >= 0, "Station ID not set yet!");
- 	return stationId;
+	assure(stationId >= 0, "Station ID not set yet!");
+	return stationId;
 }
 
 void Station::setStationId(int32_t id)
 {
- 	assure(id >= 0, "Only station IDs >= 0 allowed!");
- 	stationId = id;
+	assure(id >= 0, "Only station IDs >= 0 allowed!");
+	stationId = id;
 }
 
 antenna::Antenna* Station::getAntenna() const
@@ -253,5 +253,4 @@ void Station::initializeShadowingMap()
 		else std::logic_error("Unsupported 'shadowingInterpolation'");
 	}
 }
-
 

@@ -72,3 +72,15 @@ wns::Ratio RangeChecked::calculatePathloss(const antenna::Antenna& source,
     return distanceMap.get(distance)->calculatePathloss(source, target, frequency, distance);
 }
 
+/* Idea:
+wns::Ratio RangeChecked::calculatePathloss(const antenna::Antenna& source,
+					   const antenna::Antenna& target,
+					   const wns::Frequency& frequency,
+					   const wns::PositionOffset shift) const
+					   //const wns::PositionOffset shift = wns::PositionOffset(0,0,0)) const
+{
+    const wns::Distance distance = calculateDistance(source, target);
+    assure(frequencyMap.get(frequency), "Frequency out of range in RangeChecked::calculatePathloss().");
+    return distanceMap.get(distance)->calculatePathloss(source, target, frequency, distance);
+}
+*/

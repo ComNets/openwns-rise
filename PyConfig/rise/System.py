@@ -28,10 +28,18 @@
 from Scenario import Scenario
 class System(object):
     Scenario = None
+    wraparoundShiftVectors = None
 
-    def __init__(self, scenario):
+    def __init__(self, scenario, wraparoundShiftVectors = []):
         self.Scenario = scenario
+        self.wraparoundShiftVectors = wraparoundShiftVectors
+
+    def setWraparoundShiftVectors(self, vlist):
+        self.wraparoundShiftVectors = vlist
+
+    def getWraparoundShiftVectors(self):
+        return self.wraparoundShiftVectors
 
 class DropIn(System):
     def __init__(self):
-        super(DropIn, self).__init__(Scenario(500,500))
+        super(DropIn, self).__init__(Scenario(xmin=0,ymin=0,xmax=500,ymax=500))

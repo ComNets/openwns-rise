@@ -27,7 +27,7 @@
 
 from openwns.distribution import Normal
 from openwns.logger import Logger
-from openwns import Position
+from openwns.geometry.position import Position
 import openwns.node
 import rise.Roadmap
 import random
@@ -154,10 +154,12 @@ class BrownianCirc(Mobility):
         self.center = center
         self.maxDistance = maxDistance
         self.obstructionList = obstructions
-        while True:
+        countTrials = 0
+        while (countTrials<1000):
             self.setCoords(self.getRandomPosition())
             if self.checkBounds():
                 break
+        assert (countTrials<1000), "BrownianCirc: maximum number of trials exceeded: %d"%countTrials
         self.logger = Logger("RISE Mobility","BrownianCirc",True)
 
      def getRandomPosition(self):
@@ -173,15 +175,14 @@ class BrownianCirc(Mobility):
                 (self.center.y-myCoords.y)**2 )
         assert (distance <= self.maxDistance), "Coordinate out of maxDistance! (actual = %.2f m, target = %.2f m)" % (distance, self.maxDistance)
 
-        if myCoords.x <= 0 or myCoords.y <=0:
-            return False
+        #if myCoords.x <= 0 or myCoords.y <=0:
+        #    return False
 
-            positionObstructed = False
-            for obstruction in self.obstructionList:
-                if obstruction.containsPoint([ self.coords.x, self.coords.y, self.coords.z ]):
-                    positionObstructed = True
-
-            return not positionObstructed
+        positionObstructed = False
+        for obstruction in self.obstructionList:
+            if obstruction.containsPoint([ self.coords.x, self.coords.y, self.coords.z ]):
+                positionObstructed = True
+        return not positionObstructed
 
 
 class BrownianEquiangularPolygon(BrownianCirc):

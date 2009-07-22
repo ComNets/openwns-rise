@@ -33,6 +33,7 @@
 
 #include <WNS/pyconfig/View.hpp>
 #include <WNS/Position.hpp>
+#include <WNS/geometry/Vector.hpp>
 
 #include <string>
 #include <vector>
@@ -64,6 +65,16 @@ namespace rise {
 		 * need to do so)
 		 */
 		typedef std::vector<Station*> StationContainer;
+
+		/**
+		 * @brief A typedef for the container where the wraparound stations are located
+		 *
+		 * @note Always use this typedef either inside this class or
+		 * outside. Then it's easier to change the type of the container (if we
+		 * need to do so)
+		 */
+		typedef std::vector<wns::geometry::Vector> WraparoundShiftVectorContainer;
+
 		/**
 		 * @brief A typedef for the iterator to the container where the stations
 		 * are stored
@@ -98,7 +109,15 @@ namespace rise {
 		 *
 		 * @return the configfile for this system
 		 */
-		wns::pyconfig::View getConfigFile() const;
+		wns::pyconfig::View
+		getConfigFile() const;
+
+		/**
+		 * @brief Returns a vector of wraparound shift vectors
+		 */
+		const WraparoundShiftVectorContainer*
+		getWraparoundShiftVectors() const;
+
 
 		/**
 		 * @brief Returns a pointer to a Station with Id i
@@ -200,7 +219,7 @@ namespace rise {
 		std::string systemName;
 
 		/**
-		 * @brief A pointer to the scenario of this system 
+		 * @brief A pointer to the scenario of this system
 		 *
 		 * Unfortunately we need a scenario for each system we're currently
 		 * simualting (since propagation conditions are different for each
@@ -227,6 +246,8 @@ namespace rise {
 		 * variables.
 		 */
 		wns::pyconfig::View pyConfigView;
+
+		WraparoundShiftVectorContainer wraparoundShiftVector;
 
 	private:
 		/**

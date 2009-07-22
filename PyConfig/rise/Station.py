@@ -26,7 +26,7 @@
 ###############################################################################
 
 from openwns.logger import Logger
-from openwns import Position
+from openwns.geometry.position import Position
 from Antenna import AntennaDropIn
 from Transmitter import TransmitterDropIn
 from Receiver import ReceiverDropIn
@@ -47,8 +47,8 @@ class Station(object):
         self.antennas = _antennas
         self.receiver = _receiver
         self.transmitter = _transmitter
-	self.debug = False
-	self.logger = Logger("RISE", "PHY.Station", True, parentLogger)
+        self.debug = False
+        self.logger = Logger("RISE", "PHY.Station", True, parentLogger)
 
 # not used anywhere:
 class BaseStation(Station):
