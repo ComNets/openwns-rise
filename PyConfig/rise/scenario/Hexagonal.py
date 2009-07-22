@@ -29,8 +29,8 @@ import math
 import random
 import os
 from openwns.geometry.position import Position, Vector, Line, BoundingBox
-from wns.Distribution import Fixed
-from wns.PyConfig import attrsetter
+from openwns.distribution import Fixed
+from openwns.pyconfig import attrsetter
 from rise.Scenario import ScenarioBase
 
 # Hexagonal Scenarios:
