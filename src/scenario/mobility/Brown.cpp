@@ -28,6 +28,8 @@
 #include <RISE/scenario/mobility/Brown.hpp>
 #include <WNS/module/Base.hpp>
 #include <WNS/distribution/Distribution.hpp>
+#include <fstream.h>
+#include <iostream.h>
 
 using namespace rise;
 using namespace rise::scenario::mobility;
@@ -138,16 +140,41 @@ BrownianBase::move()
 
 	// update position
 	wns::Position newPosition = getPosition() + velocityVector;
-	// check if bounds are exceeded
-	if ( !checkBounds(newPosition) ){
-		// turn 180 degrees
-		velocityVector.setAzimuth( velocityVector.getAzimuth() + M_PI );
+	
+	MESSAGE_BEGIN(NORMAL, log, m, "New Position?: ");
+	m << "Old Position: " << getPosition()
+	<< "New Position: " << newPosition;
+	MESSAGE_END();
+	
+	while(!checkBounds(newPosition))
+	{
+		if ((*updateProbability)()*moveTimeStep<0.0004*velocityVector.getR())
+			newVelocityVector();
+		
 		newPosition = getPosition() + velocityVector;
-		assure( checkBounds(newPosition), "Oops. Can't go back where I came from!");
-		//continue;
+		
+		MESSAGE_BEGIN(NORMAL, log, m, "New Position?: ");
+		m << "Old Position: " << getPosition()
+		<< "New Position: " << newPosition;
+		MESSAGE_END();
 	}
+	
+	// check if bounds are exceeded
+// 	if ( !checkBounds(newPosition) ){
+// 		// turn 180 degrees
+// 		velocityVector.setAzimuth( velocityVector.getAzimuth() + M_PI );
+// 		newPosition = getPosition() + velocityVector;
+// 		assure( checkBounds(newPosition), "Oops. Can't go back where I came from!");
+// 		//continue;
+// 	}
+	
 	// bounds check ok, set new position
 	setPosition(newPosition);
+	
+	fstream fileout;
+	fileout.open("mobilityStationPositions", ios::out | ios::app);
+	fileout << getPosition() << endl;
+	fileout.close();
 
 	MESSAGE_BEGIN(NORMAL, log, m, "Mobility update: ");
 	m << "Position: " << getPosition()
@@ -226,14 +253,49 @@ BrownianRect::checkBounds(const wns::Position& pos) const
 BrownianCirc::BrownianCirc(const wns::pyconfig::View& mobilityView) :
 	BrownianBase(mobilityView),
 	center(mobilityView.getView("center")),
-	maxDistance(mobilityView.get<double>("maxDistance"))
+	maxDistance(mobilityView.get<double>("maxDistance")),
+	nSectors(mobilityView.get<int>("nSectors"))
 {}
 
 bool
 BrownianCirc::checkBounds(const wns::Position& pos) const
 {
 	// range check
-	if ( (center-pos).getR() >= maxDistance ) return false;
+	MESSAGE_BEGIN(NORMAL, log, m, "Check Bounds: ");
+	m << "Angle: " << (pos-center).getAzimuth()
+	<< " Center: " << center
+	<< " SS position: " << pos 
+	<< " Distance: " << (center-pos).getR();
+	MESSAGE_END();
+	
+	wns::Position posWithZ;
+	
+	posWithZ.setX(pos.getX());
+	posWithZ.setY(pos.getY());
+	posWithZ.setZ(center.getZ());
+
+	MESSAGE_BEGIN(NORMAL, log, m, "Check Bounds: ");
+	m << "Angle: " << (posWithZ-center).getAzimuth()
+			<< " Center: " << center
+			<< " SS position: " << posWithZ 
+			<< " Distance: " << (center-posWithZ).getR();
+	MESSAGE_END();
+	
+	if(nSectors > 1)
+	{
+		if ( (center-posWithZ).getR() >= maxDistance || (posWithZ-center).getAzimuth() > M_PI/2 || (posWithZ-center).getAzimuth() < ((M_PI/2) - (2*M_PI/nSectors)) ) 
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if ( (center-posWithZ).getR() >= maxDistance ) 
+		{
+			return false;
+		}
+	}
+	
 	return !BrownianBase::isObstructed(pos);
 }
 

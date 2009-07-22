@@ -189,6 +189,11 @@ namespace rise { namespace scenario { namespace mobility {
 		 * @brief Maximum distance from center
 		 */
 		double maxDistance;
+		
+		/**
+		 * @brief Number of sectors
+		 */
+		int nSectors;
 	}; // BrownianCirc
 
 	/** @brief Mobility Model according to Brownian Molecular Movement inside

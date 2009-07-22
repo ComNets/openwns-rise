@@ -369,3 +369,306 @@ class WINNERC1LOSTest(MultiSlope):
                       minDist = dBP,
                       maxDist = maxDistance)
 
+class LOSUrbanMicro(MultiSlope):
+    #""" IMT-Advanced Pathloss Model, urban micro cell LOS, all Values according to Rep. ITU-R M.2135"""
+        c0 = 299792458 # Speed of light in [m/s]
+        hBS = None # m
+        hUT = None # m
+        f = None # MHz
+        dBP = None  # breakpoint between slopes
+	dBPe = None   # breakpoint distance with effective antenna hights
+        minDistance = None # m
+        maxDistance = None # m
+        def __init__(self, minDistance, maxDistance, hBS=10, hUT=1.5, f=2500):
+        	self.hBS = hBS
+        	self.hUT = hUT
+        	self.f = f
+        	self.dBP = 2*math.pi*(self.hBS)*(self.hUT)*f*1e6/self.c0   # breakpoint between slopes
+        	self.dBPe = 4*(self.hBS-1)*(self.hUT-1)*f*1e6/self.c0   # breakpoint distance with effective antenna hights
+        	self.minDistance = minDistance
+        	self.maxDistance = maxDistance
+        	super(LOSUrbanMicro, self).__init__(validFrequencies = Interval(800, 6000),
+                                             validDistances = Interval(minDistance, maxDistance), # [m]
+                                             ranges = [], # ranges defined below
+                                             distanceUnit = "m", # nur fuer die Formel, nicht fuer validDistances
+					     minPathloss = "%.5f dB" % (22.0*log10(self.minDistance)+ 28.0+ 20.0*log10(self.f*1e-3)),
+                                             #minPathloss = "57.95 dB", # pathloss at 10m distance
+                                             outOfMinRange = FreeSpace("44.35 dB"), # Pathloss
+                                             outOfMaxRange = Deny())
+
+        	self.addRange(offset = "%.5f dB" % (28.0+ 20.0*log10(1e-3)),
+                      freqFactor = "20 dB",
+                      distFactor = "22.0 dB",
+                      minDist = self.minDistance,
+                      maxDist = self.dBPe)
+
+        	self.addRange(offset = "%.5f dB" % (7.8-18.0*log10(self.hBS-1)-18.0*log10(self.hUT-1)+ 2.0*log10(1e-3) ),
+                      freqFactor = "2 db",
+                      distFactor = "40.0 dB",
+                      minDist = self.dBPe,
+                      maxDist = self.maxDistance)
+
+class LOSUrbanMacro(MultiSlope):
+    #""" IMT-Advanced Pathloss Model, urban macro cell LOS, all Values according to Rep. ITU-R M.2135"""
+        c0 = 299792458 # Speed of light in [m/s]
+        hBS = None # m
+        hUT = None # m
+        f = None # MHz
+        dBP = None  # breakpoint between slopes
+        dBPe = None   # breakpoint distance with effective antenna hights
+        minDistance = None # m
+        maxDistance = None # m
+	def __init__(self, minDistance, maxDistance, hBS=25, hUT=1.5, f=2000):
+        	self.hBS = hBS
+        	self.hUT = hUT
+        	self.f = f
+        	self.dBP = 2*math.pi*(self.hBS)*(self.hUT)*f*1e6/self.c0   # breakpoint between slopes
+        	self.dBPe = 4*(self.hBS-1)*(self.hUT-1)*f*1e6/self.c0   # breakpoint distance with effective antenna hights
+        	self.minDistance = minDistance
+        	self.maxDistance = maxDistance
+	        super(LOSUrbanMacro, self).__init__(validFrequencies = Interval(800, 6000),
+                                             validDistances = Interval(minDistance, maxDistance), # [m]
+                                             ranges = [], # ranges defined below
+                                             distanceUnit = "m", # nur fuer die Formel, nicht fuer validDistances
+					     					 minPathloss = "%.5f dB" % (22.0*log10(self.minDistance)+ 28.0+ 20.0*log10(self.f*1e-3)),
+                                             #minPathloss = "56.02 dB", # pathloss at 8m distance
+                                             outOfMinRange = FreeSpace("44.35 dB"), # Pathloss
+                                             outOfMaxRange = Deny())
+        	self.addRange(offset = "%.5f dB" % (28.0+ 20.0*log10(1e-3)),
+                      freqFactor = "20 dB",
+                      distFactor = "22.0 dB",
+                      minDist = self.minDistance,
+                      maxDist = self.dBPe)
+
+        	self.addRange(offset = "%.5f dB" % (7.8-18.0*log10(self.hBS-1)-18.0*log10(self.hUT-1)+ 2.0*log10(1e-3) ),
+                      freqFactor = "2 db",
+                      distFactor = "40.0 dB",
+                      minDist = self.dBPe,
+                      maxDist = self.maxDistance)
+
+class LOSSubUrbanMacro(MultiSlope):
+    #""" IMT-Advanced Pathloss Model, suburban macro cell LOS, all Values according to Rep. ITU-R M.2135"""
+        c0 = 299792458 # Speed of light in [m/s]
+        hBS = None # m
+        hUT = None # m
+        f = None # MHz
+        h = None #m, avg. building height
+        W = None #m, street width
+        dBP = None  # breakpoint between slopes
+	dBPe = None   # breakpoint distance with effective antenna hights
+        minDistance = None # m
+        maxDistance = None # m
+	def __init__(self, minDistance, maxDistance, hBS=35, hUT=1.5, f=2000):
+        	self.hBS = hBS
+        	self.hUT = hUT
+        	self.f = f
+        	self.h = 10.0
+        	self.W = 20.0
+        	self.dBP = 2*math.pi*(self.hBS)*(self.hUT)*f*1e6/self.c0   # breakpoint between slopes
+        	self.dBPe = 4*(self.hBS-1)*(self.hUT-1)*f*1e6/self.c0   # breakpoint distance with effective antenna hights
+        	self.minDistance = minDistance
+        	self.maxDistance = maxDistance
+	
+        	super(LOSSubUrbanMacro, self).__init__(validFrequencies = Interval(800, 6000),
+                                             validDistances = Interval(minDistance, maxDistance), # [m]
+                                             ranges = [], # ranges defined below
+                                             distanceUnit = "m", # nur fuer die Formel, nicht fuer validDistances
+					                         minPathloss = "%.5f dB" % (20.0*log10(40*math.pi*self.minDistance*self.f/3)+ min(0.03*math.pow(self.h,1.72),10)*log10(self.minDistance)- min(0.044*math.pow(self.h,1.72),14.77)+ 0.002*log10(self.h*self.minDistance)+ 1.0+ 20.0*log10(1e-3)),
+                                             #minPathloss = "58.73 dB", # pathloss at 8m distance
+                                             outOfMinRange = FreeSpace("44.35 dB"), # Pathloss
+                                             outOfMaxRange = Deny())
+
+        	self.addRange(offset = "%.5f dB" % (20.0*log10(40*math.pi/3)- min(0.044*math.pow(self.h,1.72),14.77)+ 0.002*log10(self.h)+ 1.0+ 20.0*log10(1e-3)),
+                      freqFactor = "20 dB",
+                      distFactor = "%.5f dB" % (20.0+ min(0.03*math.pow(self.h,1.72),10)+ 0.002),
+                      minDist = self.minDistance,
+                      maxDist = self.dBP)
+
+        	self.addRange(offset = "%.5f dB" % (20.0*log10(40*math.pi/3)- min(0.044*math.pow(self.h,1.72),14.77)+ 0.002*log10(self.h)+ 1.0-40.0*log10(self.dBP)+ 20.0*log10(1e-3)),
+                      freqFactor = "20 db",
+                      distFactor = "%.5f dB" % (20.0+ min(0.03*math.pow(self.h,1.72),10)+ 0.002+ 40),
+                      minDist = self.dBP,
+                      maxDist = self.maxDistance)
+
+class LOSRuralMacro(MultiSlope):
+    #""" IMT-Advanced Pathloss Model, rural macro cell LOS, all Values according to Rep. ITU-R M.2135"""
+        c0 = 299792458 # Speed of light in [m/s]
+        hBS = None # m
+        hUT = None # m
+        f = None # MHz
+        h = None #m, avg. building height
+        W = None #m, street width
+        dBP = None  # breakpoint between slopes
+        dBPe = None   # breakpoint distance with effective antenna hights
+        minDistance = None # m
+        maxDistance = None # m
+	def __init__(self, minDistance, maxDistance, hBS=35, hUT=1.5, f=800):
+        	self.hBS = hBS
+        	self.hUT = hUT
+        	self.f = f
+        	self.h = 5.0
+        	self.W = 20.0
+        	self.dBP = 2*math.pi*(self.hBS)*(self.hUT)*f*1e6/self.c0   # breakpoint between slopes
+        	self.dBPe = 4*(self.hBS-1)*(self.hUT-1)*f*1e6/self.c0   # breakpoint distance with effective antenna hights
+        	self.minDistance = minDistance
+        	self.maxDistance = maxDistance
+	
+	
+        	super(LOSRuralMacro, self).__init__(validFrequencies = Interval(450, 6000),
+                                             validDistances = Interval(minDistance, maxDistance), # [m]
+                                             ranges = [], # ranges defined below
+                                             distanceUnit = "m", # nur fuer die Formel, nicht fuer validDistances
+					     minPathloss = "%.5f dB" % (20.0*log10(40*math.pi*self.minDistance*self.f/3)+ min(0.03*math.pow(self.h,1.72),10)*log10(self.minDistance)- min(0.044*math.pow(self.h,1.72),14.77)+ 0.002*log10(self.h*self.minDistance)+ 1.0+ 20.0*log10(1e-3)),
+                                             #minPathloss = "51.28 dB", # pathloss at 8m distance
+                                             outOfMinRange = FreeSpace("44.35 dB"), # Pathloss
+                                             outOfMaxRange = Deny())
+
+        	self.addRange(offset = "%.5f dB" % (20.0*log10(40*math.pi/3)- min(0.044*math.pow(self.h,1.72),14.77)+ 0.002*log10(self.h)+ 1.0+ 20.0*log10(1e-3)),
+                      freqFactor = "20 dB",
+                      distFactor = "%.5f dB" % (20.0+ min(0.03*math.pow(self.h,1.72),10)+ 0.002),
+                      minDist = self.minDistance,
+                      maxDist = self.dBP)
+
+       	 	self.addRange(offset = "%.5f dB" % (20.0*log10(40*math.pi/3)- min(0.044*math.pow(self.h,1.72),14.77)+ 0.002*log10(self.h)+ 1.0-40.0*log10(self.dBP)+ 20.0*log10(1e-3)),
+                      freqFactor = "20 db",
+                      distFactor = "%.5f dB" % (20.0+ min(0.03*math.pow(self.h,1.72),10)+ 0.002+ 40),
+                      minDist = self.dBP,
+                      maxDist = self.maxDistance)
+
+class NLOSUrbanMicroHexagonal(SingleSlope):
+   # """ IMT-Advanced Pathloss Model, urban micro cell NLOS, all Values according to Rep. ITU-R M.2135"""
+        c0 = 299792458 # Speed of light in [m/s]
+        hBS = None # m
+        hUT = None # m
+        f = None # MHz
+        dBP = None  # breakpoint between slopes
+	dBPe = None   # breakpoint distance with effective antenna hights
+        minDistance = None # m
+        maxDistance = None # m
+	def __init__(self, minDistance, maxDistance, hBS=10, hUT=1.5, f=2500):
+        	self.hBS = hBS
+        	self.hUT = hUT
+        	self.f = f
+        	self.dBP = 2*math.pi*(self.hBS)*(self.hUT)*f*1e6/self.c0   # breakpoint between slopes
+        	self.dBPe = 4*(self.hBS-1)*(self.hUT-1)*f*1e6/self.c0   # breakpoint distance with effective antenna hights
+        	self.minDistance = minDistance
+        	self.maxDistance = maxDistance
+	
+	
+        	super(NLOSUrbanMicroHexagonal, self).__init__(validFrequencies = Interval(800, 6000),
+                                             validDistances = Interval(minDistance, maxDistance), # [m]
+                                             offset = "%.5f dB" % (22.7+ 26.0*log10(1e-3)),
+                                             freqFactor = "26 dB",
+                                             distFactor = "36.7 dB",
+                                             distanceUnit = "m", # nur fuer die Formel, nicht fuer validDistances
+					                         minPathloss = "%.5f dB" % (36.7*log10(self.minDistance)+ 22.7+ 26.0*log10(self.f*(1e-3))),
+                                             #minPathloss = "69.74 dB", # pathloss at 8m distance
+                                             outOfMinRange = FreeSpace("44.35 dB"), # Pathloss
+                                             outOfMaxRange = Deny())
+
+
+class NLOSUrbanMacro(SingleSlope):
+    #""" IMT-Advanced Pathloss Model, urban macro cell NLOS, all Values according to Rep. ITU-R M.2135"""
+        c0 = 299792458 # Speed of light in [m/s]
+        hBS = None # m
+        hUT = None # m
+        f = None # MHz
+        h = None #m, avg. building height
+        W = None #m, street width
+        dBP = None  # breakpoint between slopes
+        dBPe = None   # breakpoint distance with effective antenna hights
+        minDistance = None # m
+        maxDistance = None # m
+	def __init__(self, minDistance, maxDistance, hBS=25, hUT=1.5, f=2000):
+        	self.hBS = hBS
+        	self.hUT = hUT
+        	self.f = f
+        	self.h = 20.0
+        	self.W = 20.0
+        	self.dBP = 2*math.pi*(self.hBS)*(self.hUT)*f*1e6/self.c0   # breakpoint between slopes
+        	self.dBPe = 4*(self.hBS-1)*(self.hUT-1)*f*1e6/self.c0   # breakpoint distance with effective antenna hights
+        	self.minDistance = minDistance
+        	self.maxDistance = maxDistance
+	
+	
+        	super(NLOSUrbanMacro, self).__init__(validFrequencies = Interval(800, 6000),
+                                             validDistances = Interval(minDistance, maxDistance), # [m]
+                                             offset = "%.5f dB" % (161.04- 7.1*log10(self.W)+ 7.5*log10(self.h)- (24.37- 3.7*pow(self.h/self.hBS,2))*log10(self.hBS)- 3*(43.42- 3.1*log10(self.hBS))- (3.2*pow(log10(11.75*self.hUT),2)-4.97)+ 20.0*log10(1e-3)),
+                                             freqFactor = "20 dB",
+                                             distFactor = "%.5f dB" % (43.42- 3.1*log10(self.hBS)),
+                                             distanceUnit = "m", # nur fuer die Formel, nicht fuer validDistances
+					                         minPathloss = "%.5f dB" % (161.04- 7.1*log10(self.W)+ 7.5*log10(self.h)- (24.37- 3.7*pow(self.h/self.hBS,2))*log10(self.hBS)+ (43.42- 3.1*log10(self.hBS))*(log10(self.minDistance)-3)- (3.2*pow(log10(11.75*self.hUT),2)-4.97)+ 20.0*log10(self.f*(1e-3))),
+                                             #minPathloss = "58.65 dB", # pathloss at 8m distance
+                                             outOfMinRange = FreeSpace("44.35 dB"), # Pathloss
+                                             outOfMaxRange = Deny())
+
+class NLOSSubUrbanMacro(SingleSlope):
+    #""" IMT-Advanced Pathloss Model, suburban macro cell NLOS, all Values according to Rep. ITU-R M.2135"""
+        c0 = 299792458 # Speed of light in [m/s]
+        hBS = None # m
+        hUT = None # m
+        f = None # MHz
+        h = None #m, avg. building height
+        W = None #m, street width
+        dBP = None  # breakpoint between slopes
+	dBPe = None   # breakpoint distance with effective antenna hights
+        minDistance = None # m
+        maxDistance = None # m
+	def __init__(self, minDistance, maxDistance, hBS=35, hUT=1.5, f=2000):
+        	self.hBS = hBS
+        	self.hUT = hUT
+        	self.f = f
+        	self.h = 10.0
+        	self.W = 20.0
+        	self.dBP = 2*math.pi*(self.hBS)*(self.hUT)*f*1e6/self.c0   # breakpoint between slopes
+        	self.dBPe = 4*(self.hBS-1)*(self.hUT-1)*f*1e6/self.c0   # breakpoint distance with effective antenna hights
+        	self.minDistance = minDistance
+        	self.maxDistance = maxDistance
+		
+        	super(NLOSSubUrbanMacro, self).__init__(validFrequencies = Interval(800, 6000),
+                                             validDistances = Interval(minDistance, maxDistance), # [m]    
+                                     	     offset = "%.5f dB" % (161.04- 7.1*log10(self.W)+ 7.5*log10(self.h)- (24.37- 3.7*pow(self.h/self.hBS,2))*log10(self.hBS)- 3*(43.42- 3.1*log10(self.hBS))- (3.2*pow(log10(11.75*self.hUT),2)-4.97)+ 20.0*log10(1e-3)),
+                                     	     freqFactor = "20 dB",
+                                     	     distFactor = "%.5f dB" % (43.42- 3.1*log10(self.hBS)),
+                                             distanceUnit = "m", # nur fuer die Formel, nicht fuer validDistances
+					                         minPathloss = "%.5f dB" % (161.04- 7.1*log10(self.W)+ 7.5*log10(self.h)- (24.37- 3.7*pow(self.h/self.hBS,2))*log10(self.hBS)+ (43.42- 3.1*log10(self.hBS))*(log10(self.minDistance)-3)- (3.2*pow(log10(11.75*self.hUT),2)-4.97)+ 20.0*log10(self.f*(1e-3))),
+                                             #minPathloss = "50.89 dB", # pathloss at 8m distance
+                                             outOfMinRange = FreeSpace("44.35 dB"), # Pathloss
+                                             outOfMaxRange = Deny())
+
+class NLOSRuralMacro(SingleSlope):
+    #""" IMT-Advanced Pathloss Model, rural macro cell NLOS, all Values according to Rep. ITU-R M.2135"""
+        c0 = 299792458 # Speed of light in [m/s]
+        hBS = None # m
+        hUT = None # m
+        f = None # MHz
+        h = None #m, avg. building height
+        W = None #m, street width
+        dBP = None  # breakpoint between slopes
+	dBPe = None   # breakpoint distance with effective antenna hights
+        minDistance = None # m
+        maxDistance = None # m
+	def __init__(self, minDistance, maxDistance, hBS=35, hUT=1.5, f=800):
+        	self.hBS = hBS
+        	self.hUT = hUT
+        	self.f = f
+        	self.h = 5.0
+        	self.W = 20.0
+        	self.dBP = 2*math.pi*(self.hBS)*(self.hUT)*f*1e6/self.c0   # breakpoint between slopes
+        	self.dBPe = 4*(self.hBS-1)*(self.hUT-1)*f*1e6/self.c0   # breakpoint distance with effective antenna hights
+        	self.minDistance = minDistance
+        	self.maxDistance = maxDistance
+	
+	
+        	super(NLOSRuralMacro, self).__init__(validFrequencies = Interval(450, 6000),
+                                             validDistances = Interval(minDistance, maxDistance), # [m]
+                                             offset = "%.5f dB" % (161.04- 7.1*log10(self.W)+ 7.5*log10(self.h)- (24.37- 3.7*pow(self.h/self.hBS,2))*log10(self.hBS)- 3*(43.42- 3.1*log10(self.hBS))- (3.2*pow(log10(11.75*self.hUT),2)-4.97)+ 20.0*log10(1e-3)),
+					                         freqFactor = "20 dB",
+					                         distFactor = "%.5f dB" % (43.42- 3.1*log10(self.hBS)),
+                                             distanceUnit = "m", # nur fuer die Formel, nicht fuer validDistances
+					                         minPathloss = "%.5f dB" % (161.04- 7.1*log10(self.W)+ 7.5*log10(self.h)- (24.37- 3.7*pow(self.h/self.hBS,2))*log10(self.hBS)+ (43.42- 3.1*log10(self.hBS))*(log10(self.minDistance)-3)- (3.2*pow(log10(11.75*self.hUT),2)-4.97)+ 20.0*log10(self.f*(1e-3))),
+                                             #minPathloss = "40.32 dB", # pathloss at 8m distance
+                                             outOfMinRange = FreeSpace("44.35 dB"), # Pathloss
+                                             outOfMaxRange = Deny())
+
+

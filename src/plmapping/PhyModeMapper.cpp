@@ -98,6 +98,8 @@ PhyModeMapper::getBestPhyMode(double sinr /* dB */) const
 	unsigned int phymodeIndex;
 	try {
 		phymodeIndex=phyModeRangeMap.get(sinr);
+        MESSAGE_SINGLE(NORMAL, logger,"phymodeIndex: "<<phymodeIndex);
+
 	} catch ( ... ) { // out of range
 		if (sinr<0) { return getLowestPhyMode(); }
 		else { return getHighestPhyMode(); }
@@ -230,7 +232,7 @@ PhyModeMapper::calculateSINRRanges(double targetPER, unsigned int bl)
 			wns::service::phy::phymode::SINRRange::FromExcluding(from).ToIncluding(to);
 		phyModeRangeMap.insert( sinrRange, phymodeIndex-1 );
 		phyModeSINRRangeRegistry.insert( previousPhyMode,sinrRange );
-		//std::cout<<"  SINRRange("<<previousPhyMode<<") = "<<from<<"..."<<to<<std::endl;
+		MESSAGE_SINGLE(NORMAL, logger, "  SINRRange("<<previousPhyMode<<") = "<<from<<"..."<<to);
 		from = to;
 		previousPhyMode = *phyModePtr; // copy
 	}
