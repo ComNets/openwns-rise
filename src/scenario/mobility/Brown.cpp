@@ -28,11 +28,12 @@
 #include <RISE/scenario/mobility/Brown.hpp>
 #include <WNS/module/Base.hpp>
 #include <WNS/distribution/Distribution.hpp>
-#include <fstream.h>
-#include <iostream.h>
+#include <fstream>
+#include <iostream>
 
 using namespace rise;
 using namespace rise::scenario::mobility;
+using namespace std;
 
 STATIC_FACTORY_REGISTER_WITH_CREATOR(
 	BrownianRect,
