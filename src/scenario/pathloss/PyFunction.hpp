@@ -28,7 +28,7 @@
 #ifndef _RISE_SCENARIO_PATHLOSS_PYFUNCTION_HPP
 #define _RISE_SCENARIO_PATHLOSS_PYFUNCTION_HPP
 
-#include <RISE/scenario/pathloss/SingleSlope.hpp>
+#include <RISE/scenario/pathloss/DistanceDependent.hpp>
 #include <RISE/stations/base/base.hpp>
 
 #include <WNS/pyconfig/View.hpp>
@@ -38,44 +38,22 @@
 namespace rise { namespace scenario { namespace pathloss {
 
     /** @brief PyConfig defined pathloss
-     *
-     *  pl = offset + distFactor * log10(distance/m * distNormFactor)
-     *              + freqFactor * log10(frequency/MHz)
-     *
-     *  As in all Pathloss-models, minPathloss is guaranteed, so
-     *  the returned value is max(minPathloss, pl).
-     *
-     *  offset, distFactor and freqFactor are configurable via pyconfig::Parser,
-     *  distNormFactor is 1, if distanceUnit was set to "m", 1/1000,
-     *  if it was "km" in the original formula.
-	 *  The distance argument, however, must always be given in meters [m].
-     *
-     *  You have to provide sensible values for validDistances and
-     *  validFrequencies in your configuration. You can use
-     *  whichever Pathloss model you like as out of range strategy
-     *  (e.g. Constant, Deny, FreeSpace, another SingleSlope), but keep in mind
-     *  that the pathloss will be discontinuous at the validDistances borders,
-     *  if set up improperly.
-     *
-     *  Pathloss.py contains two example configurations, one sets
-     *  up the Umts3003Outdoor model that was used in SGOOSE,
-     *  the other sets up a free space model.
      */
     class PyFunction:
-		public SingleSlope
+        public DistanceDependent
     {
     public:
-		PyFunction(const wns::pyconfig::View& config_);
+        PyFunction(const wns::pyconfig::View& config_);
 
-		virtual ~PyFunction()
-			{ }
-
-		wns::Ratio calculatePathloss(const antenna::Antenna& source,
-									 const antenna::Antenna& target,
-									 const wns::Frequency& frequency,
-									 const wns::Distance& distance) const;
-	private:
-		const wns::pyconfig::View config;
+        virtual ~PyFunction()
+            { }
+    protected:
+        wns::Ratio calculatePathloss(const antenna::Antenna& source,
+                                     const antenna::Antenna& target,
+                                     const wns::Frequency& frequency,
+                                     const wns::Distance& distance) const;
+    private:
+        const wns::pyconfig::View config;
 
     };
 }}}

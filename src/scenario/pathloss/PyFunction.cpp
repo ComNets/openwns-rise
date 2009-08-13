@@ -37,29 +37,29 @@ using namespace rise::scenario::pathloss;
 STATIC_FACTORY_BROKER_REGISTER(PyFunction, Pathloss, "PyFunction");
 
 PyFunction::PyFunction(const wns::pyconfig::View& _config)
-    : SingleSlope(_config),
-	  config(_config)
+    : DistanceDependent(_config),
+      config(_config)
 {
 
 }
 
 wns::Ratio
-PyFunction::calculatePathloss(	const antenna::Antenna& source,
-                                const antenna::Antenna& target,
-                                const wns::Frequency& frequency,
-                                const wns::Distance& /*distance*/) const
+PyFunction::calculatePathloss(const antenna::Antenna& source,
+                              const antenna::Antenna& target,
+                              const wns::Frequency& frequency,
+                              const wns::Distance& /*distance*/) const
 {
-	bool sourceIsBase = wns::isClass<Base>(*(source.getStation()));
-	const antenna::Antenna& baseAntenna(sourceIsBase ? source : target);
-	wns::Distance baseHeight = baseAntenna.getPosition().getZ();
+    bool sourceIsBase = wns::isClass<Base>(*(source.getStation()));
+    const antenna::Antenna& baseAntenna(sourceIsBase ? source : target);
+    wns::Distance baseHeight = baseAntenna.getPosition().getZ();
 
-	std::string s = "calculatePathloss(" +wns::Ttos(source.getPosition().getX())+ ","
-					     +wns::Ttos(source.getPosition().getY())+ ","
-					     +wns::Ttos(target.getPosition().getX())+ ","
-					     +wns::Ttos(target.getPosition().getY())+ ","
-					     +wns::Ttos(frequency)+ "," 
-					     +wns::Ttos(baseHeight)+ ")";
-	wns::Ratio pl = config.get<wns::Ratio>(s);
+    std::string s = "calculatePathloss(" +wns::Ttos(source.getPosition().getX())+ ","
+        +wns::Ttos(source.getPosition().getY())+ ","
+        +wns::Ttos(target.getPosition().getX())+ ","
+        +wns::Ttos(target.getPosition().getY())+ ","
+        +wns::Ttos(frequency)+ ","
+        +wns::Ttos(baseHeight)+ ")";
+    wns::Ratio pl = config.get<wns::Ratio>(s);
 
-	return(pl);
+    return(pl);
 }

@@ -37,6 +37,13 @@ from numpy import *
 
 class No:
     __plugin__ = 'None'
+    symmetric = True
+
+    def getShadowing(self, x, y, u, v):
+        return dB(0.0)
+
+    def getShadowSigma(self):
+        return 0.0
 
 class Map:
     def __init__(self, sceneryMapName, interpolationType = 'NearestNeighbour'):
