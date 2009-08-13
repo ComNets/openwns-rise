@@ -170,7 +170,7 @@ class UMiLoS(MultiSlope):
         # slope < d_BP
         self.addSlope(SingleSlope(validFrequencies = Interval(f_c - 500, f_c + 500),
                                   validDistances = Interval(10, d_BP),
-                                  offset = dB(8.0 + 20 * math.log10(1e-3)),
+                                  offset = dB(28.0 + 20 * math.log10(1e-3)),
                                   freqFactor = 20.0,
                                   distFactor = 22.0,
                                   minPathloss = dB(42.0),
