@@ -57,7 +57,6 @@ namespace rise
 		class Scenario
 		{
 		public:
-			typedef wns::PositionOffset ScenarioSize;
 
 			/**
 			 * @brief List of diffenent types of morphology the user can choose
@@ -84,12 +83,6 @@ namespace rise
 			virtual
 			~Scenario();
 
-			ScenarioSize
-			getScenarioSize() const
-			{
-				return scenarioSize;
-			}
-
 			wns::rng::RNGen&
 			getRNG() const
 			{
@@ -104,8 +97,6 @@ namespace rise
 
 		private:
 			typedef std::map<std::string, sceneryfile::SceneryFile*> SceneryFilesMap;
-
-			ScenarioSize scenarioSize;
 
 			SceneryFilesMap sceneryFiles;
 

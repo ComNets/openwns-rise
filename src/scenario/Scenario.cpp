@@ -41,7 +41,6 @@
 using namespace rise::scenario;
 
 Scenario::Scenario(const wns::pyconfig::View& config) :
-	scenarioSize(fetchScenarioSize(config)),
 	sceneryFiles()
 {}
 
@@ -77,15 +76,5 @@ Scenario::getSceneryFile(const std::string& filename) const
     SceneryFilesMap::const_iterator entryIter = sceneryFiles.find(filename);
     assure(entryIter != sceneryFiles.end(), "File " + filename + " not open!");
     return *(entryIter->second);
-}
-
-Scenario::ScenarioSize
-Scenario::fetchScenarioSize(const wns::pyconfig::View& config)
-{
-    // sizeX,sizeY should become obsolete
-    // better use xmin,xmax,ymin,ymax (boundingbox)
-    const double sizeX = config.get<double>("sizeX");
-    const double sizeY = config.get<double>("sizeY");
-    return ScenarioSize(sizeX, sizeY, 0);
 }
 

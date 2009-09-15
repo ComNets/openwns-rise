@@ -40,16 +40,16 @@ using namespace rise::scenario::shadowing;
 STATIC_FACTORY_BROKER_REGISTER(Objects, Shadowing, "Objects");
 
 Objects::Objects(const wns::pyconfig::View& config) :
-	scenario(GlobalScenarioBroker::getInstance()->procure(config.getView("scenario"))),
-// 	xGridBlocks(config.get<unsigned int>("xGridBlocks")),
-// 	yGridBlocks(config.get<unsigned int>("yGridBlocks")),
  	xGridBlocks(1),
  	yGridBlocks(1),
-	xGridBlockSize(scenario->getScenarioSize().getDeltaX() / xGridBlocks),
-	yGridBlockSize(scenario->getScenarioSize().getDeltaY() / yGridBlocks),
+	xGridBlockSize(0.0),
+	yGridBlockSize(0.0),
 	obstructionList(Objects::fetchObstructionList(config)),
 	blockObstructionLists()
 {
+    xGridBlockSize = (max.getX() - min.getX()) / xGridBlocks;
+    yGridBlockSize = (max.getY() - min.getY()) / yGridBlocks;
+
 	const size_t sizes[2] = {this->xGridBlocks, this->yGridBlocks};
 	this->blockObstructionLists = BlockObstructionLists(sizes);
 	this->createBlockObstructionLists();
@@ -77,6 +77,11 @@ Objects::fetchObstructionList(const wns::pyconfig::View& config)
 			objectView.get<double>("pointB",0),
 			objectView.get<double>("pointB",1),
 			objectView.get<double>("pointB",2));
+
+        if (a.getX() < min.getX()) min.setX(a.getX());
+        if (a.getY() < min.getX()) min.setY(a.getY());
+        if (a.getX() > max.getX()) max.setX(a.getX());
+        if (a.getY() > max.getY()) max.setY(a.getY());
 
 		obstructions.push_front(
 			ObjectPtr(

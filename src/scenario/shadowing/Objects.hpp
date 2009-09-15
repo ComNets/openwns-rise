@@ -31,7 +31,6 @@
 #include <RISE/scenario/shadowing/Shadowing.hpp>
 #include <RISE/scenario/Obstruction.hpp>
 #include <RISE/scenario/Scenario.hpp>
-
 #include <WNS/geometry/AxisParallelRectangle.hpp>
 #include <WNS/geometry/LineSegment.hpp>
 #include <WNS/pyconfig/View.hpp>
@@ -66,22 +65,23 @@ namespace rise { namespace scenario { namespace shadowing {
 		typedef Obstructing<wns::geometry::AxisParallelRectangle> Object;
 		typedef wns::SmartPtr<Object> ObjectPtr;
 
-		static ObstructionList
+		ObstructionList
 		fetchObstructionList(const wns::pyconfig::View& config);
 
-		static ObstructionList
+		ObstructionList
 		fetchObstructionList(Scenario& scenario,
 				     const wns::pyconfig::View& config);
 
 		void
 		createBlockObstructionLists();
 
-		Scenario* scenario;
+        wns::geometry::Point min;
+        wns::geometry::Point max;
 
 		const unsigned int xGridBlocks;
 		const unsigned int yGridBlocks;
-		const double xGridBlockSize;
-		const double yGridBlockSize;
+		double xGridBlockSize;
+		double yGridBlockSize;
 		ObstructionList obstructionList;
 		BlockObstructionLists blockObstructionLists;
 	};
