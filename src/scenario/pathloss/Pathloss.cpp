@@ -57,6 +57,10 @@ wns::Ratio Pathloss::getPathloss(const antenna::Antenna& source,
     }
     catch(...)
     { // probably out of range
+        /**
+         * @todo dbn: Remove OutOfRangePathloss completely
+         */
+        std::cout << "WARNING : Setting pathloss to out of range value! Probably this is a misconfiguration!" << std::endl;
       result = OutOfRangePathloss;
     }
     return result;
