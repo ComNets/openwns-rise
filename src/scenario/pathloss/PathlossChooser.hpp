@@ -79,3 +79,4 @@ namespace rise { namespace scenario { namespace pathloss {
 }}} 
 
 #endif // NOT defined _RISE_SCENARIO_PATHLOSS_PATHLOSSCHOOSER_HPP
+

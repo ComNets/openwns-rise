@@ -100,9 +100,6 @@ namespace rise
 
 			SceneryFilesMap sceneryFiles;
 
-			static ScenarioSize
-			fetchScenarioSize(const wns::pyconfig::View& config);
-
 		};
 
 		typedef wns::Broker<Scenario> ScenarioBroker;
