@@ -111,15 +111,15 @@ void
 ITUPathlossTest::testSwap()
 {
     rise::tests::AntennaDropIn a1(station1_);
-    station1_->moveTo(wns::Position(132.0, 4.155, 7.60));
+    station1_->moveTo(wns::Position(132.0, 4.155, 25.0));
     wns::Position p1 = a1.getPosition();
     rise::tests::AntennaDropIn a2(station2_);
-    station2_->moveTo(wns::Position(1.0, 3.155, 1.60));
+    station2_->moveTo(wns::Position(1.0, 3.155, 1.50));
 
     CPPUNIT_ASSERT_DOUBLES_EQUAL(testee_->getPathloss(a1, a2, 2000.0).get_factor(),
                                  testee_->getPathloss(a2, a1, 2000.0).get_factor(), 1e-6);
 
-    station1_->moveTo(wns::Position(11.0, 23.0, 15.0));
+    station1_->moveTo(wns::Position(11.0, 23.0, 25.0));
     station2_->moveTo(wns::Position(112.3, 34.2, 1.5));
     CPPUNIT_ASSERT_DOUBLES_EQUAL(testee_->getPathloss(a1, a2, 2000.0).get_factor(),
                                  testee_->getPathloss(a2, a1, 2000.0).get_factor(), 1e-6);
@@ -140,10 +140,10 @@ ITUPathlossTest::testRNG()
     {
         for (double yy = 0.0; yy < 5.0; yy=yy+ stepsize)
         {
-            for (double zz = 0.0; zz < 5.0; zz=zz+stepsize)
+            for (double zz = 25.0; zz < 30.0; zz=zz+stepsize)
             {
                 wns::Position pos1(xx, yy, zz);
-                wns::Position pos2(xx+34, yy +2.2, zz);
+                wns::Position pos2(xx+100, yy +30, zz);
                 detail::HashRNG hrng(0, pos1, pos2, (pos1-pos2).abs());
                 boost::normal_distribution<double> dis(1.0, 2.0);
                 e.put(dis(hrng));
@@ -164,10 +164,10 @@ void
 ITUPathlossTest::testPerformance()
 {
     rise::tests::AntennaDropIn a1(station1_);
-    station1_->moveTo(wns::Position(132.0, 4.155, 7.60));
+    station1_->moveTo(wns::Position(132.0, 4.155, 25.0));
     wns::Position p1 = a1.getPosition();
     rise::tests::AntennaDropIn a2(station2_);
-    station2_->moveTo(wns::Position(1.0, 3.155, 1.60));
+    station2_->moveTo(wns::Position(1.0, 3.155, 1.50));
 
     for (int ii=0; ii < 650000; ++ii)
     {
