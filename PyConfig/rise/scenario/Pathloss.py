@@ -672,3 +672,30 @@ class NLOSRuralMacro(SingleSlope):
                                              outOfMaxRange = Deny())
 
 
+class ITUInH(Pathloss):
+    """
+    Indoor Hotspot scenario according to ITU-R M.2135 pp. 29-31
+    """
+    minPathloss = None
+
+    __plugin__ = 'ITUInH'
+
+    def __init__(self, minPathloss = "0.0 dB"):
+        self.minPathloss = minPathloss
+
+class ITUUMa(Pathloss):
+    """
+    Urban Macro scenario according to ITU-R M.2135 pp. 29-31
+    """
+    minPathloss = None
+
+    streetWidth = None
+
+    buildingHeight = None
+
+    __plugin__ = 'ITUUMa'
+
+    def __init__(self, minPathloss = "0.0 dB"):
+        self.minPathloss = minPathloss
+        self.streetWidth = 20.0
+        self.buildingHeight = 20.0
