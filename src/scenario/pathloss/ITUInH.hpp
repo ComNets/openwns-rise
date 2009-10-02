@@ -41,9 +41,9 @@ class ITUInH:
     public ITUPathloss
 {
 public:
-    ITUUMa(const wns::pyconfig::View&);
+    ITUInH(const wns::pyconfig::View&);
 
-    virtual ~ITUUMa() {}
+    virtual ~ITUInH() {}
 
     virtual double
     getLOSProbability(double distance) const;
