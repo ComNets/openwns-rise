@@ -36,6 +36,13 @@ class Antenna(object):
         self.__plugin__ = plugin
         self.coordOffset = _coordOffset
 
+class ITU(Antenna):
+
+    def __init__(self, antennaGain, coordOffset, azimuth, elevation):
+        Antenna.__init__(self, "ITU", coordOffset)
+        self.antennaGain = antennaGain
+        self.azimuth = azimuth
+        self.elevation = elevation
 
 class Internal(Antenna):
     elevation = None

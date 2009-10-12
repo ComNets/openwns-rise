@@ -69,7 +69,8 @@ detail::HashRNG::operator()()
 }
 
 ITUPathloss::ITUPathloss(const wns::pyconfig::View& pyco):
-rise::scenario::pathloss::DistanceDependent(pyco)
+    rise::scenario::pathloss::DistanceDependent(pyco),
+    losProbabilityCC_("rise.scenario.pathloss.ITUPathloss.losProbability")
 {}
 
 wns::Ratio
@@ -87,16 +88,19 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
 
     if (hrng.a < getLOSProbability(distance))
     {
+        losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
 
-        boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(distance));
+         boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(distance));
         pl += wns::Ratio::from_dB(shadow(hrng));
+        pl.los = true;
     }
     else
     {
         pl = getNLOSPathloss(source, target, frequency, distance);
         boost::normal_distribution<double> shadow(0.0, getNLOSShadowingStd(distance));
         pl += wns::Ratio::from_dB(shadow(hrng));
+        pl.los = false;
     }
     return pl;
 }

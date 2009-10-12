@@ -24,16 +24,77 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  ******************************************************************************/
-#include <WNS/TestFixture.hpp>
 
-#include <RISE/scenario/pathloss/ITUUMa.hpp>
+#include <RISE/scenario/pathloss/ITUPathloss.hpp>
 #include <RISE/antenna/tests/AntennaDropIn.hpp>
 #include <RISE/stations/tests/StationDropIn.hpp>
+
+#include <WNS/TestFixture.hpp>
 
 #include <WNS/evaluation/statistics/pdf.hpp>
 
 namespace rise { namespace scenario { namespace pathloss { namespace tests {
 
+
+class ITUPathlossStub:
+    public ITUPathloss
+{
+public:
+    ITUPathlossStub(double losProbability, double losPL, double nlosPL, double losSh, double nlosSh, wns::pyconfig::View pyco):
+        ITUPathloss(pyco)
+    {
+        losProbability_ = losProbability;
+        losPL_ = losPL;
+        nlosPL_ = nlosPL;
+        losSh_ = losSh;
+        nlosSh_ = nlosSh;
+    };
+
+    virtual ~ITUPathlossStub() {};
+
+    virtual double
+    getLOSProbability(double distance) const
+    {
+        return losProbability_;
+    }
+
+    virtual wns::Ratio
+    getLOSPathloss(const rise::antenna::Antenna& source,
+                   const rise::antenna::Antenna& target,
+                   const wns::Frequency& frequency,
+                   const wns::Distance& distance) const
+    {
+        return wns::Ratio::from_dB(losPL_);
+    }
+
+    virtual wns::Ratio
+    getNLOSPathloss(const rise::antenna::Antenna& source,
+                    const rise::antenna::Antenna& target,
+                    const wns::Frequency& frequency,
+                    const wns::Distance& distance) const
+    {
+        return wns::Ratio::from_dB(nlosPL_);
+    }
+
+    virtual double
+    getLOSShadowingStd(double distance) const
+    {
+        return losSh_;
+    }
+
+    virtual double
+    getNLOSShadowingStd(double distance) const
+    {
+        return nlosSh_;
+    }
+
+private:
+    double losProbability_;
+    double losPL_;
+    double nlosPL_;
+    double losSh_;
+    double nlosSh_;
+};
 
 class ITUPathlossTest:
     public wns::TestFixture
@@ -62,7 +123,7 @@ public:
     testPerformance();
 
 private:
-    rise::scenario::pathloss::ITUUMa* testee_;
+    rise::scenario::pathloss::tests::ITUPathlossStub* testee_;
     rise::tests::SystemManagerDropIn* systemManager_;
     rise::tests::StationDropIn* station1_;
     rise::tests::StationDropIn* station2_;
@@ -81,13 +142,16 @@ void ITUPathlossTest::prepare()
 {
     wns::pyconfig::Parser config;
     config.loadString(
-        "from rise.scenario.Pathloss import ITUUMa\n"
-        "testee = ITUUMa()\n"
+    "class A:\n"
+    "   pass\n"
+    "\n"
+    "testee = A()\n"
+    "testee.minPathloss = \"0.0 dB\""
     );
 
     wns::pyconfig::View configView(config, "testee");
 
-    testee_ = new rise::scenario::pathloss::ITUUMa(configView);
+    testee_ = new rise::scenario::pathloss::tests::ITUPathlossStub(0.38, 1.0, 0.0, 0.0, 0.0, configView);
 
     systemManager_ = new rise::tests::SystemManagerDropIn();
 
@@ -131,7 +195,7 @@ ITUPathlossTest::testRNG()
     double last = 0.0;
 
     using namespace wns::evaluation::statistics;
-    PDF e(-10.0, 10.0, 1000, PDF::linear, StatEval::fixed, "rise::pathloss::detail::HashRNG", "Test randomness of HashRNG");
+    PDF e(-10.0, 10.0, 1000, PDF::linear, StatEval::fixed, "rise.pathloss.detail.HashRNG", "Test randomness of HashRNG");
 
     // Decrease step size and use e.print
     // to validate externally
@@ -158,6 +222,10 @@ ITUPathlossTest::testRNG()
     // This is no test of correctness for the stochastical behaviour
     CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, e.mean(), 0.03);
     CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0, e.variance(), 0.05);
+    std::ofstream myfile;
+    myfile.open("rise.pathloss.detail.HashRNG_PDF.dat");
+    e.print(myfile);
+    myfile.close();
 }
 
 void
@@ -169,8 +237,15 @@ ITUPathlossTest::testPerformance()
     rise::tests::AntennaDropIn a2(station2_);
     station2_->moveTo(wns::Position(1.0, 3.155, 1.50));
 
-    for (int ii=0; ii < 650000; ++ii)
+    double sum = 0;
+    for (int ii=0; ii < 65000; ++ii)
     {
+        // Move to make the outcome of the experiment random
+        // The stubs PL model is distance independent
+        station2_->moveTo(wns::Position(1.0, 3.155 + ii, 1.50));
         wns::Ratio r = testee_->getPathloss(a1, a2, 2000.0);
-    } 
+        sum += r.get_dB();
+    }
+    sum = sum / 65000;
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.38, sum, 2e-03);
 }

@@ -68,17 +68,21 @@ ITUUMa::getLOSPathloss(const rise::antenna::Antenna& source,
     bsHeight -= 1.0;
     utHeight -= 1.0;
 
-    double dBP = 4 * bsHeight * utHeight * frequency / 3.0e05;
+    double dBP = 4 * bsHeight * utHeight * frequency / 3.0e02;
 
     if (distance < dBP)
     {
-        return wns::Ratio::from_dB(22.0 * log10(distance) + 28.0 + 20 * log10(frequency/1000.0));
+        return wns::Ratio::from_dB(9.0 + 22.0 * log10(distance) + 28.0 + 20 * log10(frequency/1000.0));
     }
     else
     {
         double pl = 40 * log10(distance) + 7.8;
         pl -= 18.0 * log10(bsHeight) + 18.0 * log10(utHeight);
         pl += 2 * log10(frequency / 1000.0);
+
+        // Also all users are outdoors and in cars, 9 dB loss for that cmp. Table 8.2
+        pl += 9.0;
+
         return wns::Ratio::from_dB(pl);
     }
 }
@@ -106,6 +110,9 @@ ITUUMa::getNLOSPathloss(const rise::antenna::Antenna& source,
     pl += 20.0 * log10(frequency/1000.0);
     pl -= 3.2 * pow(log10(11.75 * utHeight), 2) - 4.97;
 
+    // Also all users are outdoors and in cars, 9 dB loss for that cmp. Table 8.2
+    pl += 9.0;
+
     return wns::Ratio::from_dB(pl);
 }
 
@@ -114,7 +121,11 @@ ITUUMa::getLOSShadowingStd(double distance) const
 {
     assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
     assure(distance < 5000.0, "This model is only valid for a maximum distance of 5000m");
-    return 4.0;
+
+    // Superposition of Car penentration loss variance and shadowing
+    // Sum of two normal distributions X1 = N(mu1, var1) and  X 2= N(mu2, var2)
+    // results in Xsum = N(mu1 + mu2, var1 + var2)
+    return 6.40312;
 }
 
 double
@@ -122,5 +133,9 @@ ITUUMa::getNLOSShadowingStd(double distance) const
 {
     assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
     assure(distance < 5000.0, "This model is only valid for a maximum distance of 5000m");
-    return 6.0;
+
+    // Superposition of Car penentration loss variance and shadowing
+    // Sum of two normal distributions X1 = N(mu1, var1) and  X 2= N(mu2, var2)
+    // results in Xsum = N(mu1 + mu2, var1 + var2)
+    return 7.81025;
 }

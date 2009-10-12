@@ -29,6 +29,7 @@
 #define RISE_SCENARIO_PATHLOSS_ITUPATHLOSS_HPP
 
 #include <RISE/scenario/pathloss/DistanceDependent.hpp>
+#include <WNS/probe/bus/ContextCollector.hpp>
 
 namespace rise { namespace scenario { namespace pathloss {
 
@@ -147,6 +148,8 @@ public:
     virtual double
     getNLOSShadowingStd(double distance) const = 0;
 
+private:
+    wns::probe::bus::ContextCollector losProbabilityCC_;
 };
 
 } // pathloss
