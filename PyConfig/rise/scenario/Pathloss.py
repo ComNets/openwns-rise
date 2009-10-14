@@ -699,3 +699,15 @@ class ITUUMa(Pathloss):
         self.minPathloss = minPathloss
         self.streetWidth = 20.0
         self.buildingHeight = 20.0
+
+class ITUUMi(Pathloss):
+    """
+    Urban Micro scenario according to ITU-R M.2135 pp. 29-31
+    """
+    minPathloss = None
+    streetWidth = None
+    __plugin__ = 'ITUUMi'
+
+    def __init__(self, minPathloss = "0.0 dB"):
+        self.minPathloss = minPathloss 
+        self.streetWidth = 20.0
