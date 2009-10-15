@@ -43,6 +43,9 @@ class ITUUMaTest:
     CPPUNIT_TEST( testShadowing );
     CPPUNIT_TEST( testLOSPathloss );
     CPPUNIT_TEST( testNLOSPathloss );
+    CPPUNIT_TEST( testPlotLosProbability );
+    CPPUNIT_TEST( testPlotLosPathloss );
+    CPPUNIT_TEST( testPlotNLosPathloss );
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -64,6 +67,15 @@ public:
 
     void
     testNLOSPathloss();
+
+    void
+    testPlotLosProbability();
+
+    void
+    testPlotLosPathloss();
+
+    void
+    testPlotNLosPathloss();
 
 private:
     ITUUMa* testee_;
@@ -149,7 +161,7 @@ ITUUMaTest::testLOSPathloss()
 
     double f = 2000;
     double d1 = 100;
-    double d1plane = sqrt(d1*d1 - 23.5*23.5);
+    double d1plane = sqrt(d1*d1 + 23.5*23.5);
     double pl1 = 78.020599913 + 9.0;
 
     rise::tests::AntennaDropIn a1(station1_);
@@ -161,7 +173,7 @@ ITUUMaTest::testLOSPathloss()
 
     // Now above breakpoint distance
     double d2 = 400;
-    double d2plane = sqrt(d2*d2 - 23.5*23.5);
+    double d2plane = sqrt(d2*d2 + 23.5*23.5);
     double pl2 = 93.059197216 + 9.0;
 
     station1_->moveTo(wns::Position(0.0, 0.0, 25.0));
@@ -178,7 +190,7 @@ ITUUMaTest::testNLOSPathloss()
 
     double f = 2000;
     double d1 = 340;
-    double d1plane = sqrt(d1*d1 - 23.5*23.5);
+    double d1plane = sqrt(d1*d1 + 23.5*23.5);
     double pl1 = 118.511659003 + 9.0;
 
     rise::tests::AntennaDropIn a1(station1_);
@@ -188,6 +200,91 @@ ITUUMaTest::testNLOSPathloss()
 
     CPPUNIT_ASSERT_DOUBLES_EQUAL(pl1, testee_->getNLOSPathloss(a1,a2,f,d1).get_dB(), 1e-06);
 
+}
+
+void
+ITUUMaTest::testPlotLosProbability()
+{
+    std::ofstream myfile;
+    myfile.open("rise.pathloss.ITUUMaTest.losProbability.py");
+    myfile << "from pylab import *\n" << "x = []\n" << "y = []\n";
+
+    for (int ii=1; ii < 1000; ++ii)
+    {
+        myfile << "x.append(" << ii << ")\n";
+        myfile << "y.append(" << testee_->getLOSProbability(ii) << ")\n";
+    }
+    myfile << "x = array(x)\n";
+    myfile << "y = array(y)\n";
+    myfile << "plot(x,y)\n";
+    myfile << "title(\"LOS Probability for UMa (openWNS)\")\n";
+    myfile << "grid()\n";
+    myfile << "savefig(\"rise.pathloss.ITUUMaTest.losProbability.png\")\n";
+    myfile.close();
+}
+
+void
+ITUUMaTest::testPlotLosPathloss()
+{
+    double f = 2000;
+
+    rise::tests::AntennaDropIn a1(station1_);
+    station1_->moveTo(wns::Position(0.0, 0.0, 25.0));
+
+    std::ofstream myfile;
+    myfile.open("rise.pathloss.ITUUMaTest.losPathloss.py");
+    myfile << "from pylab import *\n" << "x = []\n" << "y = []\n";
+
+    for (int ii=11; ii < 1000; ++ii)
+    {
+        double dplane = sqrt( abs(ii*ii - 23.5*23.5) );
+        rise::tests::AntennaDropIn a2(station2_);
+        station2_->moveTo(wns::Position(0.0, dplane, 1.50));
+
+        double pl = testee_->getLOSPathloss(a1, a2, f, ii).get_dB();
+        myfile << "x.append(" << ii << ")\n";
+        myfile << "y.append(" << pl << ")\n";
+    }
+
+    myfile << "x = array(x)\n";
+    myfile << "y = array(y)\n";
+    myfile << "plot(x,y)\n";
+    myfile << "title(\"LOS Pathloss @ 2GHz for UMa (openWNS)\")\n";
+    myfile << "grid()\n";
+    myfile << "savefig(\"rise.pathloss.ITUUMaTest.losPathloss.png\")\n";
+    myfile.close();
+}
+
+void
+ITUUMaTest::testPlotNLosPathloss()
+{
+    double f = 2000;
+
+    rise::tests::AntennaDropIn a1(station1_);
+    station1_->moveTo(wns::Position(0.0, 0.0, 25.0));
+
+    std::ofstream myfile;
+    myfile.open("rise.pathloss.ITUUMaTest.nlosPathloss.py");
+    myfile << "from pylab import *\n" << "x = []\n" << "y = []\n";
+
+    for (int ii=11; ii < 1000; ++ii)
+    {
+        double dplane = sqrt( abs(ii*ii - 23.5*23.5) );
+        rise::tests::AntennaDropIn a2(station2_);
+        station2_->moveTo(wns::Position(0.0, dplane, 1.50));
+
+        double pl = testee_->getNLOSPathloss(a1, a2, f, ii).get_dB();
+        myfile << "x.append(" << ii << ")\n";
+        myfile << "y.append(" << pl << ")\n";
+    }
+
+    myfile << "x = array(x)\n";
+    myfile << "y = array(y)\n";
+    myfile << "plot(x,y)\n";
+    myfile << "title(\"NLOS Pathloss @ 2GHz for UMa (openWNS)\")\n";
+    myfile << "grid()\n";
+    myfile << "savefig(\"rise.pathloss.ITUUMaTest.nlosPathloss.png\")\n";
+    myfile.close();
 }
 
 } // tests

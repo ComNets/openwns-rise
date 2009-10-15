@@ -28,6 +28,7 @@
 #include <RISE/antenna/ITUAntenna.hpp>
 #include <RISE/stations/tests/StationDropIn.hpp>
 #include <RISE/manager/tests/SystemManagerDropIn.hpp>
+#include <RISE/antenna/tests/AntennaDropIn.hpp>
 
 #include <WNS/TestFixture.hpp>
 
@@ -40,6 +41,8 @@ class ITUAntennaTest:
 {
     CPPUNIT_TEST_SUITE( ITUAntennaTest );
     CPPUNIT_TEST( testMethod );
+    CPPUNIT_TEST( testPlotElevation0Azimuth );
+    CPPUNIT_TEST( testPlotElevation30Azimuth );
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -53,7 +56,16 @@ public:
     void
     testMethod();
 
+    void
+    testPlotElevation0Azimuth();
+
+    void
+    testPlotElevation30Azimuth();
+
 private:
+    void
+        plotElevation(double azimuth, std::ofstream&, std::string);
+
     rise::tests::SystemManagerDropIn* systemManager_;
     rise::tests::StationDropIn* station_;
     ITUAntenna* testee_;
@@ -75,14 +87,14 @@ void ITUAntennaTest::prepare()
     wns::pyconfig::Parser config;
     config.loadString(
     "from rise.Antenna import ITU\n"
-    "downtilt = 12.0/360.0 * 2 * 3.14159265\n"
-    "testee = ITU(\"0.0 dB\", [0.0, 0.0, 23.5], 0.0, downtilt)\n");
+    "downtilt = (12.0 + 90.0)/360.0 * 2 * 3.14159265\n"
+    "testee = ITU(\"0.0 dB\", [0.0, 0.0, 25.0], 0.0, downtilt)\n");
 
     wns::pyconfig::View configView(config, "testee");
 
     testee_ = new ITUAntenna(configView, station_);
 
-    station_->moveTo(wns::Position(1000.0, 1000.0, 1.5));
+    station_->moveTo(wns::Position(0.0, 0.0, 0.0));
     station_->setStationId(1);
 }
 
@@ -106,4 +118,46 @@ ITUAntennaTest::testMethod()
         wns::Ratio gain = testee_->getGain(wns::Position(1000.0 + x, 1000.0 + y, 0.0), PatternPtr());
         std::cout << ii << "\t" << x << "\t" << y << "\t" << gain.get_dB() << std::endl;
     }
+}
+
+void
+ITUAntennaTest::testPlotElevation0Azimuth()
+{
+    std::ofstream myfile;
+    myfile.open("rise.pathloss.ITUAntennaTest.Azimuth0.py");
+    plotElevation(0.0, myfile, "rise.pathloss.ITUAntennaTest.Azimuth0.png");
+    myfile.close();
+}
+
+void
+ITUAntennaTest::testPlotElevation30Azimuth()
+{
+    std::ofstream myfile;
+    myfile.open("rise.pathloss.ITUAntennaTest.Azimuth30.py");
+    plotElevation(30.0/360.0 * 2.0*3.14, myfile, "rise.pathloss.ITUAntennaTest.Azimuth30.png");
+    myfile.close();
+}
+
+void
+ITUAntennaTest::plotElevation(double azimuth, std::ofstream& myfile, std::string pngFileName)
+{
+    double f = 2000;
+
+    myfile << "from pylab import *\n" << "x = []\n" << "y = []\n";
+
+    for (int ii=11; ii < 1000; ++ii)
+    {
+        double dplane = sqrt(abs(ii*ii - 23.5*23.5));
+        double ag = testee_->getGain(wns::Position(dplane * cos(azimuth), dplane * sin(azimuth), 1.50), rise::antenna::PatternPtr()).get_dB();
+
+        myfile << "x.append(" << ii << ")\n";
+        myfile << "y.append(" << ag << ")\n";
+    }
+    
+    myfile << "x = array(x)\n";
+    myfile << "y = array(y)\n";
+    myfile << "plot(x,y)\n";
+    myfile << "title(\"Antenna gain at " << azimuth << " degree azimuth for UMa (openWNS)\")\n";
+    myfile << "grid()\n";
+    myfile << "savefig(\"" << pngFileName << "\")\n";
 }
