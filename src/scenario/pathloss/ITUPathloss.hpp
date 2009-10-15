@@ -71,6 +71,7 @@ public:
     bool giveA;
     double a;
     double b;
+    double c;
 };
 
 }
@@ -150,6 +151,7 @@ public:
 
 private:
     wns::probe::bus::ContextCollector losProbabilityCC_;
+    wns::probe::bus::ContextCollector shadowingCC_;
 };
 
 } // pathloss

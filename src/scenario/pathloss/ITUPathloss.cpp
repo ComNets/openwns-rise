@@ -46,10 +46,12 @@ detail::HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2,
     boost::hash_combine(seed, std::min(p1.getZ(),p2.getZ()));
     size_t seed2 = seed;
     boost::hash_combine(seed2, distance);
+    size_t seed3 = seed2;
+    boost::hash_combine(seed3, distance);
 
     a = ( (double) seed / normalize);
     b = ( (double) seed2 / normalize);
-
+    c = ( (double) seed3 / normalize);
     giveA = true;
 }
 
@@ -70,7 +72,8 @@ detail::HashRNG::operator()()
 
 ITUPathloss::ITUPathloss(const wns::pyconfig::View& pyco):
     rise::scenario::pathloss::DistanceDependent(pyco),
-    losProbabilityCC_("rise.scenario.pathloss.ITUPathloss.losProbability")
+    losProbabilityCC_("rise.scenario.pathloss.ITUPathloss.losProbability"),
+    shadowingCC_("rise.scenario.pathloss.ITUPathloss.shadowing")
 {}
 
 wns::Ratio
@@ -86,20 +89,24 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
 
     wns::Ratio pl;
 
-    if (hrng.a < getLOSProbability(distance))
+    if (hrng.c < getLOSProbability(distance))
     {
         losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
 
-         boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(distance));
-        pl += wns::Ratio::from_dB(shadow(hrng));
+        boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(distance));
+        double sh = shadow(hrng);
+        shadowingCC_.put(sh);
+        pl += wns::Ratio::from_dB(sh);
         pl.los = true;
     }
     else
     {
         pl = getNLOSPathloss(source, target, frequency, distance);
         boost::normal_distribution<double> shadow(0.0, getNLOSShadowingStd(distance));
-        pl += wns::Ratio::from_dB(shadow(hrng));
+        double sh = shadow(hrng);
+        shadowingCC_.put(sh);
+        pl += wns::Ratio::from_dB(sh);
         pl.los = false;
     }
     return pl;
