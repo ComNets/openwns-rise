@@ -25,8 +25,8 @@
  *
  ******************************************************************************/
 
-#ifndef RISE_SCENARIO_PATHLOSS_ITUUMa_HPP
-#define RISE_SCENARIO_PATHLOSS_ITUUMa_HPP
+#ifndef RISE_SCENARIO_PATHLOSS_ITURMa_HPP
+#define RISE_SCENARIO_PATHLOSS_ITURMa_HPP
 
 #include <RISE/scenario/pathloss/ITUPathloss.hpp>
 
@@ -36,13 +36,13 @@ namespace rise { namespace scenario { namespace pathloss {
  *
  * @author Daniel Bueltmann <openwns@doender.de>
  */
-class ITUUMa:
+class ITURMa:
     public ITUPathloss
 {
 public:
-    ITUUMa(const wns::pyconfig::View&);
+    ITURMa(const wns::pyconfig::View&);
 
-    virtual ~ITUUMa() {}
+    virtual ~ITURMa() {}
 
     virtual double
     getLOSProbability(double distance) const;
@@ -81,4 +81,4 @@ private:
 } // scenario
 } // rise
 
-#endif // RISE_SCENARIO_PATHLOSS_ITUUMa_HPP
+#endif // RISE_SCENARIO_PATHLOSS_ITURMa_HPP

@@ -77,13 +77,19 @@ public:
     }
 
     virtual double
-    getLOSShadowingStd(double distance) const
+    getLOSShadowingStd(const rise::antenna::Antenna& source,
+                       const rise::antenna::Antenna& target,
+                       const wns::Frequency& frequency,
+                       const wns::Distance& distance) const
     {
         return losSh_;
     }
 
     virtual double
-    getNLOSShadowingStd(double distance) const
+    getNLOSShadowingStd(const rise::antenna::Antenna& source,
+                        const rise::antenna::Antenna& target,
+                        const wns::Frequency& frequency,
+                        const wns::Distance& distance) const
     {
         return nlosSh_;
     }

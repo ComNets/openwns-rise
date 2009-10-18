@@ -141,13 +141,19 @@ public:
      * @brief Return a realization of the shadowing in LOS case. This may be distance dependent
      */
     virtual double
-    getLOSShadowingStd(double distance) const = 0;
+    getLOSShadowingStd(const rise::antenna::Antenna& source,
+                       const rise::antenna::Antenna& target,
+                       const wns::Frequency& frequency,
+                       const wns::Distance& distance) const = 0;
 
     /**
      * @brief Return a realization of the shadowing in NLOS case. This may be distance dependent
      */
     virtual double
-    getNLOSShadowingStd(double distance) const = 0;
+    getNLOSShadowingStd(const rise::antenna::Antenna& source,
+                        const rise::antenna::Antenna& target,
+                        const wns::Frequency& frequency,
+                        const wns::Distance& distance) const = 0;
 
 private:
     wns::probe::bus::ContextCollector losProbabilityCC_;

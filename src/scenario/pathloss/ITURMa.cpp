@@ -25,15 +25,15 @@
  *
  ******************************************************************************/
 
-#include <RISE/scenario/pathloss/ITUUMa.hpp>
+#include <RISE/scenario/pathloss/ITURMa.hpp>
 
 #include <WNS/StaticFactoryBroker.hpp>
 
-STATIC_FACTORY_BROKER_REGISTER(rise::scenario::pathloss::ITUUMa, rise::scenario::pathloss::Pathloss, "ITUUMa");
+STATIC_FACTORY_BROKER_REGISTER(rise::scenario::pathloss::ITURMa, rise::scenario::pathloss::Pathloss, "ITURMa");
 
 using namespace rise::scenario::pathloss;
 
-ITUUMa::ITUUMa(const wns::pyconfig::View& pyco):
+ITURMa::ITURMa(const wns::pyconfig::View& pyco):
 ITUPathloss(pyco)
 {
     streetWidth_ = pyco.get<double>("streetWidth");
@@ -41,14 +41,19 @@ ITUPathloss(pyco)
 }
 
 double
-ITUUMa::getLOSProbability(double distance) const
+ITURMa::getLOSProbability(double distance) const
 {
-    double pLOS = std::min(1.0, 18.0/distance) * (1 - exp(-distance/63.0)) + exp(-distance/63.0);
+    if (distance <= 10.0)
+    {
+        return 1.0;
+    }
+
+    double pLOS = exp(- (distance-10.0)/1000.0);
     return pLOS;
 }
 
 wns::Ratio
-ITUUMa::getLOSPathloss(const rise::antenna::Antenna& source,
+ITURMa::getLOSPathloss(const rise::antenna::Antenna& source,
                        const rise::antenna::Antenna& target,
                        const wns::Frequency& frequency,
                        const wns::Distance& distance) const
@@ -64,31 +69,31 @@ ITUUMa::getLOSPathloss(const rise::antenna::Antenna& source,
     assure(utHeight > 1.0, "BS Height must be at least 1 m");
     assure(utHeight < 10.0, "BS Height cannot be larger than 10 m");
 
-    // For UMaLOS the effictive heights are used heff = h - 1.0
-    bsHeight -= 1.0;
-    utHeight -= 1.0;
-
-    double dBP = 4 * bsHeight * utHeight * frequency / 3.0e02;
+    double dBP = 2 * 3.14 * bsHeight * utHeight * frequency / 3.0e02;
 
     if (distance < dBP)
     {
-        return wns::Ratio::from_dB(9.0 + 22.0 * log10(distance) + 28.0 + 20 * log10(frequency/1000.0));
+        double pl = 9.0 + 20.0 * log10(distance * 40 * 3.14 * frequency/3000.0);
+        pl += std::min(0.03 * pow(buildingHeight_, 1.72), 10.0) * log10(distance);
+        pl -= std::min(0.044 * pow(buildingHeight_, 1.72), 14.77);
+        pl += 0.002*log10(buildingHeight_)*distance;
+
+        return wns::Ratio::from_dB(pl);
     }
     else
     {
-        double pl = 40 * log10(distance) + 7.8;
-        pl -= 18.0 * log10(bsHeight) + 18.0 * log10(utHeight);
-        pl += 2 * log10(frequency / 1000.0);
+        double pl = 9.0 + 20.0 * log10(dBP * 40 * 3.14 * frequency/3000.0);
+        pl += std::min(0.03 * pow(buildingHeight_, 1.72), 10.0) * log10(dBP);
+        pl -= std::min(0.044 * pow(buildingHeight_, 1.72), 14.77);
+        pl += 0.002*log10(buildingHeight_)*dBP;
 
-        // Also all users are outdoors and in cars, 9 dB loss for that cmp. Table 8.2
-        pl += 9.0;
-
+        pl += 40 * log10(distance / dBP);
         return wns::Ratio::from_dB(pl);
     }
 }
 
 wns::Ratio
-ITUUMa::getNLOSPathloss(const rise::antenna::Antenna& source,
+ITURMa::getNLOSPathloss(const rise::antenna::Antenna& source,
                         const rise::antenna::Antenna& target,
                         const wns::Frequency& frequency,
                         const wns::Distance& distance) const
@@ -117,7 +122,7 @@ ITUUMa::getNLOSPathloss(const rise::antenna::Antenna& source,
 }
 
 double
-ITUUMa::getLOSShadowingStd(const rise::antenna::Antenna& source,
+ITURMa::getLOSShadowingStd(const rise::antenna::Antenna& source,
                            const rise::antenna::Antenna& target,
                            const wns::Frequency& frequency,
                            const wns::Distance& distance) const
@@ -125,14 +130,34 @@ ITUUMa::getLOSShadowingStd(const rise::antenna::Antenna& source,
     assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
     assure(distance < 5000.0, "This model is only valid for a maximum distance of 5000m");
 
+    double bsHeight = source.getPosition().getZ();
+    double utHeight = target.getPosition().getZ();
+
+    // We must assume here that the higher one is the BS
+    if (bsHeight < utHeight) std::swap(bsHeight, utHeight);
+
+    assure(bsHeight > 10.0, "BS Height must be at least 10 m");
+    assure(bsHeight < 150.0, "BS Height cannot be larger than 150 m");
+    assure(utHeight > 1.0, "BS Height must be at least 1 m");
+    assure(utHeight < 10.0, "BS Height cannot be larger than 10 m");
+
+    double dBP = 2 * 3.14 * bsHeight * utHeight * frequency / 3.0e02;
+
     // Superposition of Car penentration loss variance and shadowing
     // Sum of two normal distributions X1 = N(mu1, var1) and  X 2= N(mu2, var2)
     // results in Xsum = N(mu1 + mu2, var1 + var2)
-    return 6.40312;
+    if (distance < dBP)
+    {
+        return 6.40312;
+    }
+    else
+    {
+        return 7.810249676;
+    }
 }
 
 double
-ITUUMa::getNLOSShadowingStd(const rise::antenna::Antenna& source,
+ITURMa::getNLOSShadowingStd(const rise::antenna::Antenna& source,
                             const rise::antenna::Antenna& target,
                             const wns::Frequency& frequency,
                             const wns::Distance& distance) const
@@ -143,5 +168,5 @@ ITUUMa::getNLOSShadowingStd(const rise::antenna::Antenna& source,
     // Superposition of Car penentration loss variance and shadowing
     // Sum of two normal distributions X1 = N(mu1, var1) and  X 2= N(mu2, var2)
     // results in Xsum = N(mu1 + mu2, var1 + var2)
-    return 7.81025;
+    return 9.433981132;
 }

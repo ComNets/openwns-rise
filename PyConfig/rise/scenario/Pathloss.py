@@ -700,6 +700,40 @@ class ITUUMa(Pathloss):
         self.streetWidth = 20.0
         self.buildingHeight = 20.0
 
+class ITUSMa(Pathloss):
+    """
+    Suburban Urban Macro scenario according to ITU-R M.2135 pp. 29-31
+    """
+    minPathloss = None
+
+    streetWidth = None
+
+    buildingHeight = None
+
+    __plugin__ = 'ITUSMa'
+
+    def __init__(self, minPathloss = "0.0 dB"):
+        self.minPathloss = minPathloss
+        self.streetWidth = 10.0
+        self.buildingHeight = 5.0
+
+class ITURMa(Pathloss):
+    """
+    Rural Macro scenario according to ITU-R M.2135 pp. 29-31
+    """
+    minPathloss = None
+
+    streetWidth = None
+
+    buildingHeight = None
+
+    __plugin__ = 'ITURMa'
+
+    def __init__(self, minPathloss = "0.0 dB"):
+        self.minPathloss = minPathloss
+        self.streetWidth = 20.0
+        self.buildingHeight = 5.0
+
 class ITUUMi(Pathloss):
     """
     Urban Micro scenario according to ITU-R M.2135 pp. 29-31

@@ -83,7 +83,10 @@ ITUInH::getNLOSPathloss(const rise::antenna::Antenna& source,
 }
 
 double
-ITUInH::getLOSShadowingStd(double distance) const
+ITUInH::getLOSShadowingStd(const rise::antenna::Antenna& source,
+                           const rise::antenna::Antenna& target,
+                           const wns::Frequency& frequency,
+                           const wns::Distance& distance) const
 {
     assure(distance > 3.0, "This model is only valid for a minimum distance of 3m");
     assure(distance < 100.0, "This model is only valid for a maximum distance of 100m");
@@ -91,7 +94,10 @@ ITUInH::getLOSShadowingStd(double distance) const
 }
 
 double
-ITUInH::getNLOSShadowingStd(double distance) const
+ITUInH::getNLOSShadowingStd(const rise::antenna::Antenna& source,
+                            const rise::antenna::Antenna& target,
+                            const wns::Frequency& frequency,
+                            const wns::Distance& distance) const
 {
     assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
     assure(distance < 150.0, "This model is only valid for a maximum distance of 150m");

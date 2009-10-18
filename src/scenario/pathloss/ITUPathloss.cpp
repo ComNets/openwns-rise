@@ -48,10 +48,13 @@ detail::HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2,
     boost::hash_combine(seed2, distance);
     size_t seed3 = seed2;
     boost::hash_combine(seed3, distance);
+    size_t seed4 = seed2;
+    boost::hash_combine(seed4, seed);
 
     a = ( (double) seed / normalize);
     b = ( (double) seed2 / normalize);
     c = ( (double) seed3 / normalize);
+    d = ( (double) seed4 / normalize);
     giveA = true;
 }
 
@@ -94,7 +97,7 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
         losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
 
-        boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(distance));
+        boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(source, target, frequency, distance));
         double sh = shadow(hrng);
         shadowingCC_.put(sh);
         pl += wns::Ratio::from_dB(sh);
@@ -103,11 +106,12 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
     else
     {
         pl = getNLOSPathloss(source, target, frequency, distance);
-        boost::normal_distribution<double> shadow(0.0, getNLOSShadowingStd(distance));
+        boost::normal_distribution<double> shadow(0.0, getNLOSShadowingStd(source, target, frequency, distance));
         double sh = shadow(hrng);
         shadowingCC_.put(sh);
         pl += wns::Ratio::from_dB(sh);
         pl.los = false;
     }
+
     return pl;
 }

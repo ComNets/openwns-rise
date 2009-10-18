@@ -140,13 +140,19 @@ ITUInHTest::testLosProbability()
 void
 ITUInHTest::testShadowing()
 {
+    rise::tests::AntennaDropIn a1(station1_);
+    station1_->moveTo(wns::Position(0.0, 0.0, 6.0));
+    rise::tests::AntennaDropIn a2(station2_);
+    station2_->moveTo(wns::Position(0.0, 2.0, 1.50));
+    double f = 3400;
+
     double LOSShadowing = 3.0;
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(LOSShadowing, testee_->getLOSShadowingStd(20.0), 1e-05);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(LOSShadowing, testee_->getLOSShadowingStd(a1, a2, f, 20.0), 1e-05);
 
     double NLOSShadowing = 4.0;
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(NLOSShadowing, testee_->getNLOSShadowingStd(20.0), 1e-05);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(NLOSShadowing, testee_->getNLOSShadowingStd(a1, a2, f, 20.0), 1e-05);
 }
 
 void

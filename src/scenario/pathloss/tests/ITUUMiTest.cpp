@@ -128,17 +128,23 @@ ITUUMiTest::testLosProbability()
 void
 ITUUMiTest::testShadowing()
 {
+    rise::tests::AntennaDropIn a1(station1_);
+    station1_->moveTo(wns::Position(0.0, 0.0, 6.0));
+    rise::tests::AntennaDropIn a2(station2_);
+    station2_->moveTo(wns::Position(0.0, 2.0, 1.50));
+    double f = 2000;
+
     // The standard deviation of the shadowing shall include
     // the standard deviation of the car penetration loss (Table 8.2)
     // The variance of the sum of two gaussian distributed variables is
     // the sum of the individual variances
     double LOSShadowing = 3;
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(LOSShadowing, testee_->getLOSShadowingStd(20.0), 1e-05);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(LOSShadowing, testee_->getLOSShadowingStd(a1, a2, f, 20.0), 1e-05);
 
     double NLOSShadowing = 4;
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(NLOSShadowing, testee_->getNLOSShadowingStd(20.0), 1e-05);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(NLOSShadowing, testee_->getNLOSShadowingStd(a1, a2, f, 20.0), 1e-05);
 }
 
 void
