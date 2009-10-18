@@ -141,6 +141,7 @@ srcFiles = [
     'src/scenario/pathloss/tests/SingleSlopeTest.cpp',
     'src/scenario/pathloss/tests/MultiSlopeTest.cpp',
     'src/scenario/pathloss/tests/ITUPathlossTest.cpp',
+    'src/scenario/pathloss/tests/ITUInHTest.cpp',
     'src/scenario/pathloss/tests/ITUUMaTest.cpp',
     'src/scenario/pathloss/tests/ITUUMiTest.cpp',
     'src/scenario/shadowing/tests/ShadowingTestsBase.cpp',

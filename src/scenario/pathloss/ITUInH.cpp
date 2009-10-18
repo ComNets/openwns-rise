@@ -27,6 +27,10 @@
 
 #include <RISE/scenario/pathloss/ITUInH.hpp>
 
+#include <WNS/StaticFactoryBroker.hpp>
+
+STATIC_FACTORY_BROKER_REGISTER(rise::scenario::pathloss::ITUInH, rise::scenario::pathloss::Pathloss, "ITUInH");
+
 using namespace rise::scenario::pathloss;
 
 ITUInH::ITUInH(const wns::pyconfig::View& pyco):
@@ -57,7 +61,7 @@ ITUInH::getLOSPathloss(const rise::antenna::Antenna& source,
 
     double pl = 32.8 + 16.9 * log10(distance);
     // Frequency is given in MHz (model uses GHz)
-    pl = 20 * log10(frequency/1000.0);
+    pl += 20 * log10(frequency/1000.0);
 
     return wns::Ratio::from_dB(pl);
 }
@@ -73,7 +77,7 @@ ITUInH::getNLOSPathloss(const rise::antenna::Antenna& source,
 
     double pl = 11.5 + 43.3 * log10(distance);
     // Frequency is given in MHz (model uses GHz)
-    pl = 20 * log10(frequency/1000.0);
+    pl += 20 * log10(frequency/1000.0);
 
     return wns::Ratio::from_dB(pl);
 }
