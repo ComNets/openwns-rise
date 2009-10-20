@@ -114,7 +114,6 @@ srcFiles = [
     'src/scenario/shadowing/NoShadowing.cpp',
     'src/scenario/shadowing/MapShadowing.cpp',
     'src/scenario/shadowing/SpatialCorrelatedShadowing.cpp',
-    'src/scenario/shadowing/Objects.cpp',
     'src/scenario/mobility/Component.cpp',
     'src/scenario/mobility/Mobility.cpp',
     'src/scenario/mobility/None.cpp',
@@ -149,7 +148,6 @@ srcFiles = [
     'src/scenario/pathloss/tests/ITUUMiTest.cpp',
     'src/scenario/shadowing/tests/ShadowingTestsBase.cpp',
     'src/scenario/shadowing/tests/NoShadowingTest.cpp',
-    'src/scenario/shadowing/tests/ObjectsTest.cpp',
     'src/scenario/tests/PropagationTest.cpp',
     'src/scenario/ftfading/tests/FTFadingTest.cpp',
     ]
@@ -220,7 +218,6 @@ hppFiles = [
     'src/scenario/shadowing/Shadowing.hpp',
     'src/scenario/shadowing/tests/AntennaPosDropIn.hpp',
     'src/scenario/shadowing/tests/ShadowingTestsBase.hpp',
-    'src/scenario/shadowing/Objects.hpp',
     'src/scenario/shadowing/NoShadowing.hpp',
     'src/scenario/sceneryfile/SC.hpp',
     'src/scenario/sceneryfile/Walls.hpp',

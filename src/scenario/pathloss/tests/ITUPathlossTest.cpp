@@ -253,5 +253,5 @@ ITUPathlossTest::testPerformance()
         sum += r.get_dB();
     }
     sum = sum / 65000;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.38, sum, 2e-03);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.38, sum, 3e-03);
 }

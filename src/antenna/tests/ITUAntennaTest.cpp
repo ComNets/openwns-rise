@@ -116,7 +116,7 @@ ITUAntennaTest::testMethod()
         double x = 200 * cos(ii/360.0 * 2 * 3.14);
         double y = 200 * sin(ii/360.0 * 2 * 3.14);
         wns::Ratio gain = testee_->getGain(wns::Position(1000.0 + x, 1000.0 + y, 0.0), PatternPtr());
-        std::cout << ii << "\t" << x << "\t" << y << "\t" << gain.get_dB() << std::endl;
+        // std::cout << ii << "\t" << x << "\t" << y << "\t" << gain.get_dB() << std::endl;
     }
 }
 
