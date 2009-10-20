@@ -27,6 +27,7 @@
 
 #ifndef RISE_SCENARIO_PATHLOSS_DETAIL_HASHRNG_HPP
 #define RISE_SCENARIO_PATHLOSS_DETAIL_HASHRNG_HPP
+
 #include <RISE/scenario/pathloss/DistanceDependent.hpp>
 
 namespace rise { namespace scenario { namespace pathloss {

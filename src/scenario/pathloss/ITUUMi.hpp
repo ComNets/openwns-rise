@@ -25,10 +25,10 @@
  *
  ******************************************************************************/
 
-#ifndef RISE_SCENARIO_PATHLOSS_ITUUMi_HPP
-#define RISE_SCENARIO_PATHLOSS_ITUUMi_HPP
+#ifndef RISE_SCENARIO_PATHLOSS_ITUUMI_HPP
+#define RISE_SCENARIO_PATHLOSS_ITUUMI_HPP
 
-#include <RISE/scenario/pathloss/ITUPathloss.hpp>
+#include <RISE/scenario/pathloss/DistanceDependent.hpp>
 
 namespace rise { namespace scenario { namespace pathloss {
 /**
@@ -37,13 +37,17 @@ namespace rise { namespace scenario { namespace pathloss {
  * @author Daniel Bueltmann <openwns@doender.de>
  */
 class ITUUMi:
-    public ITUPathloss
+    public rise::scenario::pathloss::DistanceDependent
 {
 public:
     ITUUMi(const wns::pyconfig::View&);
 
-    virtual ~ITUUMi() {}
-
+    virtual ~ITUUMi() {};
+    virtual wns::Ratio calculatePathloss(const antenna::Antenna& source,
+					 const antenna::Antenna& target,
+					 const wns::Frequency& frequency,
+					 const wns::Distance& distance) const;
+  //private:
     virtual double
     getLOSProbability(double distance) const;
 
@@ -76,7 +80,6 @@ public:
 				  const wns::Frequency& frequency,
 				  const wns::Distance& distance) const;
 private:
-  mutable bool indoor;
   double outdoorProbability;
 };
 
@@ -84,4 +87,4 @@ private:
 } // scenario
 } // rise
 
-#endif // RISE_SCENARIO_PATHLOSS_ITUUMi_HPP
+#endif // RISE_SCENARIO_PATHLOSS_ITUUMI_HPP
