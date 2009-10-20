@@ -740,8 +740,10 @@ class ITUUMi(Pathloss):
     """
     minPathloss = None
     streetWidth = None
+    outdoorProbability = None
     __plugin__ = 'ITUUMi'
 
-    def __init__(self, minPathloss = "0.0 dB"):
-        self.minPathloss = minPathloss 
+    def __init__(self, minPathloss = "0.0 dB", outdoorProbability = 0.5):
+        self.minPathloss = minPathloss
         self.streetWidth = 20.0
+        self.outdoorProbability = outdoorProbability

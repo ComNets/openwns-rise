@@ -81,6 +81,7 @@ void ITUUMiTest::prepare()
     config.loadString(
         "from rise.scenario.Pathloss import ITUUMi\n"
         "testee = ITUUMi()\n"
+        "testee.outdoorProbability = 1.0\n"
         );
 
     wns::pyconfig::View configView(config, "testee");

@@ -70,9 +70,14 @@ public:
                         const rise::antenna::Antenna& target,
                         const wns::Frequency& frequency,
                         const wns::Distance& distance) const;
-
+    double
+    getIndoorShadowingStd(const rise::antenna::Antenna& source,
+				  const rise::antenna::Antenna& target,
+				  const wns::Frequency& frequency,
+				  const wns::Distance& distance) const;
 private:
-  //double streetWidth_;
+  mutable bool indoor;
+  double outdoorProbability;
 };
 
 } // pathloss

@@ -28,15 +28,21 @@
 #include <RISE/scenario/pathloss/ITUUMi.hpp>
 
 #include <WNS/StaticFactoryBroker.hpp>
+#include <WNS/distribution/Uniform.hpp>
+
+#include <boost/random.hpp>
+#include <boost/functional/hash.hpp>
 #include <ios>
 STATIC_FACTORY_BROKER_REGISTER(rise::scenario::pathloss::ITUUMi, rise::scenario::pathloss::Pathloss, "ITUUMi");
 
 using namespace rise::scenario::pathloss;
 
 ITUUMi::ITUUMi(const wns::pyconfig::View& pyco):
-ITUPathloss(pyco)
+  ITUPathloss(pyco)
 {
-  //streetWidth_ = pyco.get<double>("streetWidth");
+  indoor = false;
+  //outdoorProbability = 0.5;
+  outdoorProbability = pyco.get<double>("outdoorProbability");
 }
 
 double
@@ -44,6 +50,7 @@ ITUUMi::getLOSProbability(double distance) const
 {
     double pLOS = std::min(1.0, 18.0/distance) * (1 - exp(-distance/36.0)) + exp(-distance/36.0);
     return pLOS;
+
 }
 
 wns::Ratio
@@ -67,22 +74,35 @@ ITUUMi::getLOSPathloss(const rise::antenna::Antenna& source,
     utHeight -= 1.0;
 
     double dBP = 4 * bsHeight * utHeight * frequency / 3.0e02;
-    //std::cout<<" d: "<<distance<<" f: "<<frequency
-    //     <<" bsH: "<<bsHeight<<" utH: "<< utHeight<<" dBP: "<<dBP<<std::endl;
+    double pl;
     if (distance < dBP)
     {
-      double pl = 22.0 * log10(distance) + 28.0 + 20 * log10(frequency/1000.0);
-      return wns::Ratio::from_dB(pl);
+      pl = 22.0 * log10(distance) + 28.0 + 20 * log10(frequency/1000.0);
+      //return wns::Ratio::from_dB(pl);
     }
     else
     {
-        double pl = 40 * log10(distance) + 7.8;
+        pl = 40 * log10(distance) + 7.8;
         pl -= 18.0 * log10(bsHeight) + 18.0 * log10(utHeight);
         pl += 2.0 * log10(frequency/1000.0);
-
-        //50% users are indoor (not considered yet) and 50% are outdoor (pedestrian) see Table 8-4, p.14
-        return wns::Ratio::from_dB(pl);
+	//return wns::Ratio::from_dB(pl);
     }
+
+    static wns::distribution::Uniform dis(0.0, 1.0, wns::simulator::getRNG());
+    static size_t initialSeed = dis() * pow(2, sizeof(size_t)*8);
+    detail::HashRNG hrng(initialSeed, source.getPosition(), target.getPosition(), distance);
+
+    if ((hrng.c > outdoorProbability) && (distance < 1000))
+      {
+	//d_in is uniformly distributed between 0 and 25
+	double d_in = hrng.d * 25.0;
+	pl = pl + 20 + 0.5 * d_in;
+	indoor = true;
+      }
+    /*std::cout<<" d: "<<distance<<" f: "<<frequency
+	     <<" bsH: "<<bsHeight<<" utH: "<< utHeight<<" dBP: "
+	     <<dBP<<" PL:"<<pl<<" indoor: "<<indoor<<std::endl;*/
+    return wns::Ratio::from_dB(pl);
 }
 
 wns::Ratio
@@ -102,7 +122,19 @@ ITUUMi::getNLOSPathloss(const rise::antenna::Antenna& source,
     assure(utHeight <= 2.5, "BS Height cannot be larger than 2.5 m");
 
     double pl =  36.7 * log10(distance) + 22.7 + 26.0 * log10(frequency/1000.0);
-    //50% users are indoor (not considered yet)
+
+    //50% users are indoor
+    static wns::distribution::Uniform dis(0.0, 1.0, wns::simulator::getRNG());
+    static size_t initialSeed = dis() * pow(2, sizeof(size_t)*8);
+    detail::HashRNG hrng(initialSeed, source.getPosition(), target.getPosition(), distance);
+
+    if ((hrng.c > outdoorProbability) && (distance < 1000))
+      {
+	//d_in is uniformly distributed between 0 and 25
+	double d_in = hrng.d * 25.0;
+	pl = pl + 20 + 0.5*d_in;
+	indoor = true;
+      }
     return wns::Ratio::from_dB(pl);
 }
 
@@ -112,10 +144,17 @@ ITUUMi::getLOSShadowingStd(const rise::antenna::Antenna& source,
                            const wns::Frequency& frequency,
                            const wns::Distance& distance) const
 {
-    assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
-    assure(distance < 5000.0, "This model is only valid for a maximum distance of 5000m");
-    //standard deviation of 3dB
-    return 3;
+  if (indoor)
+    {
+     return getIndoorShadowingStd(source, target, frequency, distance);
+    }
+  else
+    {
+      assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
+      assure(distance < 5000.0, "This model is only valid for a maximum distance of 5000m");
+      //standard deviation of 3dB
+      return 3;
+    }
 }
 
 double
@@ -124,9 +163,29 @@ ITUUMi::getNLOSShadowingStd(const rise::antenna::Antenna& source,
                             const wns::Frequency& frequency,
                             const wns::Distance& distance) const
 {
-    assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
-    assure(distance < 2000.0, "This model is only valid for a maximum distance of 2000m");
-
-    //standard deviation of 4dB
-    return 4;
+  if (indoor)
+    {
+      return getIndoorShadowingStd(source, target, frequency, distance);
+    }
+  else
+    {
+      assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
+      assure(distance < 2000.0, "This model is only valid for a maximum distance of 2000m");
+      //standard deviation of 4dB
+      return 4;
+    }
 }
+
+double
+ITUUMi::getIndoorShadowingStd(const rise::antenna::Antenna& source,
+                            const rise::antenna::Antenna& target,
+                            const wns::Frequency& frequency,
+                            const wns::Distance& distance) const
+{
+    assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
+    assure(distance < 1000.0, "This model is only valid for a maximum distance of 1000m");
+
+    //standard deviation of 7dB
+    return 7;
+}
+
