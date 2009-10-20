@@ -56,35 +56,27 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
     double sh;
     if (hrng.c < getLOSProbability(distance))
     {
-        //losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
         boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(source, target, frequency, distance));
 	sh = shadow(hrng);
-	//double sh = shadow(hrng);
-	//shadowingCC_.put(sh);
-	//pl += wns::Ratio::from_dB(sh);
-	//pl.los = true;
+	pl.los = true;
     }
     else
     {
         pl = getNLOSPathloss(source, target, frequency, distance);
         boost::normal_distribution<double> shadow(0.0, getNLOSShadowingStd(source, target, frequency, distance));
 	sh = shadow(hrng);
-	//double sh = shadow(hrng);
-	//shadowingCC_.put(sh);
-	//pl += wns::Ratio::from_dB(sh);
-	//pl.los = false;
+	pl.los = false;
     }
 
     if ((hrng.c > outdoorProbability) && (distance < 1000))
       {
 	//d_in is uniformly distributed between 0 and 25
 	double d_in = hrng.d * 25.0;
-	pl = pl + wns::Ratio::from_dB(20.0 + 0.5 * d_in);
+	pl += wns::Ratio::from_dB(20.0 + 0.5 * d_in);
 	boost::normal_distribution<double> shadow(0.0, getIndoorShadowingStd(source, target, frequency, distance));
 	sh = shadow(hrng);
       }
-    //shadowingCC_.put(sh);
     pl += wns::Ratio::from_dB(sh);
     return pl;
 }
@@ -122,16 +114,15 @@ ITUUMi::getLOSPathloss(const rise::antenna::Antenna& source,
     if (distance < dBP)
     {
       pl = 22.0 * log10(distance) + 28.0 + 20 * log10(frequency/1000.0);
-      //return wns::Ratio::from_dB(pl);
+      return wns::Ratio::from_dB(pl);
     }
     else
     {
         pl = 40 * log10(distance) + 7.8;
         pl -= 18.0 * log10(bsHeight) + 18.0 * log10(utHeight);
         pl += 2.0 * log10(frequency/1000.0);
-	//return wns::Ratio::from_dB(pl);
+	return wns::Ratio::from_dB(pl);
     }
-    return wns::Ratio::from_dB(pl);
 }
 
 wns::Ratio
