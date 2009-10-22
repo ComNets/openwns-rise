@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include <RISE/scenario/pathloss/ITUSMa.hpp>
+#include <RISE/scenario/pathloss/HashRNG.hpp>
 
 #include <WNS/distribution/Uniform.hpp>
 

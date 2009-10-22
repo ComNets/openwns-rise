@@ -28,7 +28,8 @@
 #ifndef RISE_SCENARIO_PATHLOSS_ITUSMa_HPP
 #define RISE_SCENARIO_PATHLOSS_ITUSMa_HPP
 
-#include <RISE/scenario/pathloss/ITUPathloss.hpp>
+#include <RISE/scenario/pathloss/DistanceDependent.hpp>
+#include <WNS/probe/bus/ContextCollector.hpp>
 
 namespace rise { namespace scenario { namespace pathloss {
 /**

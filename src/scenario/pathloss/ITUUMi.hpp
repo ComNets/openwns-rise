@@ -29,6 +29,7 @@
 #define RISE_SCENARIO_PATHLOSS_ITUUMI_HPP
 
 #include <RISE/scenario/pathloss/DistanceDependent.hpp>
+#include <WNS/probe/bus/ContextCollector.hpp>
 
 namespace rise { namespace scenario { namespace pathloss {
 /**
@@ -80,6 +81,9 @@ public:
 				  const wns::Frequency& frequency,
 				  const wns::Distance& distance) const;
 private:
+    wns::probe::bus::ContextCollector losProbabilityCC_;
+    wns::probe::bus::ContextCollector shadowingCC_;
+
   double outdoorProbability;
 };
 
