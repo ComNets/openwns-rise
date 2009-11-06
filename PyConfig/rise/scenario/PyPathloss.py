@@ -190,8 +190,12 @@ class UMiLoS(MultiSlope):
 
         self.shadowing = SpatialCorrelated(3.0, 10, seed = seed)
 
-    def calculatePathloss(self, sourceX, sourceY, targetX, targetY, frequency, baseHeight):
-        return dB(fromdB(super(UMiLoS, self).calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight)) + fromdB(self.shadowing.getShadowing(sourceX, sourceY, targetX, targetY)))
+    def calculatePathloss(self, sourceX, sourceY, targetX, targetY, frequency, baseHeight, withShadowing=True):
+        pl = super(UMiLoS, self).calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight)
+        if(withShadowing):
+            return dB(fromdB(pl) + fromdB(self.shadowing.getShadowing(sourceX, sourceY, targetX, targetY)))
+        else:
+            return pl
 
 class UMiNLoS(SingleSlope):
     def __init__(self,
@@ -209,27 +213,44 @@ class UMiNLoS(SingleSlope):
 
         self.shadowing = SpatialCorrelated(4.0, 13, seed = seed)
 
-    def calculatePathloss(self, sourceX, sourceY, targetX, targetY, frequency, baseHeight):
-        return dB(fromdB(super(UMiNLoS, self).calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight)) + fromdB(self.shadowing.getShadowing(sourceX, sourceY, targetX, targetY)))
+    def calculatePathloss(self, sourceX, sourceY, targetX, targetY, frequency, baseHeight, withShadowing=True):
+        pl = super(UMiNLoS, self).calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight)
+        if(withShadowing):
+            return dB(fromdB(pl) + fromdB(self.shadowing.getShadowing(sourceX, sourceY, targetX, targetY)))
+        else:
+            return pl
+
+class randomNumberGenerator:
+
+    def __init__(self, minX, minY, maxDistance):
+        self.minX = minX
+        self.minY = minY
+        self.maxDistance = maxDistance
+        self.lastHash = 0
+        self.r = random.Random()
+
+    def random(self, sourceX, sourceY, targetX, targetY):
+        # Hash must be symmetric
+        hash = ((sourceX+targetX-2*self.minX) + (sourceY+targetY-2*self.minY)*self.maxDistance)+1
+        if(hash == self.lastHash):
+            return self.r.random()
+        else:
+            self.lastHash = hash
+            self.r.seed(hash)
+            return self.r.random()
 
 class NLoSDecider:
     def __init__(self,
                  P_LoS,
                  minX, maxX, minY, maxY,
-                 distanceClass = None):
+                 distanceClass = None,
+                 rng = None):
         self.P_LoS = P_LoS
 
         if(distanceClass is None):
             self.distance = EuclideanDistance()
         else:
             self.distance = distanceClass
-
-
-        self.minX = minX
-        self.maxX = maxX
-        self.minY = minY
-        self.maxY = maxY
-        self.maxDistance = math.sqrt((maxX-minX)**2 + (maxY-minY)**2)
 
         d = 1.0
         self.min = 1.0
@@ -240,19 +261,11 @@ class NLoSDecider:
             d += 1.0
         self.max = d
 
-        self.storage = {}
-
         # own instance of pseudo-random number generator to decide LoS/NLoS
-        self.r = random.Random()
-
-    def getKey(self, sourceX, sourceY, targetX, targetY):
-        return((sourceX-self.minX) +
-               self.maxDistance * (sourceY-self.minY) +
-               self.maxDistance**2 * (targetX - self.minX) +
-               self.maxDistance**3 * (targetY - self.minY))
-
-    def getSymmetricKey(self, sourceX, sourceY, targetX, targetY):
-        return((sourceX+targetX-2*self.minX) + (sourceY+targetY-2*self.minY)*self.maxDistance)
+        if(rng is None):
+            self.r = randomNumberGenerator(minX, minY, math.sqrt((maxX-minX)**2 + (maxY-minY)**2))
+        else:
+            self.r = rng
 
     def isLoS(self, sourceX, sourceY, targetX, targetY):
         d = self.distance.calc(sourceX, sourceY, targetX, targetY)
@@ -261,29 +274,9 @@ class NLoSDecider:
         if(d > self.max):
             return False
 
-        # set the seed based on the location
-        # Key must be symmetric (source -> target LoS <=> target -> source LoS)
         p_los = self.P_LoS.calc(d)
-        self.r.seed(self.getSymmetricKey(sourceX, sourceY, targetX, targetY)+1)
-        return(p_los >= self.r.random())
+        return(p_los >= self.r.random(sourceX, sourceY, targetX, targetY))
 
-        k1 = self.getKey(sourceX, sourceY, targetX, targetY)
-
-        if(k1 in self.storage):
-            #assert(False)
-            return self.storage[k1]
-
-        k2 = self.getKey(targetX, targetY, sourceX, sourceY)
-        if(k2 in self.storage):
-            #assert(False)
-            return self.storage[k2]
-
-        # not decided yet
-        p_los = self.P_LoS.calc(d)
-        v = (p_los >= random.random())
-        self.storage[k1] = v
-        self.storage[k2] = v
-        return v
 
 class UMiP_LoS:
     def calc(self, d):
@@ -324,6 +317,45 @@ class UMiOutdoor(PyPathlossABC):
 
     def calculateDistance(self, sourceX, sourceY, targetX, targetY):
         return self.distance.calc(sourceX, sourceY, targetX, targetY)
+
+class UMi(UMiOutdoor):
+    def __init__(self,
+                 f_c,
+                 seed,
+                 minX, maxX, minY, maxY,
+                 distanceClass = None):
+        super(UMi, self).__init__(f_c, seed, minX, maxX, minY, maxY, distanceClass)
+
+        self.r = randomNumberGenerator(minX, minY, math.sqrt((maxX-minX)**2 + (maxY-minY)**2))
+        self.decider = NLoSDecider(UMiP_LoS(),
+                                   minX, maxX, minY, maxY,
+                                   distanceClass,
+                                   self.r)
+        self.shadowing = SpatialCorrelated(7.0, 13, seed = seed)
+
+    def calculatePathloss(self, sourceX, sourceY, targetX, targetY, frequency, baseHeight):
+        isLos = self.decider.isLoS(sourceX, sourceY, targetX, targetY)
+        isOutdoor = (self.r.random(sourceX, sourceY, targetX, targetY) > 0.5)
+
+        if(isOutdoor):
+            if(isLos):
+                return(self.LoS.calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight))
+            else:
+                return(self.NLoS.calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight))
+        else:
+            if(isLos):
+                pl = self.LoS.calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight, withShadowing=False)
+            else:
+                pl = self.NLoS.calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight, withShadowing=False)
+
+            # add indoor part
+            pl = fromdB(pl) + self.r.random(sourceX, sourceY, targetX, targetY)*25*0.5 + 20
+
+            # add indoor shadowing (sigma = 7)
+            pl += fromdB(self.shadowing.getShadowing(sourceX, sourceY, targetX, targetY))
+
+            return(dB(pl))
+
 
 
 
