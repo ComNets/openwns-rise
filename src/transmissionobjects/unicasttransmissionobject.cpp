@@ -31,23 +31,22 @@ using namespace std;
 using namespace rise;
 
 UnicastTransmissionObject::UnicastTransmissionObject(Transmitter* aTransmitter,
-													 receiver::ReceiverInterface* aReceiver,
-													 uint32_t aLinkMode,
-													 wns::osi::PDUPtr aPayload,
-													 wns::Power power)
-	: TransmissionObject(aTransmitter, aPayload, power, aLinkMode),
-	  pd_receiver(aReceiver)
+                                                     receiver::ReceiverInterface* aReceiver,
+                                                     uint32_t aLinkMode,
+                                                     wns::osi::PDUPtr aPayload,
+                                                     wns::Power power)
+    : TransmissionObject(aTransmitter, aPayload, power, aLinkMode),
+      pd_receiver(aReceiver)
 {}
 
 UnicastTransmissionObject::UnicastTransmissionObject(Transmitter* aTransmitter,
-													 receiver::ReceiverInterface* aReceiver,
-													 uint32_t aLinkMode,
-													 wns::osi::PDUPtr aPayload,
-													 wns::Power power,
-													 //const wns::service::phy::phymode::PhyModeInterface& _phyMode)
-													 const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)
-	: TransmissionObject(aTransmitter, aPayload, power, _phyModePtr, aLinkMode),
-	  pd_receiver(aReceiver)
+                                                     receiver::ReceiverInterface* aReceiver,
+                                                     uint32_t aLinkMode,
+                                                     wns::osi::PDUPtr aPayload,
+                                                     wns::Power power,
+                                                     const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)
+    : TransmissionObject(aTransmitter, aPayload, power, _phyModePtr, aLinkMode),
+      pd_receiver(aReceiver)
 {}
 
 UnicastTransmissionObject::~UnicastTransmissionObject()

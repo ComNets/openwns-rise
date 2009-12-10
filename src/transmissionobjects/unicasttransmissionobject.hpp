@@ -31,51 +31,50 @@
 #include <RISE/transmissionobjects/transmissionobject.hpp>
 
 namespace rise {
-	//! Gives the implicit information needed for cir calculation.
-	/** This class gives the information needed in cir calculation, when
-	 *  unicasting. */
-	/** @ingroup TRANSMISSIONOBJECT */
-	class UnicastTransmissionObject
-		: public TransmissionObject
-	{
-	public:
-		//! Default constructor, used to create a TransmissionObject
-		UnicastTransmissionObject(Transmitter* aTransmitter,
-								  receiver::ReceiverInterface* aReceiver,
-								  uint32_t aLinkMode,
-								  wns::osi::PDUPtr aPayload,
-								  wns::Power power);
+    //! Gives the implicit information needed for cir calculation.
+    /** This class gives the information needed in cir calculation, when
+     *  unicasting. */
+    /** @ingroup TRANSMISSIONOBJECT */
+    class UnicastTransmissionObject
+        : public TransmissionObject
+    {
+    public:
+        //! Default constructor, used to create a TransmissionObject
+        UnicastTransmissionObject(Transmitter* aTransmitter,
+                                  receiver::ReceiverInterface* aReceiver,
+                                  uint32_t aLinkMode,
+                                  wns::osi::PDUPtr aPayload,
+                                  wns::Power power);
 
-		//! Default constructor, used to create a TransmissionObject
-		UnicastTransmissionObject(Transmitter* aTransmitter,
-								  receiver::ReceiverInterface* aReceiver,
-								  uint32_t aLinkMode,
-								  wns::osi::PDUPtr aPayload,
-								  wns::Power power,
-								  //const wns::service::phy::phymode::PhyModeInterface& _phyMode
-								  const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr);
+        //! Default constructor, used to create a TransmissionObject
+        UnicastTransmissionObject(Transmitter* aTransmitter,
+                                  receiver::ReceiverInterface* aReceiver,
+                                  uint32_t aLinkMode,
+                                  wns::osi::PDUPtr aPayload,
+                                  wns::Power power,
+                                  const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr);
 
-		/** If the receiver is the intended receiver of the unicast, it
+        /** If the receiver is the intended receiver of the unicast, it
 		 * should return true, else false. */
-		virtual bool
-		isForMe(const receiver::ReceiverInterface* aReceiver) const
-		{
-			return (pd_receiver == aReceiver);
-		};
+        virtual bool
+        isForMe(const receiver::ReceiverInterface* aReceiver) const
+            {
+                return (pd_receiver == aReceiver);
+            };
 
-		virtual receiver::ReceiverInterface*
-		getReceiver()
-		{
-			return pd_receiver;
-		}
+        virtual receiver::ReceiverInterface*
+        getReceiver()
+            {
+                return pd_receiver;
+            }
 
-		//! Default destructor
-		virtual ~UnicastTransmissionObject();
+        //! Default destructor
+        virtual ~UnicastTransmissionObject();
 
-	protected:
-		//! The receiver intended to receive this transmission object.
-		receiver::ReceiverInterface* pd_receiver;
-	};
+    protected:
+        //! The receiver intended to receive this transmission object.
+        receiver::ReceiverInterface* pd_receiver;
+    };
 }
 
 #endif // _UNICASTTRANSMISSIONOBJECT_HPP

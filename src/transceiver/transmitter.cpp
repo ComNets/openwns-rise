@@ -73,8 +73,9 @@ void Transmitter::configureLogger()
 
 void Transmitter::startTransmitting(TransmissionObjectPtr transmissionObject, int32_t subCarrier)
 {
- 	assert(prc.at(subCarrier));
+    assure(prc.at(subCarrier), "SubCarrier with id " << subCarrier << " does not exist");
 	prc[subCarrier]->startTransmission(transmissionObject);
+
  	MESSAGE_BEGIN(NORMAL, log, m, "Starting transmission");
  	m << " on subBand=" << subCarrier
 	  << ", f=" << transmissionObject->getPhysicalResource()->getFrequency()
@@ -95,7 +96,9 @@ void Transmitter::stopTransmitting(TransmissionObjectPtr transmissionObject)
 		++itr;
 		++subCarrier;
 	}
-	assert(itr!=itrEND); // assert that we have found the matching physicalResource
+    // assert that we have found the matching physicalResource
+    assure(itr!=itrEND, "Cannot find physicalResource with given transmissionObject");
+
  	MESSAGE_BEGIN(NORMAL, log, m, "Stopping transmission. PhysicalResource: ");
 	m << "f=" << transmissionObject->getPhysicalResource()->getFrequency()
 	  << ", b=" << transmissionObject->getPhysicalResource()->getBandwidth()

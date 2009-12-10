@@ -36,8 +36,8 @@ using namespace std;
 using namespace rise;
 
 TransmissionInterface::TransmissionInterface() :
-	onAir(false),
-	pr(NULL)
+    onAir(false),
+    pr(NULL)
 {
 }
 
@@ -46,88 +46,60 @@ TransmissionInterface::~TransmissionInterface()
 }
 
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,
-									   const wns::Power& _txPower,
-									   uint32_t _linkMode) :
-	transmitter(_transmitter),
-	payload(NULL),
-	linkMode(_linkMode)
+                                       const wns::Power& _txPower,
+                                       uint32_t _linkMode) :
+    transmitter(_transmitter),
+    payload(NULL),
+    linkMode(_linkMode)
 {
-	//assure(0, "using old TransmissionObject constructor");
-	this->setTxPower(_txPower);
-	//this->setPhyModePtr(NULL); // implicitely UNDEF
+    this->setTxPower(_txPower);
 }
 
 
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,
-									   wns::osi::PDUPtr _payload,
-									   const wns::Power& _txPower,
-									   uint32_t _linkMode) :
-	transmitter(_transmitter),
-	payload(_payload),
-	linkMode(_linkMode)
+                                       wns::osi::PDUPtr _payload,
+                                       const wns::Power& _txPower,
+                                       uint32_t _linkMode) :
+    transmitter(_transmitter),
+    payload(_payload),
+    linkMode(_linkMode)
 {
-	//assure(0, "using old TransmissionObject constructor");
-	this->setTxPower(_txPower);
-	//this->setPhyModePtr(NULL); // implicitely UNDEF
+    this->setTxPower(_txPower);
 }
 
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,
-									   const wns::Power& _txPower,
-									   //const wns::service::phy::phymode::PhyModeInterface& _phyMode,
-									   const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-									   uint32_t _linkMode) :
-	transmitter(_transmitter),
-	payload(NULL),
-	linkMode(_linkMode)
+                                       const wns::Power& _txPower,
+                                       const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
+                                       uint32_t _linkMode) :
+    transmitter(_transmitter),
+    payload(NULL),
+    linkMode(_linkMode)
 {
-	this->setTxPower(_txPower);
-	//assureNotNull(&_phyMode);
-	//this->setPhyMode(_phyMode);
-	assure(_phyModePtr,"phyModePtr==NULL");
-	this->setPhyModePtr(_phyModePtr);
+    this->setTxPower(_txPower);
+    assure(_phyModePtr,"phyModePtr==NULL");
+    this->setPhyModePtr(_phyModePtr);
 }
 
 
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,
-									   wns::osi::PDUPtr _payload,
-									   const wns::Power& _txPower,
-									   //const wns::service::phy::phymode::PhyModeInterface& _phyMode,
-									   const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-									   uint32_t _linkMode) :
-	transmitter(_transmitter),
-	payload(_payload),
-	linkMode(_linkMode)
+                                       wns::osi::PDUPtr _payload,
+                                       const wns::Power& _txPower,
+                                       const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
+                                       uint32_t _linkMode) :
+    transmitter(_transmitter),
+    payload(_payload),
+    linkMode(_linkMode)
 {
-	this->setTxPower(_txPower);
-	//assureNotNull(&_phyMode);
-	//this->setPhyMode(_phyMode);
-	assure(_phyModePtr,"phyModePtr==NULL");
-	this->setPhyModePtr(_phyModePtr);
+    this->setTxPower(_txPower);
+    assure(_phyModePtr,"phyModePtr==NULL");
+    this->setPhyModePtr(_phyModePtr);
 }
 
 TransmissionObject::~TransmissionObject()
 {
 }
 
-// wns::Ratio NonBeamforming::getTransmittersAntennaGain(const wns::Position& receiverPosition) const
-// {
-// 	return getTransmitter()->getAntenna()->getGain(receiverPosition, 0, true);
-// }
-
 wns::Ratio TransmissionObject::getTransmittersAntennaGain(const wns::Position& receiverPosition) const
 {
-	return getTransmitter()->getAntenna()->getGain(receiverPosition, rise::antenna::PatternPtr());
+    return getTransmitter()->getAntenna()->getGain(receiverPosition, rise::antenna::PatternPtr());
 }
-
-// wns::Ratio Beamforming::getTransmittersAntennaGain(const wns::Position& receiverPosition) const
-// {
-// 	return getTransmitter()->getAntenna()->getGain(receiverPosition,
-// 												   pattern,
-// 												   true);
-// }
-
-// AntennaBF* Beamforming::getAntenna() const
-// {
-// 	return antennaBF;
-// }
-

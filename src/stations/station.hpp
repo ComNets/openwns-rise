@@ -101,6 +101,9 @@ namespace rise {
 		virtual double
 		getDistance(const PositionableInterface& p);
 
+        virtual double
+        getAngle(const PositionableInterface& p);
+
 		/**
 		 * @brief Initialize object
 		 *

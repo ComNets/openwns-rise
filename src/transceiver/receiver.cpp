@@ -123,7 +123,8 @@ void ReceiverBase::startReceiving()
 	//std::cout << "rise::ReceiverBase::startReceiving" << std::endl;
 	assure(!active, "Receiver already active!");
 	int32_t nSB = prc.size();
-	for(int32_t i=0; i < nSB; ++i) {
+	for(int32_t i=0; i < nSB; ++i) 
+    {
 		assert(prc.at(i));
 		prc.at(i)->attach(this);
 	}
@@ -137,7 +138,8 @@ void ReceiverBase::stopReceiving()
 	//std::cout << "rise::ReceiverBase::stopReceiving" << std::endl;
 	assure(active, "Receiver is not active!");
 	int32_t nSC = prc.size();
-	for(int32_t i = 0; i < nSC; ++i) {
+	for(int32_t i = 0; i < nSC; ++i)
+    {
 		assert(prc.at(i));
 		prc.at(i)->detach(this);
 	}

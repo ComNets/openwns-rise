@@ -40,169 +40,129 @@
 
 namespace rise
 {
-	namespace receiver {
-		class ReceiverInterface;
-	}
+    namespace receiver {
+        class ReceiverInterface;
+    }
 
-	class Transmitter;
+    class Transmitter;
 
-	class TransmitterAspect
-	{
-	public:
-		virtual ~TransmitterAspect()
-		{}
+    class TransmitterAspect
+    {
+    public:
+        virtual ~TransmitterAspect()
+            {}
 
-		/**
+        /**
 		 * @brief Calculates the Gain of the antenna of the transmitter of this
 		 * transmission
 		 */
-		virtual wns::Ratio getTransmittersAntennaGain(const wns::Position& receiverPosition) const = 0;
+        virtual wns::Ratio getTransmittersAntennaGain(const wns::Position& receiverPosition) const = 0;
 
-		virtual Transmitter* getTransmitter() const = 0;
+        virtual Transmitter* getTransmitter() const = 0;
 
-		const wns::Power& getTxPower() const
-		{
-			return this->txPower;
-		}
+        const wns::Power& getTxPower() const
+            {
+                return this->txPower;
+            }
 
-		void setTxPower(wns::Power power)
-		{
-			this->txPower=power;
-		}
+        void setTxPower(wns::Power power)
+            {
+                this->txPower=power;
+            }
 
         /**
 		 * @brief give PhyMode used on this object (reference)
 		 */
-		const wns::service::phy::phymode::PhyModeInterface& getPhyMode() const
-		{
-			//return this->phyMode;
-			return *(this->phyModePtr); // returns reference only
-		}
+        const wns::service::phy::phymode::PhyModeInterface& getPhyMode() const
+            {
+                // returns reference only
+                return *(this->phyModePtr);
+            }
 
         /**
 		 * @brief give PhyMode used on this object (Pointer)
 		 */
-		//const wns::service::phy::phymode::PhyModeInterface* getPhyModePtr() const
-		const wns::service::phy::phymode::PhyModeInterfacePtr getPhyModePtr() const
-		{
-			//return &(this->phyMode);
-			return this->phyModePtr;
-		}
-/*
-		void setPhyMode(const wns::service::phy::phymode::PhyModeInterface& _phyMode)
-		{
-			assureNotNull(&_phyMode);
-			//this->phyMode=_phyMode; // copy
-			this->phyModePtr=&_phyMode; // ref
-		}
-*/
-		//void setPhyModePtr(const wns::service::phy::phymode::PhyModeInterface* _phyModePtr)
-		void setPhyModePtr(const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)
-		{
-			// using the old constructor, a NULL value is possible
-			//assureNotNull(_phyModePtr);
-			//this->phyMode=*_phyModePtr; // copy
-			this->phyModePtr=_phyModePtr; // SmartPtr
-		}
+        const wns::service::phy::phymode::PhyModeInterfacePtr getPhyModePtr() const
+            {
+                return this->phyModePtr;
+            }
 
-	private:
-		/**
-		 * @brief The transmission power which was used to send this transmission
-		 */
-		wns::Power txPower;
-		/**
-		 * @brief The PhyMode (Modulation&Coding) used for this transmission
-		 */
-		wns::service::phy::phymode::PhyModeInterfacePtr phyModePtr; // SmartPtr. better?
-		//const wns::service::phy::phymode::PhyModeInterface* phyModePtr;
-	};
+        void setPhyModePtr(const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)
+            {
+                this->phyModePtr = _phyModePtr; // SmartPtr
+            }
+
+    private:
+        /** @brief The transmission power which was used to send this transmission */
+        wns::Power txPower;
+
+        /** @brief The PhyMode (Modulation&Coding) used for this transmission */
+        wns::service::phy::phymode::PhyModeInterfacePtr phyModePtr;
+
+    };
+
+    class CastingAspect
+    {
+    public:
+        /**
+         * @brief The transmission object returns, whether it is for the
+         * receiver, or not.
+         */
+        virtual bool isForMe(const receiver::ReceiverInterface* aReceiver) const = 0;
+        virtual ~CastingAspect() {}
+    };
 
 
-// 	class NonBeamforming :
-// 		virtual public TransmitterAspect
-// 	{
-// 	public:
-// 		virtual wns::Ratio getTransmittersAntennaGain(const wns::Position& receiverPosition) const;
-// 	};
+    namespace medium {
+        class PhysicalResource;
+    }
 
-// 	class Beamforming :
-// 		virtual public TransmitterAspect
-// 	{
-// 		friend class AntennaBF;
-// 	public:
-// 		virtual wns::Ratio getTransmittersAntennaGain(const wns::Position& receiverPosition) const;
-// 		AntennaBF* getAntenna() const;
-// 	protected:
-// 		AntennaBF* antennaBF;
-// 		std::vector<double>* pattern;
-// 	};
-
-	class CastingAspect
-	{
-	public:
-		/**
-		 * @brief The transmission object returns, whether it is for the
-		 * receiver, or not.
-		 */
-		virtual bool isForMe(const receiver::ReceiverInterface* aReceiver) const = 0;
-		virtual ~CastingAspect() {}
-	};
-
-
-	namespace medium {
-		class PhysicalResource;
-	}
-
-	class TransmissionInterface :
-		virtual public wns::RefCountable,
-		virtual public TransmitterAspect,
-		virtual public CastingAspect
-	{
-		/**
+    class TransmissionInterface :
+        virtual public wns::RefCountable,
+        virtual public TransmitterAspect,
+        virtual public CastingAspect
+    {
+        /**
 		 * Physical Resource is friend, because it needs to set the
 		 * PhysicalResource
 		 */
-		friend class medium::PhysicalResource;
-	public:
-		TransmissionInterface();
+        friend class medium::PhysicalResource;
+    public:
+        TransmissionInterface();
 
-		virtual ~TransmissionInterface();
+        virtual ~TransmissionInterface();
 
-		bool getIsStart() const
-		{
-			return this->onAir;
-		}
+        bool getIsStart() const
+            {
+                return this->onAir;
+            }
 
-		void setIsStart(bool iS)
-		{
-			this->onAir = iS;
-		}
+        void setIsStart(bool iS)
+            {
+                this->onAir = iS;
+            }
 
-		medium::PhysicalResource* getPhysicalResource() const
-		{
-			assure(this->pr != NULL, "Hasn't been set (set by PhysicalResource::startTransmission())");
-			return this->pr;
-		}
+        medium::PhysicalResource* getPhysicalResource() const
+            {
+                assure(this->pr != NULL, "Hasn't been set (set by PhysicalResource::startTransmission())");
+                return this->pr;
+            }
 
-	private:
-		/**
-		 * @brief True until the transmission didn't stop
-		 */
-		bool onAir;
+    private:
+        /** @brief True until the transmission didn't stop */
+        bool onAir;
 
-		/**
-		 * @brief The PhysicalResource where the TransmissionObject is transmitted on
-		 */
-		medium::PhysicalResource* pr;
+        /** @brief The PhysicalResource where the TransmissionObject is transmitted on */
+        medium::PhysicalResource* pr;
 
-		void setPhysicalResource(medium::PhysicalResource* _pr)
-		{
-			assure(pr == NULL, "The TransmissionObject may only be transmitted on ONE physical resource");
-			this->pr = _pr;
-		}
-	};
+        void setPhysicalResource(medium::PhysicalResource* _pr)
+            {
+                assure(pr == NULL, "The TransmissionObject may only be transmitted on ONE physical resource");
+                this->pr = _pr;
+            }
+    };
 
-	/**
+    /**
 	 * @brief Gives the implicit information needed for cir calculation.
 	 *
 	 * This class gives the information needed in cir calculation i.e. who is
@@ -213,96 +173,75 @@ namespace rise
 	 *
 	 * @ingroup TRANSMISSIONOBJECT
 	 */
-	class TransmissionObject :
-		virtual public TransmissionInterface,
-// 		virtual public NonBeamforming,
-		virtual public wns::container::SingleFastListEnabler<wns::SmartPtr<TransmissionObject> >
+    class TransmissionObject :
+        virtual public TransmissionInterface,
+        virtual public wns::container::SingleFastListEnabler<wns::SmartPtr<TransmissionObject> >
+    {
+    public:
+        //! Constructor without PDU
+        TransmissionObject(Transmitter* _transmitter,
+                           const wns::Power& _txPower,
+                           uint32_t _linkMode = 0);
 
-	{
-	public:
-		// obsolete soon, if we always have a PhyMode:
-		/** @todo obsolete interface if PhyMode is always specified */
-		//! Constructor without PDU
-		TransmissionObject(Transmitter* _transmitter,
-						   const wns::Power& _txPower,
-						   uint32_t _linkMode = 0);
+        //! Default constructor, used to create a TransmissionObject
+        TransmissionObject(Transmitter* _transmitter,
+                           wns::osi::PDUPtr _payload,
+                           const wns::Power& _txPower,
+                           uint32_t _linkMode = 0);
 
-		// obsolete soon, if we always have a PhyMode:
-		/** @todo obsolete interface if PhyMode is always specified */
-		//! Default constructor, used to create a TransmissionObject
-		TransmissionObject(Transmitter* _transmitter,
-						   wns::osi::PDUPtr _payload,
-						   const wns::Power& _txPower,
-						   uint32_t _linkMode = 0);
+        //! Constructor without PDU
+        TransmissionObject(Transmitter* _transmitter,
+                           const wns::Power& _txPower,
+                           const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
+                           uint32_t _linkMode = 0);
 
-		//! Constructor without PDU
-		TransmissionObject(Transmitter* _transmitter,
-						   const wns::Power& _txPower,
-						   //const wns::service::phy::phymode::PhyModeInterface& _phyMode,
-						   const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-						   uint32_t _linkMode = 0);
+        //! Default constructor, used to create a TransmissionObject
+        TransmissionObject(Transmitter* _transmitter,
+                           wns::osi::PDUPtr _payload,
+                           const wns::Power& _txPower,
+                           const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
+                           uint32_t _linkMode = 0);
 
-		//! Default constructor, used to create a TransmissionObject
-		TransmissionObject(Transmitter* _transmitter,
-						   wns::osi::PDUPtr _payload,
-						   const wns::Power& _txPower,
-						   //const wns::service::phy::phymode::PhyModeInterface& _phyMode,
-						   const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-						   uint32_t _linkMode = 0);
+        //! Default destructor
+        virtual ~TransmissionObject();
 
-		//! Default destructor
-		virtual ~TransmissionObject();
+        //! Returns the link mode. Can be downlink, uplink or direct link
+        uint32_t getLinkMode() const
+            {
+                return this->linkMode;
+            }
 
-		//! Returns the link mode. Can be downlink, uplink or direct link
-		uint32_t getLinkMode() const
-		{
-			return this->linkMode;
-		}
+        //! return payload
+        wns::osi::PDUPtr getPayload() const
+            {
+                return this->payload;
+            }
 
-		//! return payload
-		wns::osi::PDUPtr getPayload() const
-		{
-			return this->payload;
-		}
+        virtual Transmitter* getTransmitter() const
+            {
+                return this->transmitter;
+            }
 
-		virtual Transmitter* getTransmitter() const
-		{
-			return this->transmitter;
-		}
+        enum linkmode
+        {
+            downlink   = 0,
+            uplink,
+            directlink
+        };
+        virtual wns::Ratio getTransmittersAntennaGain(const wns::Position& receiverPosition) const;
 
-		enum linkmode
-		{
-			downlink   = 0,
-			uplink,
-			directlink
-		};
- 		virtual wns::Ratio getTransmittersAntennaGain(const wns::Position& receiverPosition) const;
-/*
-		virtual std::ostream& print(std::ostream& s) const
-		{
-			return s << "TransmissionObject=(transmitter="<<this->transmitter<<", TxPower="<<getTxPower()<<", linkMode="<<linkMode<<", payload="<<payload<<")";
-		}
+    private:
+        Transmitter* transmitter;
 
-		 @brief define stream operator for class PhyMode
-		friend std::ostream&
-		operator<< (std::ostream& s, const TransmissionObject& t) {
-			//return s << "TransmissionObject=(transmitter="<<t.transmitter<<",TxPower="<<t.getTxPower()<<", linkMode="<<t.linkMode<<",payload="<<t.payload<<")";
-			return s << t.print(s);
-		}
-*/
+        wns::osi::PDUPtr payload;
 
-	private:
-		Transmitter* transmitter;
+        /**
+         * Variable describing in which linkmode this TransmissionObject is
+         * sent.
+         */
+        uint32_t linkMode;
 
-		wns::osi::PDUPtr payload;
-
-		/**
-		 * Variable describing in which linkmode this TransmissionObject is
-		 * sent.
-		 */
-		uint32_t linkMode;
-
-	};
+    };
 
 
 

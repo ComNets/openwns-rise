@@ -34,38 +34,38 @@ using namespace std;
 using namespace rise;
 
 MulticastTransmissionObject::MulticastTransmissionObject(Transmitter* aTransmitter,
-														 ReceiverContainer aMultiGroup,
-														 uint32_t,
-														 wns::osi::PDUPtr aPayload,
-														 wns::Power power)
-	: TransmissionObject(aTransmitter, aPayload, power),
-	  multiGroup(aMultiGroup)
+                                                         ReceiverContainer aMultiGroup,
+                                                         uint32_t,
+                                                         wns::osi::PDUPtr aPayload,
+                                                         wns::Power power)
+    : TransmissionObject(aTransmitter, aPayload, power),
+      multiGroup(aMultiGroup)
 {}
 
 MulticastTransmissionObject::MulticastTransmissionObject(Transmitter* aTransmitter,
-														 ReceiverContainer aMultiGroup,
-														 uint32_t aLinkMode,
-														 wns::osi::PDUPtr aPayload,
-														 wns::Power power,
-														 const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)
-	: TransmissionObject(aTransmitter, aPayload, power, _phyModePtr, aLinkMode),
-	  multiGroup(aMultiGroup)
+                                                         ReceiverContainer aMultiGroup,
+                                                         uint32_t aLinkMode,
+                                                         wns::osi::PDUPtr aPayload,
+                                                         wns::Power power,
+                                                         const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)
+    : TransmissionObject(aTransmitter, aPayload, power, _phyModePtr, aLinkMode),
+      multiGroup(aMultiGroup)
 {}
 
 MulticastTransmissionObject::~MulticastTransmissionObject() {}
 
 bool MulticastTransmissionObject::isForMe(const receiver::ReceiverInterface* r) const
 {
-	for (uint32_t i=0; i <= multiGroup.size(); ++i)
-	{
-		if (multiGroup.at(i) == r) return true;
-	}
-	return false;
+    for (uint32_t i=0; i <= multiGroup.size(); ++i)
+    {
+        if (multiGroup.at(i) == r) return true;
+    }
+    return false;
 }
 
 void MulticastTransmissionObject::addReceiver(receiver::ReceiverInterface* r)
 {
-	multiGroup.push_back(r);
+    multiGroup.push_back(r);
 }
 
 

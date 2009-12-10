@@ -120,6 +120,14 @@ double Station::getDistance(const PositionableInterface& p)
 	return mobility->getDistance(p);
 }
 
+double Station::getAngle(const PositionableInterface& p)
+{
+    // forward from mobility
+	assure(mobility, "Mobility Not set.");
+	return mobility->getAngle(p);
+}
+
+
 void Station::positionWillChange()
 {
 	// forward from mobility

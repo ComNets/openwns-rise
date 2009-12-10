@@ -32,37 +32,39 @@
 
 namespace rise
 {
-	//! Gives the implicit information needed for cir calculation.
-	/** This class gives the information needed in cir calculation,
-	    when broadcasting. */
-	/** @ingroup TRANSMISSIONOBJECT */
-	class BroadcastTransmissionObject : public TransmissionObject {
-	public:
-		//! Default constructor, used to create a TransmissionPbject
-		// obsolete soon, if we always have a PhyMode:
-		/** @todo obsolete interface if PhyMode is always specified */
-		BroadcastTransmissionObject(Transmitter* aTransmitter,
-									wns::osi::PDUPtr aPayload,
-									wns::Power power,
-									uint32_t aLinkMode = 0);
-		//! Default constructor, used to create a TransmissionPbject
-		BroadcastTransmissionObject(Transmitter* aTransmitter,
-									wns::osi::PDUPtr aPayload,
-									wns::Power power,
-									//const wns::service::phy::phymode::PhyModeInterface& _phyMode,
-									const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-									uint32_t aLinkMode = 0);
-		/** isForMe of BroadcastTransmissionObject always returns true. You have to
+    //! Gives the implicit information needed for cir calculation.
+    /** This class gives the information needed in cir calculation,
+        when broadcasting. */
+    /** @ingroup TRANSMISSIONOBJECT */
+    class BroadcastTransmissionObject :
+        public TransmissionObject
+    {
+    public:
+        //! Default constructor, used to create a TransmissionPbject
+        BroadcastTransmissionObject(Transmitter* aTransmitter,
+                                    wns::osi::PDUPtr aPayload,
+                                    wns::Power power,
+                                    uint32_t aLinkMode = 0);
+
+        //! Default constructor, used to create a TransmissionPbject
+        BroadcastTransmissionObject(Transmitter* aTransmitter,
+                                    wns::osi::PDUPtr aPayload,
+                                    wns::Power power,
+                                    const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
+                                    uint32_t aLinkMode = 0);
+
+        /** isForMe of BroadcastTransmissionObject always returns true. You have to
 		    check for yourself, if you are associated to the sender. */
-		virtual bool isForMe(const receiver::ReceiverInterface*) const {
-			return true;
-		};
+        virtual bool isForMe(const receiver::ReceiverInterface*) const
+            {
+                return true;
+            };
 
-		//! Default destructor
-		virtual ~BroadcastTransmissionObject();
+        //! Default destructor
+        virtual ~BroadcastTransmissionObject();
 
-	protected:
-	};
+    protected:
+    };
 }
 
 #endif // _BROADCASTTRANSMISSIONOBJECT_HPP

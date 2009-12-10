@@ -32,43 +32,44 @@
 #include <vector>
 
 namespace rise {
-	//! Gives the implicit information needed for cir calculation.
-	/** This class gives the information needed in cir calculation, when
-	    multicasting. */
-	/** @ingroup TRANSMISSIONOBJECT */
-	class MulticastTransmissionObject :
-		public TransmissionObject
-	{
-		typedef std::vector<receiver::ReceiverInterface*> ReceiverContainer;
-	public:
-		//! Default constructor, used to create a TransmissionObject
-		MulticastTransmissionObject(Transmitter* aTransmitter,
-									ReceiverContainer multiGroup,
-									uint32_t aLinkMode,
-									wns::osi::PDUPtr aPayload,
-									wns::Power power);
+    //! Gives the implicit information needed for cir calculation.
+    /** This class gives the information needed in cir calculation, when
+        multicasting. */
+    /** @ingroup TRANSMISSIONOBJECT */
+    class MulticastTransmissionObject :
+        public TransmissionObject
+    {
+        typedef std::vector<receiver::ReceiverInterface*> ReceiverContainer;
 
-		MulticastTransmissionObject(Transmitter* aTransmitter,
-									ReceiverContainer multiGroup,
-									uint32_t aLinkMode,
-									wns::osi::PDUPtr aPayload,
-									wns::Power power,
-									const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr);
+    public:
+        //! Default constructor, used to create a TransmissionObject
+        MulticastTransmissionObject(Transmitter* aTransmitter,
+                                    ReceiverContainer multiGroup,
+                                    uint32_t aLinkMode,
+                                    wns::osi::PDUPtr aPayload,
+                                    wns::Power power);
 
-		//! Default destructor
-		virtual ~MulticastTransmissionObject();
+        MulticastTransmissionObject(Transmitter* aTransmitter,
+                                    ReceiverContainer multiGroup,
+                                    uint32_t aLinkMode,
+                                    wns::osi::PDUPtr aPayload,
+                                    wns::Power power,
+                                    const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr);
 
-		/** If the receiver is in the multicast group, isForMe should
-		    return true, else false.*/
-		virtual bool isForMe(const receiver::ReceiverInterface* r) const;
+        //! Default destructor
+        virtual ~MulticastTransmissionObject();
 
-		//! Add a receiver to the multicast group
-		void addReceiver(receiver::ReceiverInterface* r);
+        /** If the receiver is in the multicast group, isForMe should
+            return true, else false.*/
+        virtual bool isForMe(const receiver::ReceiverInterface* r) const;
 
-	private:
-		//! The group of receivers intended to receive this transmission object
-		ReceiverContainer multiGroup;
-	};
+        //! Add a receiver to the multicast group
+        void addReceiver(receiver::ReceiverInterface* r);
+
+    private:
+        //! The group of receivers intended to receive this transmission object
+        ReceiverContainer multiGroup;
+    };
 }
 
 #endif // _MULTICASTTRANSMISSIONOBJECT_HPP

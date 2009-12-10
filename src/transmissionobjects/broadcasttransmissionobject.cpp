@@ -35,19 +35,18 @@ using namespace std;
 using namespace rise;
 
 BroadcastTransmissionObject::BroadcastTransmissionObject(Transmitter* aTransmitter,
-														 wns::osi::PDUPtr aPayload,
-														 wns::Power power,
-														 uint32_t aLinkMode)
-	: TransmissionObject(aTransmitter, aPayload, power, aLinkMode)
+                                                         wns::osi::PDUPtr aPayload,
+                                                         wns::Power power,
+                                                         uint32_t aLinkMode)
+    : TransmissionObject(aTransmitter, aPayload, power, aLinkMode)
 {}
 
 BroadcastTransmissionObject::BroadcastTransmissionObject(Transmitter* aTransmitter,
-														 wns::osi::PDUPtr aPayload,
-														 wns::Power power,
-														 //const wns::service::phy::phymode::PhyModeInterface& _phyMode,
-														 const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-														 uint32_t aLinkMode)
-	: TransmissionObject(aTransmitter, aPayload, power, _phyModePtr, aLinkMode)
+                                                         wns::osi::PDUPtr aPayload,
+                                                         wns::Power power,
+                                                         const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
+                                                         uint32_t aLinkMode)
+    : TransmissionObject(aTransmitter, aPayload, power, _phyModePtr, aLinkMode)
 {}
 
 BroadcastTransmissionObject::~BroadcastTransmissionObject() {}
