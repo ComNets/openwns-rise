@@ -37,6 +37,7 @@ namespace rise {
     /** @ingroup TRANSMISSIONOBJECT */
     class UnicastTransmissionObject
         : public TransmissionObject
+    {
     public:
         //! Default constructor, used to create a TransmissionObject
         UnicastTransmissionObject(Transmitter* aTransmitter,
