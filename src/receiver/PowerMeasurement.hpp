@@ -37,57 +37,94 @@
 #include <WNS/Types.hpp>
 #include <WNS/pyconfig/View.hpp>
 
+#include <vector>
+
 namespace rise { namespace receiver {
 
-	/** @brief Class encapsulating all measured values for one transmission */
+    /** @brief Class encapsulating all measured values for one transmission */
     class PowerMeasurement :
-		public wns::service::phy::power::PowerMeasurementInterface,
-		public wns::Cloneable<PowerMeasurement> // allow SmartPtr
+        public wns::service::phy::power::PowerMeasurementInterface,
+        public wns::Cloneable<PowerMeasurement> // allow SmartPtr
     {
     public:
-		PowerMeasurement(); // default constructor
-		PowerMeasurement(wns::Power rxPower, wns::Power interference, wns::Ratio omniAttenuation);
-		PowerMeasurement(rise::TransmissionObjectPtr t, wns::node::Interface* _sourceNode, wns::Power _rxPower, wns::Power _interference, wns::Ratio _omniAttenuation, int _subChannel=0, int _beam=0);
-		virtual ~PowerMeasurement();
-		virtual const wns::Power getRxPower() const;
-		virtual const wns::Power getInterferencePower() const; // interference contains noise here
-		virtual const wns::Power getOmniInterferencePower() const;
-		virtual const wns::Power getNoisePower() const;
-		virtual const wns::Ratio getSINR() const;
-		virtual const double     getMI()  const; // mutual information
-		virtual const double     getMIB() const; // mutual information per bit [0..1]
-		virtual const wns::Power getTxPower() const;
-		virtual const wns::Ratio getPathLoss() const; // total including dynamic fading
-		virtual const wns::Power getRSS() const; // received signal strength (S+I)
-		virtual const wns::service::phy::phymode::PhyModeInterfacePtr getPhyMode() const;
 
-		virtual const int getSubChannel() const; // OFDMA subchannel used
-		virtual const int getBeam() const; // MIMO/beamforming beam
-		virtual const rise::Station* getSourceStation() const; // transmitter station
+        PowerMeasurement(rise::TransmissionObjectPtr t,
+                         wns::node::Interface* _sourceNode,
+                         wns::Power _rxPower,
+                         wns::Power _interference,
+                         wns::Ratio _omniAttenuation,
+                         std::vector<wns::Ratio> _postProcessingSINRFactor);
 
-		virtual wns::node::Interface* getSourceNode() const; // transmitter node (only available for OFDMAPhy)
+        virtual ~PowerMeasurement();
 
-		virtual std::string getString() const;
+        virtual const wns::Power
+        getRxPower() const;
+
+        // interference contains noise here
+        virtual const wns::Power
+        getInterferencePower() const;
+
+        virtual const wns::Power
+        getOmniInterferencePower() const;
+
+        virtual const wns::Ratio
+        getSINR() const;
+
+        virtual const std::vector<wns::Ratio>
+        getPostProcessingSINRFactor() const;
+
+        // mutual information
+        virtual const double
+        getMI()  const;
+
+        // mutual information per bit [0..1]
+        virtual const double
+        getMIB() const;
+
+        virtual const wns::Power
+        getTxPower() const;
+
+        // total including dynamic fading
+        virtual const wns::Ratio
+        getPathLoss() const;
+
+         // received signal strength (S+I)
+        virtual const wns::Power
+        getRSS() const;
+
+        virtual const wns::service::phy::phymode::PhyModeInterfacePtr
+        getPhyMode() const;
+
+         // transmitter station
+        virtual const rise::Station*
+        getSourceStation() const;
+
+         // transmitter node (only available for OFDMAPhy)
+        virtual wns::node::Interface*
+        getSourceNode() const;
+
+        virtual std::string
+        getString() const;
+
     private:
-		wns::Power rxPower; // got from receiveData()
-		wns::Power interference; // got from receiveData() // interference contains noise
-		wns::Ratio omniAttenuation; // got from receiveData()
-		wns::Power noise; // TODO
-		wns::Power txPower; // from TransmissionObjectPtr
-		wns::service::phy::phymode::PhyModeInterfacePtr phyModePtr; // got from TransmissionObjectPtr; is a SmartPtr
 
-		int subChannel; // OFDMA subchannel used
-		int beam;       // MIMO/beamforming beam
-		rise::TransmissionObjectPtr transmissionObjectPtr;
-		rise::Station* transmitterStation; // transmitter station
+        wns::Power rxPower;
+        wns::Power interference;
+        wns::Ratio omniAttenuation;
+        std::vector<wns::Ratio> postProcessingSINRFactor;
 
-		wns::node::Interface* sourceNode; // transmitter node (id)
-   };
-	/** @brief define stream operator for class PowerMeasurement */
-	inline std::ostream&
-	operator<< (std::ostream& s, const rise::receiver::PowerMeasurement& p) {
-		return s << p.getString();
-	}
+        wns::service::phy::phymode::PhyModeInterfacePtr phyModePtr;
+
+        rise::TransmissionObjectPtr transmissionObjectPtr;
+        rise::Station* transmitterStation;
+
+        wns::node::Interface* sourceNode; // transmitter node (id)
+    };
+    /** @brief define stream operator for class PowerMeasurement */
+    inline std::ostream&
+    operator<< (std::ostream& s, const rise::receiver::PowerMeasurement& p) {
+        return s << p.getString();
+    }
 }}
 
 #endif // NOT defined __RISE_POWERMEASUREMENT_HPP

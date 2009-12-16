@@ -47,24 +47,28 @@ TransmissionInterface::~TransmissionInterface()
 
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,
                                        const wns::Power& _txPower,
-                                       uint32_t _linkMode) :
+                                       uint32_t _linkMode,
+                                       int _numberOfSpatialStreams) :
     transmitter(_transmitter),
     payload(NULL),
     linkMode(_linkMode)
 {
     this->setTxPower(_txPower);
+    this->setNumberOfSpatialStreams(_numberOfSpatialStreams);
 }
 
 
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,
                                        wns::osi::PDUPtr _payload,
                                        const wns::Power& _txPower,
-                                       uint32_t _linkMode) :
+                                       uint32_t _linkMode,
+                                       int _numberOfSpatialStreams) :
     transmitter(_transmitter),
     payload(_payload),
     linkMode(_linkMode)
 {
     this->setTxPower(_txPower);
+    this->setNumberOfSpatialStreams(_numberOfSpatialStreams);
 }
 
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,

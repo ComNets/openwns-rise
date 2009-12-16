@@ -37,8 +37,9 @@ using namespace rise;
 BroadcastTransmissionObject::BroadcastTransmissionObject(Transmitter* aTransmitter,
                                                          wns::osi::PDUPtr aPayload,
                                                          wns::Power power,
-                                                         uint32_t aLinkMode)
-    : TransmissionObject(aTransmitter, aPayload, power, aLinkMode)
+                                                         uint32_t aLinkMode,
+                                                         int numberOfSpatialStreams)
+    : TransmissionObject(aTransmitter, aPayload, power, aLinkMode, numberOfSpatialStreams)
 {}
 
 BroadcastTransmissionObject::BroadcastTransmissionObject(Transmitter* aTransmitter,

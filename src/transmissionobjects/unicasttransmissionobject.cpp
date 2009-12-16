@@ -34,8 +34,9 @@ UnicastTransmissionObject::UnicastTransmissionObject(Transmitter* aTransmitter,
                                                      receiver::ReceiverInterface* aReceiver,
                                                      uint32_t aLinkMode,
                                                      wns::osi::PDUPtr aPayload,
-                                                     wns::Power power)
-    : TransmissionObject(aTransmitter, aPayload, power, aLinkMode),
+                                                     wns::Power power,
+                                                     int numberOfSpatialStreams)
+    : TransmissionObject(aTransmitter, aPayload, power, aLinkMode, numberOfSpatialStreams),
       pd_receiver(aReceiver)
 {}
 

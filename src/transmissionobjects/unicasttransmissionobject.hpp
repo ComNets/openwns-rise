@@ -37,14 +37,14 @@ namespace rise {
     /** @ingroup TRANSMISSIONOBJECT */
     class UnicastTransmissionObject
         : public TransmissionObject
-    {
     public:
         //! Default constructor, used to create a TransmissionObject
         UnicastTransmissionObject(Transmitter* aTransmitter,
                                   receiver::ReceiverInterface* aReceiver,
                                   uint32_t aLinkMode,
                                   wns::osi::PDUPtr aPayload,
-                                  wns::Power power);
+                                  wns::Power power,
+                                  int numberOfSpatialStreams);
 
         //! Default constructor, used to create a TransmissionObject
         UnicastTransmissionObject(Transmitter* aTransmitter,
@@ -55,7 +55,7 @@ namespace rise {
                                   const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr);
 
         /** If the receiver is the intended receiver of the unicast, it
-		 * should return true, else false. */
+         * should return true, else false. */
         virtual bool
         isForMe(const receiver::ReceiverInterface* aReceiver) const
             {

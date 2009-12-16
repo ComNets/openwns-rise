@@ -36,15 +36,14 @@ namespace rise
     /** This class gives the information needed in cir calculation,
         when broadcasting. */
     /** @ingroup TRANSMISSIONOBJECT */
-    class BroadcastTransmissionObject :
-        public TransmissionObject
-    {
+    class BroadcastTransmissionObject : public TransmissionObject {
     public:
         //! Default constructor, used to create a TransmissionPbject
         BroadcastTransmissionObject(Transmitter* aTransmitter,
                                     wns::osi::PDUPtr aPayload,
                                     wns::Power power,
-                                    uint32_t aLinkMode = 0);
+                                    uint32_t aLinkMode = 0,
+                                    int numberOfSpatialStreams = 1);
 
         //! Default constructor, used to create a TransmissionPbject
         BroadcastTransmissionObject(Transmitter* aTransmitter,
@@ -54,11 +53,10 @@ namespace rise
                                     uint32_t aLinkMode = 0);
 
         /** isForMe of BroadcastTransmissionObject always returns true. You have to
-		    check for yourself, if you are associated to the sender. */
-        virtual bool isForMe(const receiver::ReceiverInterface*) const
-            {
-                return true;
-            };
+            check for yourself, if you are associated to the sender. */
+        virtual bool isForMe(const receiver::ReceiverInterface*) const {
+            return true;
+        };
 
         //! Default destructor
         virtual ~BroadcastTransmissionObject();

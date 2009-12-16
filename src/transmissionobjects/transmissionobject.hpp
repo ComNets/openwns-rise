@@ -49,23 +49,33 @@ namespace rise
     class TransmitterAspect
     {
     public:
+        TransmitterAspect() :
+            txPower(),
+            numberOfSpatialStreams(1)
+            {}
+
         virtual ~TransmitterAspect()
             {}
+
 
         /**
 		 * @brief Calculates the Gain of the antenna of the transmitter of this
 		 * transmission
 		 */
-        virtual wns::Ratio getTransmittersAntennaGain(const wns::Position& receiverPosition) const = 0;
+        virtual wns::Ratio
+        getTransmittersAntennaGain(const wns::Position& receiverPosition) const = 0;
 
-        virtual Transmitter* getTransmitter() const = 0;
+        virtual Transmitter*
+        getTransmitter() const = 0;
 
-        const wns::Power& getTxPower() const
+        const wns::Power&
+        getTxPower() const
             {
                 return this->txPower;
             }
 
-        void setTxPower(wns::Power power)
+        void
+        setTxPower(wns::Power power)
             {
                 this->txPower=power;
             }
@@ -73,32 +83,55 @@ namespace rise
         /**
 		 * @brief give PhyMode used on this object (reference)
 		 */
-        const wns::service::phy::phymode::PhyModeInterface& getPhyMode() const
+        const wns::service::phy::phymode::PhyModeInterface&
+        getPhyMode() const
             {
-                // returns reference only
-                return *(this->phyModePtr);
+                return *(this->phyModePtr); // returns reference only
             }
 
         /**
 		 * @brief give PhyMode used on this object (Pointer)
 		 */
-        const wns::service::phy::phymode::PhyModeInterfacePtr getPhyModePtr() const
+        const wns::service::phy::phymode::PhyModeInterfacePtr
+        getPhyModePtr() const
             {
                 return this->phyModePtr;
             }
 
-        void setPhyModePtr(const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)
+        void
+        setPhyModePtr(const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)
             {
-                this->phyModePtr = _phyModePtr; // SmartPtr
+                this->phyModePtr=_phyModePtr; // SmartPtr
+            }
+
+        const int
+        getNumberOfSpatialStreams() const
+            {
+                return this->numberOfSpatialStreams;
+            }
+
+        void
+        setNumberOfSpatialStreams(int _numSS)
+            {
+                assure(_numSS > 0,
+                       "Cannot have negative number of spatial streams");
+                this->numberOfSpatialStreams = _numSS;
             }
 
     private:
-        /** @brief The transmission power which was used to send this transmission */
+        /**
+         * @brief The transmission power which was used to send this transmission
+         */
         wns::Power txPower;
-
-        /** @brief The PhyMode (Modulation&Coding) used for this transmission */
+        /**
+         * @brief The PhyMode (Modulation&Coding) used for this transmission
+         */
         wns::service::phy::phymode::PhyModeInterfacePtr phyModePtr;
 
+        /**
+         * @brief The number of spatial streams for MIMO transmissions
+         */
+        int numberOfSpatialStreams;
     };
 
     class CastingAspect
@@ -176,20 +209,24 @@ namespace rise
     class TransmissionObject :
         virtual public TransmissionInterface,
         virtual public wns::container::SingleFastListEnabler<wns::SmartPtr<TransmissionObject> >
+
     {
     public:
         //! Constructor without PDU
         TransmissionObject(Transmitter* _transmitter,
                            const wns::Power& _txPower,
-                           uint32_t _linkMode = 0);
+                           uint32_t _linkMode = 0,
+                           int numberOfSpatialStreams = 1);
 
         //! Default constructor, used to create a TransmissionObject
         TransmissionObject(Transmitter* _transmitter,
                            wns::osi::PDUPtr _payload,
                            const wns::Power& _txPower,
-                           uint32_t _linkMode = 0);
+                           uint32_t _linkMode = 0,
+                           int numberOfSpatialStreams = 1);
 
-        //! Constructor without PDU
+        //! Constructor with spectial case numberOfSpatialStreams = 1 and phyMode
+        //! given
         TransmissionObject(Transmitter* _transmitter,
                            const wns::Power& _txPower,
                            const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
@@ -240,11 +277,7 @@ namespace rise
          * sent.
          */
         uint32_t linkMode;
-
     };
-
-
-
 }
 
 #endif // _TRANSMISSIONOBJECT_HPP

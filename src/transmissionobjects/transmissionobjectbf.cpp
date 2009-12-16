@@ -33,45 +33,31 @@ using namespace rise;
 
 //! Default constructor, used to create a TransmissionObject
 TransmissionObjectBF::TransmissionObjectBF(Transmitter* _transmitter,
-										   receiver::ReceiverInterface* _aReceiver,
-										   antenna::Beamforming* _antennaBF,
-										   wns::osi::PDUPtr _payload,
-										   wns::Power _txPower,
-										   rise::antenna::PatternPtr _pattern,
-										   uint32_t _linkMode)
-	: UnicastTransmissionObject(_transmitter, _aReceiver, _linkMode, _payload, _txPower),
-	  antennaBF(_antennaBF),
-	  pattern(_pattern)
+                                           receiver::ReceiverInterface* _aReceiver,
+                                           antenna::Beamforming* _antennaBF,
+                                           wns::osi::PDUPtr _payload,
+                                           wns::Power _txPower,
+                                           rise::antenna::PatternPtr _pattern,
+                                           uint32_t _linkMode,
+                                           int _numberOfSpatialStreams)
+    : UnicastTransmissionObject(_transmitter, _aReceiver, _linkMode, _payload, _txPower, _numberOfSpatialStreams),
+      antennaBF(_antennaBF),
+      pattern(_pattern)
 {}
 
 //! Default constructor, used to create a TransmissionObject
 TransmissionObjectBF::TransmissionObjectBF(Transmitter* _transmitter,
-										   receiver::ReceiverInterface* _aReceiver,
-										   antenna::Beamforming* _antennaBF,
-										   wns::osi::PDUPtr _payload,
-										   wns::Power _txPower,
-										   //const wns::service::phy::phymode::PhyModeInterface& _phyMode,
-										   const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-										   rise::antenna::PatternPtr _pattern,
-										   uint32_t _linkMode)
-	: UnicastTransmissionObject(_transmitter, _aReceiver, _linkMode, _payload, _txPower, _phyModePtr),
-	  antennaBF(_antennaBF),
-	  pattern(_pattern)
+                                           receiver::ReceiverInterface* _aReceiver,
+                                           antenna::Beamforming* _antennaBF,
+                                           wns::osi::PDUPtr _payload,
+                                           wns::Power _txPower,
+                                           const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
+                                           rise::antenna::PatternPtr _pattern,
+                                           uint32_t _linkMode)
+    : UnicastTransmissionObject(_transmitter, _aReceiver, _linkMode, _payload, _txPower, _phyModePtr),
+      antennaBF(_antennaBF),
+      pattern(_pattern)
 {}
-
-// //! Constructor without PDU
-// BeamformingTransmissionObject::BeamformingTransmissionObject(Transmitter* _transmitter,
-// 										   receiver::ReceiverInterface* _aReceiver,
-// 										   wns::Power _txPower,
-// 										   rise::antenna::PatternId _patternId,
-// 										   uint32_t _linkMode)
-// 	: UnicastTransmissionObject(_transmitter, _aReceiver, _linkMode, _txPower),
-// 	  pattern(_patternId)
-// {
-// 	//antenna must be a beamforming antenna !!!
-// 	assure(dynamic_cast<antenna::Beamforming*>(_transmitter->getAntenna()), "transmitter is not beamforming capable");
-// 	antennaBF = dynamic_cast<antenna::Beamforming*>(_transmitter->getAntenna());
-// }
 
 //! Default destructor
 TransmissionObjectBF::~TransmissionObjectBF()
