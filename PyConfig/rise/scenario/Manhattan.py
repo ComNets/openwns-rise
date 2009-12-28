@@ -100,11 +100,7 @@ class Manhattan(ScenarioBase):
         assert (rows>0 and
                 columns>0),"Number of rows and columns have to be > 0"
 
-        ScenarioBase.__init__(self,
-                              xmin = 0,
-                              xmax = (columns + 1) * streetWidth + columns * blockWidth,
-                              ymin = 0,
-                              ymax = (rows + 1) * streetWidth + rows * blockHeight),
+        ScenarioBase.__init__(self)
 
         self.rows = rows
         self.columns = columns
@@ -360,6 +356,8 @@ class Manhattan(ScenarioBase):
 
     def getShadowing(self, scenario, wallAttenuation, smoothingSteps):
         objs = []
+        sizeX = (self.columns + 1) * self.streetWidth + self.columns * self.blockWidth
+        sizeY = (self.rows + 1) * self.streetWidth + self.rows * self.blockHeight
 
         for yy in xrange(self.rows):
             uly = self.streetWidth * (1+yy) + yy * self.blockHeight
@@ -385,7 +383,8 @@ class Manhattan(ScenarioBase):
         return rise.scenario.Shadowing.Objects(obstructionList = objs,
                                                xGridBlocks = 1,
                                                yGridBlocks = 1,
-                                               scenario = scenario)
+                                               sizeX = sizeX,
+                                               sizeY = sizeY)
 
     def getRelayEnhancedCells(self):
         return self.deploymentStrategy.getRelayEnhancedCells()
