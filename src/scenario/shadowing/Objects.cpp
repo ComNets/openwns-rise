@@ -40,16 +40,16 @@ using namespace rise::scenario::shadowing;
 STATIC_FACTORY_BROKER_REGISTER(Objects, Shadowing, "Objects");
 
 Objects::Objects(const wns::pyconfig::View& config) :
-	scenario(GlobalScenarioBroker::getInstance()->procure(config.getView("scenario"))),
-// 	xGridBlocks(config.get<unsigned int>("xGridBlocks")),
-// 	yGridBlocks(config.get<unsigned int>("yGridBlocks")),
- 	xGridBlocks(1),
- 	yGridBlocks(1),
-	xGridBlockSize(scenario->getScenarioSize().getDeltaX() / xGridBlocks),
-	yGridBlockSize(scenario->getScenarioSize().getDeltaY() / yGridBlocks),
+    xGridBlocks(config.get<unsigned int>("xGridBlocks")),
+    yGridBlocks(config.get<unsigned int>("yGridBlocks")),
+    sizeX(config.get<double>("sizeX")),
+    sizeY(config.get<double>("sizeY")),
 	obstructionList(Objects::fetchObstructionList(config)),
 	blockObstructionLists()
 {
+    xGridBlockSize = sizeX / double(xGridBlocks);
+    yGridBlockSize = sizeY / double(yGridBlocks);
+
 	const size_t sizes[2] = {this->xGridBlocks, this->yGridBlocks};
 	this->blockObstructionLists = BlockObstructionLists(sizes);
 	this->createBlockObstructionLists();

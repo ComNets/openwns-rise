@@ -110,9 +110,6 @@ SC::SC(const std::string filename, const scenario::Scenario& /*scenario*/) :
 			resolution = 10;
 		}
 
-    assert((xSize*resolution) == scenario.getScenarioSize().getDeltaX());
-    assert((ySize*resolution) == scenario.getScenarioSize().getDeltaY());
-
     // create maps
     scenerymap::resolution resolutions[2] = {resolution, resolution};
     std::size_t sizes[2] = {xSize, ySize};

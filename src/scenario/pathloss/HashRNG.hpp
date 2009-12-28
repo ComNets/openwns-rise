@@ -25,43 +25,59 @@
  *
  ******************************************************************************/
 
-#include <RISE/scenario/pathloss/Pathloss.hpp>
-#include <WNS/Assure.hpp>
-#include <WNS/Ttos.hpp>
+#ifndef RISE_SCENARIO_PATHLOSS_DETAIL_HASHRNG_HPP
+#define RISE_SCENARIO_PATHLOSS_DETAIL_HASHRNG_HPP
 
-#include <string>
+#include <RISE/scenario/pathloss/DistanceDependent.hpp>
 
-using namespace rise::scenario::pathloss;
+namespace rise { namespace scenario { namespace pathloss {
 
-Pathloss::Pathloss(const ReturnValueTransformation* rvt)
-    : transform(rvt)
+namespace detail {
+
+/**
+ * @brief Helper that can be used as pseudo-random number generator for
+ * boost distributions. This may only be used to draw one random number
+ * from the distribution. DO NOT USE as a random number generator!!!
+ *
+ * @author Daniel Bueltmann <openwns@doender.de>
+ */
+class HashRNG
 {
-}
+public:
+    HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, double distance);
 
-Pathloss::~Pathloss()
-{
-    delete transform;
-}
+    static const bool has_fixed_range = true;
 
-wns::Ratio Pathloss::getPathloss(const antenna::Antenna& source,
-				 const antenna::Antenna& target,
-				 const wns::Frequency& frequency) const
-{
-    assure(frequency > 0, "Illegal frequency (" + wns::Ttos(frequency) + " MHz) passed to Pathloss::getPathloss()");
-    assure(frequency < std::numeric_limits<wns::Frequency>::infinity(),
-	   "Infinite frequency passed to Pathloss::getPathloss()");
-    wns::Ratio result;
-    try
-    { // out-of-range must be catched so that distant cells can be simulated
-      result = (*transform)(calculatePathloss(source, target, frequency));
+    static const double min_value = 0.0;
+
+    static const double max_value = 1.0;
+
+    double
+    operator()();
+
+    double
+    min()
+    {
+        return 0.0;
     }
-    catch(...)
-    { // probably out of range
-        /**
-         * @todo dbn: Remove OutOfRangePathloss completely
-         */
-        std::cout << "WARNING : Setting pathloss to out of range value! Probably this is a misconfiguration!" << std::endl;
-      result = OutOfRangePathloss;
+
+    double
+    max()
+    {
+        return 1.0;
     }
-    return result;
-}
+
+    bool giveA;
+    double a;
+    double b;
+    double c;
+    double d;
+    double e;
+};
+
+} // detail
+} // pathloss
+} // scenario
+} // rise
+
+#endif // RISE_SCENARIO_PATHLOSS_DETAIL_HASHRNG_HPP

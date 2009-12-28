@@ -31,6 +31,7 @@
 #include <RISE/scenario/scenerymap/SceneryMap.hpp>
 #include <RISE/antenna/Antenna.hpp>
 #include <RISE/antenna/Static.hpp>
+#include <RISE/antenna/ITUAntenna.hpp>
 #include <RISE/antenna/Beamforming.hpp>
 #include <RISE/scenario/mobility/Mobility.hpp>
 #include <RISE/scenario/sceneryfile/SceneryFile.hpp>
@@ -70,9 +71,15 @@ Station::createAntenna()
 	if (s=="Internal"|| s=="Antenna3D"|| s=="Planet")
 		pd_antenna = new antenna::Static(antennaView, this);
 	else {
-		wns::Exception e;
-		e << "No such antenna type";
-		throw e;
+        if (s=="ITU")
+        {
+            pd_antenna = new antenna::ITUAntenna(antennaView, this);
+        }else
+        {
+		  wns::Exception e;
+		  e << "No such antenna type";
+		  throw e;
+        }
 	}
 }
 

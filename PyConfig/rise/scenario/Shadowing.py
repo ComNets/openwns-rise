@@ -120,22 +120,24 @@ class SpatialCorrelated:
         return(self.shadowSigma)
 
 class Objects(object):
-
-    def __init__(self,
-                 obstructionList = [],
-                 xGridBlocks = 20,
-                 yGridBlocks = 19,
-                 scenario = None):
-        self.obstructionList = obstructionList
-#   self.obstructionFileName = obstructionFileName
-        self.xGridBlocks = xGridBlocks
-        self.yGridBlocks = yGridBlocks
-        self.scenario = scenario
     __plugin__ = 'Objects'
     obstructionList = None
     xGridBlocks = None
     yGridBlocks = None
-    scenario = None
+    sizeX = None
+    sizeY = None
+
+    def __init__(self,
+                 obstructionList,
+                 xGridBlocks,
+                 yGridBlocks,
+                 sizeX,
+                 sizeY):
+        self.obstructionList = obstructionList
+        self.xGridBlocks = xGridBlocks
+        self.yGridBlocks = yGridBlocks
+        self.sizeX = sizeX
+        self.sizeY = sizeY
 
 
 class Point:
@@ -173,15 +175,18 @@ class ObjectsTest(Objects):
     scenario = None
     antennas = None
     def __init__(self):
-        super(ObjectsTest, self).__init__(xGridBlocks = 20,
-                                          yGridBlocks = 30)
+        super(ObjectsTest, self).__init__(obstructionList = [],
+                                          xGridBlocks = 20,
+                                          yGridBlocks = 30, 
+                                          sizeX = 500,
+                                          sizeY = 500)
 
         self.obstructionList = [
             Shape2D( pointA = [1.0,1.0,0.0], pointB = [5.0,2.0,0.0], attenuation = "3 dB"),
             Shape2D( pointA = [3.0,3.0,0.0], pointB = [8.0,4.0,0.0], attenuation = "4 dB"),
             Shape2D( pointA = [2.0,5.0,0.0], pointB = [4.0,7.0,0.0], attenuation = "5 dB"),
             ]
-        self.scenario = rise.Scenario.Scenario(xmin=0,ymin=0,xmax=500,ymax=500)
+        self.scenario = rise.Scenario.Scenario()
         self.antennas = [
             rise.Antenna.AntennaPosDropIn( [2,0,0] ),
             rise.Antenna.AntennaPosDropIn( [2,3,0] ),

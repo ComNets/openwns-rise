@@ -25,43 +25,38 @@
  *
  ******************************************************************************/
 
-#include <RISE/scenario/pathloss/Pathloss.hpp>
-#include <WNS/Assure.hpp>
-#include <WNS/Ttos.hpp>
+#ifndef RISE_ANTENNA_ITUANTENNA_HPP
+#define RISE_ANTENNA_ITUANTENNA_HPP
 
-#include <string>
+#include <RISE/antenna/Antenna.hpp>
+#include <WNS/Direction.hpp>
+#include <WNS/probe/bus/ContextCollector.hpp>
 
-using namespace rise::scenario::pathloss;
+namespace rise { namespace antenna {
 
-Pathloss::Pathloss(const ReturnValueTransformation* rvt)
-    : transform(rvt)
+/**
+ * @brief Three dimensional antenna according to ITU-R M2135 pp.17
+ */
+class ITUAntenna:
+    public rise::antenna::Antenna
 {
-}
+public:
+    ITUAntenna(const wns::pyconfig::View& pyConfigView, Station* const station);
 
-Pathloss::~Pathloss()
-{
-    delete transform;
-}
+    virtual ~ITUAntenna();
 
-wns::Ratio Pathloss::getPathloss(const antenna::Antenna& source,
-				 const antenna::Antenna& target,
-				 const wns::Frequency& frequency) const
-{
-    assure(frequency > 0, "Illegal frequency (" + wns::Ttos(frequency) + " MHz) passed to Pathloss::getPathloss()");
-    assure(frequency < std::numeric_limits<wns::Frequency>::infinity(),
-	   "Infinite frequency passed to Pathloss::getPathloss()");
-    wns::Ratio result;
-    try
-    { // out-of-range must be catched so that distant cells can be simulated
-      result = (*transform)(calculatePathloss(source, target, frequency));
-    }
-    catch(...)
-    { // probably out of range
-        /**
-         * @todo dbn: Remove OutOfRangePathloss completely
-         */
-        std::cout << "WARNING : Setting pathloss to out of range value! Probably this is a misconfiguration!" << std::endl;
-      result = OutOfRangePathloss;
-    }
-    return result;
-}
+    virtual wns::Ratio getGain(const wns::Position& pos,
+                               const PatternPtr pattern) const;
+private:
+
+    wns::Ratio gain_;
+
+    wns::Direction direction_;
+
+    wns::probe::bus::ContextCollector gainCC_;
+};
+
+} // antenna
+} // rise
+
+#endif // RISE_ANTENNA_ITUANTENNA_HPP

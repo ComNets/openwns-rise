@@ -43,11 +43,11 @@ namespace rise { namespace plmapping { namespace tests {
 	class PhyModeTest
 		: public wns::TestFixture
 	{
- 		CPPUNIT_TEST_SUITE( PhyModeTest );
+		CPPUNIT_TEST_SUITE( PhyModeTest );
 		CPPUNIT_TEST( testConstructorDestructor );
 		CPPUNIT_TEST( testPythonConstructor );
 		CPPUNIT_TEST( testModulation );
-      		CPPUNIT_TEST( testCoding );
+		CPPUNIT_TEST( testCoding );
 		CPPUNIT_TEST( testModulationCoding );
 		CPPUNIT_TEST( testSNR2MI );
 		CPPUNIT_TEST( testMI2PER );
@@ -64,10 +64,10 @@ namespace rise { namespace plmapping { namespace tests {
 		void testModulation();
 		void testCoding();
 		void testModulationCoding();
- 		void testSNR2MI();
- 		void testMI2PER();
- 		void testSNR2PER();
-// 		void testInt();
+		void testSNR2MI();
+		void testMI2PER();
+		void testSNR2PER();
+//		void testInt();
 //		void testInt2();
 		bool useCout;
 

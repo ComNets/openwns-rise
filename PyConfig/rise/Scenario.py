@@ -59,30 +59,9 @@ class ScenarioBase(Sealed, IScenario):
 
     sizeX = None # obsolete, only for backward compatibility [rs]
     sizeY = None # obsolete, only for backward compatibility [rs]
-    boundingBox = None
 
-    def __init__(self, xmin=None, xmax=None, ymin=None, ymax=None):
+    def __init__(self):
         Sealed.__init__(self)
-        IScenario.__init__(self)
-        if ymax!=None:
-            self.boundingBox = BoundingBox(xmin, xmax, ymin, ymax, 0.0, 0.0)
-        else:
-            self.boundingBox = BoundingBox() # auto resize
-	self.sizeX = (self.boundingBox.xmax-self.boundingBox.xmin)
-	self.sizeY = (self.boundingBox.ymax-self.boundingBox.ymin)
-
-    def setBoundingBox(self, xmin, xmax, ymin, ymax, zmin=0.0, zmax=0.0):
-        self.boundingBox = BoundingBox(xmin, xmax, ymin, ymax, zmin, zmax)
- 	self.sizeX = (self.boundingBox.xmax-self.boundingBox.xmin)
-	self.sizeY = (self.boundingBox.ymax-self.boundingBox.ymin)       
-    def getXMax(self):
-        return self.boundingBox.xmax
-    def getYMax(self):
-        return self.boundingBox.ymax
-    def getXMin(self):
-        return self.boundingBox.xmin
-    def getYMin(self):
-        return self.boundingBox.ymin
 
 class Scenario(ScenarioBase):
     def __init__(self, **restOfArgs):

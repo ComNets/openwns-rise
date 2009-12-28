@@ -76,12 +76,12 @@ namespace rise { namespace scenario { namespace shadowing {
 		void
 		createBlockObstructionLists();
 
-		Scenario* scenario;
-
-		const unsigned int xGridBlocks;
-		const unsigned int yGridBlocks;
-		const double xGridBlockSize;
-		const double yGridBlockSize;
+		unsigned int xGridBlocks;
+		unsigned int yGridBlocks;
+        double xGridBlockSize;
+        double yGridBlockSize;
+        double sizeX;
+        double sizeY;
 		ObstructionList obstructionList;
 		BlockObstructionLists blockObstructionLists;
 	};

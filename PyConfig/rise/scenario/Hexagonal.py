@@ -402,7 +402,6 @@ class Hexagonal(PlotableScenario,Wraparound):
             for pos in self.positions[stationType]:
                 pos.label="%s_{%d}"%(stationType,labelTag)
                 labelTag=labelTag+1
-                self.boundingBox.extendToIncludePosition(pos)
 
         if self.useWraparound:
             #Wraparound.test(self)
