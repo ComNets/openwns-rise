@@ -351,10 +351,10 @@ class Manhattan(ScenarioBase):
         print self.idDiffLowerCross
 
     def getMobilityObstructions(self):
-        tmp = self.getShadowing(None,0,1)
+        tmp = self.getShadowing(0,1)
         return tmp.obstructionList
 
-    def getShadowing(self, scenario, wallAttenuation, smoothingSteps):
+    def getShadowing(self, wallAttenuation, smoothingSteps):
         objs = []
         sizeX = (self.columns + 1) * self.streetWidth + self.columns * self.blockWidth
         sizeY = (self.rows + 1) * self.streetWidth + self.rows * self.blockHeight
