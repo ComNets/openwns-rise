@@ -64,14 +64,12 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
         pl = getLOSPathloss(source, target, frequency, distance);
         boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(source, target, frequency, distance));
         sh = shadow(hrng);
-        pl.los = true;
     }
     else
     {
         pl = getNLOSPathloss(source, target, frequency, distance);
         boost::normal_distribution<double> shadow(0.0, getNLOSShadowingStd(source, target, frequency, distance));
         sh = shadow(hrng);
-        pl.los = false;
     }
 
     size_t seed = initialSeed;

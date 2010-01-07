@@ -127,7 +127,6 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
         double sh = shadow(hrng);
         shadowingCC_.put(sh);
         pl += wns::Ratio::from_dB(sh);
-        pl.los = true;
     }
     else
     {
@@ -148,7 +147,6 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
         double sh = shadow(hrng);
         shadowingCC_.put(sh);
         pl += wns::Ratio::from_dB(sh);
-        pl.los = false;
     }
     return pl;
 }
