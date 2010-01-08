@@ -31,7 +31,6 @@ import rise.Scenario
 import rise.Antenna
 
 import random
-#random.seed(22)
 
 from numpy import *
 
@@ -103,9 +102,8 @@ class SpatialCorrelated:
         if(self.symmetric):
             self.f[0] = self.f[2]
             self.f[3] = self.f[1]
-        
             self.f = transpose(self.f)
-        
+
         if(self.symmetric):
             self.theta = rnd[nSamples*4:nSamples*5] * 2 * pi
             self.theta[nSamples/2:nSamples] = self.theta[0:(nSamples/2)]
@@ -122,22 +120,10 @@ class SpatialCorrelated:
 class Objects(object):
     __plugin__ = 'Objects'
     obstructionList = None
-    xGridBlocks = None
-    yGridBlocks = None
-    sizeX = None
-    sizeY = None
 
     def __init__(self,
-                 obstructionList,
-                 xGridBlocks,
-                 yGridBlocks,
-                 sizeX,
-                 sizeY):
+                 obstructionList):
         self.obstructionList = obstructionList
-        self.xGridBlocks = xGridBlocks
-        self.yGridBlocks = yGridBlocks
-        self.sizeX = sizeX
-        self.sizeY = sizeY
 
 
 class Point:
@@ -149,42 +135,47 @@ class Point:
         self.y = y
         self.z = z
 
-class Shape2D:
-
-    def __init__(self,
-                 objType = "AxisParallelRectangle",
-                 pointA = [0.0,0.0,0.0],
-                 pointB = [0.0,0.0,0.0],
-                 attenuation = "0 dB"):
-        self.ObjType = objType
-        self.pointA  = pointA
-        self.pointB  = pointB
-        self.attenuation = attenuation
-    __plugin__='Shape2DObstruction'
+class Shape2D(object):
     pointA  = None
     pointB  = None
     attenuation = None
 
+    def __init__(self, pointA, pointB, attenuation):
+        self.pointA  = pointA
+        self.pointB  = pointB
+        self.attenuation = attenuation
+
+class AxisParallelRectangle(Shape2D):
+    __plugin__ = 'rise.shadowing.obstruction.AxisParallelRectangle'
+
+    def __init__(self, pointA, pointB, attenuation):
+        super(AxisParallelRectangle, self).__init__(pointA, pointB, attenuation)
+
+
     def containsPoint(self, point):
-        return (point[0] >= self.pointA[0] and
-                point[1] >= self.pointA[1] and
-                point[0] <= self.pointB[0] and
-                point[1] <= self.pointB[1])
+        return (point.x >= self.pointA.x and
+                point.y >= self.pointA.y and
+                point.x <= self.pointB.x and
+                point.y <= self.pointB.y)
+
+class LineSegment(Shape2D):
+    __plugin__ = 'rise.shadowing.obstruction.LineSegment'
+
+    def __init__(self, pointA, pointB, attenuation):
+        super(LineSegment, self).__init__(pointA, pointB, attenuation)
+    
+
 
 class ObjectsTest(Objects):
     scenario = None
     antennas = None
     def __init__(self):
-        super(ObjectsTest, self).__init__(obstructionList = [],
-                                          xGridBlocks = 20,
-                                          yGridBlocks = 30, 
-                                          sizeX = 500,
-                                          sizeY = 500)
+        super(ObjectsTest, self).__init__(obstructionList = [])
 
         self.obstructionList = [
-            Shape2D( pointA = [1.0,1.0,0.0], pointB = [5.0,2.0,0.0], attenuation = "3 dB"),
-            Shape2D( pointA = [3.0,3.0,0.0], pointB = [8.0,4.0,0.0], attenuation = "4 dB"),
-            Shape2D( pointA = [2.0,5.0,0.0], pointB = [4.0,7.0,0.0], attenuation = "5 dB"),
+            AxisParallelRectangle( Point(1.0,1.0,0.0), Point(5.0,2.0,0.0), attenuation = "3 dB"),
+            AxisParallelRectangle( Point(3.0,3.0,0.0), Point(8.0,4.0,0.0), attenuation = "4 dB"),
+            AxisParallelRectangle( Point(2.0,5.0,0.0), Point(4.0,7.0,0.0), attenuation = "5 dB"),
             ]
         self.scenario = rise.Scenario.Scenario()
         self.antennas = [

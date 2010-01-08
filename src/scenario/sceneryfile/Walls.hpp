@@ -36,41 +36,33 @@
 #include <RISE/scenario/sceneryfile/SceneryFile.hpp>
 #include <RISE/scenario/Obstruction.hpp>
 
-namespace rise
-{
-    namespace scenario
-    {
-	namespace sceneryfile
-	{
-	    class Walls : public SceneryFile
-	    {
-	    public:
-		typedef Obstructing<wns::geometry::LineSegment> Wall;
-		typedef wns::SmartPtr<Wall> WallPtr;
+namespace rise { namespace scenario { namespace sceneryfile	{
+        class Walls : public SceneryFile
+        {
+        public:
+            typedef Obstructing<wns::geometry::LineSegment> Wall;
 
-		Walls();
-		Walls(const std::string filename);
-		virtual ~Walls() {}
+            Walls();
+            Walls(const std::string filename);
+            virtual ~Walls() {}
 
-		virtual bool hasMorphologyMap() const { return false; }
-		virtual bool hasPathlossMap() const { return false; }
-		virtual bool hasShadowingMap() const { return false; }
-		virtual bool hasObstructionList() const { return true; }
+            virtual bool hasMorphologyMap() const { return false; }
+            virtual bool hasPathlossMap() const { return false; }
+            virtual bool hasShadowingMap() const { return false; }
+            virtual bool hasObstructionList() const { return true; }
 
-		virtual const ObstructionList& getObstructionList() const
-		{
-		    assert(initialized);
-		    return obstructionList;
-		}
+            virtual const ObstructionList& getObstructionList() const
+                {
+                    assert(initialized);
+                    return obstructionList;
+                }
 
-	    private:
-		bool initialized;
+        private:
+            bool initialized;
 
-		ObstructionList obstructionList;
-		static WallPtr createWall(std::string input);
-	    };
-	}
-    }
-}
+            ObstructionList obstructionList;
+            static Wall* createWall(std::string input);
+        };
+}}}
 
 #endif // _WALLS_HPP

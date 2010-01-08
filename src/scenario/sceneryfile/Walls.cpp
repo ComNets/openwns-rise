@@ -46,27 +46,29 @@ Walls::Walls(const std::string filename)
       obstructionList()
 {
     std::ifstream file(filename.c_str());
-    
     assure(file.is_open(), "could not open " + filename);
 
     std::string inputLine = "";
-    while (inputLine.find("numWalls1") == std::string::npos) {
-	file >> inputLine;
+    while (inputLine.find("numWalls1") == std::string::npos)
+    {
+        file >> inputLine;
     }
 
     unsigned int numWalls = atoi(inputLine.substr(inputLine.find("=") + 1).c_str());
-    for (unsigned int wallI = 0; wallI < numWalls; ++wallI) {
-	file >> inputLine;
-	if (inputLine[0] == 'w') {
-	    obstructionList.push_front(createWall(inputLine.substr(2)));
-	}
+    for (unsigned int wallI = 0; wallI < numWalls; ++wallI)
+    {
+        file >> inputLine;
+        if (inputLine[0] == 'w') {
+            obstructionList.push_front(createWall(inputLine.substr(2)));
+        }
     }
 
     file.close();
     initialized = true;
 }
 
-Walls::WallPtr Walls::createWall(std::string input)
+Walls::Wall*
+Walls::createWall(std::string input)
 {
     input = input.substr(input.find_first_not_of(" \t"));
     double x1 = strtod(input.substr(0, input.find_first_of(" \t")).c_str(), NULL);
@@ -95,5 +97,5 @@ Walls::WallPtr Walls::createWall(std::string input)
     wns::geometry::Point a(x1, y1, 0);
     wns::geometry::Point b(x2, y2, 0);
 
-    return WallPtr(new Wall(wns::geometry::LineSegment(a, b), wns::Ratio::from_dB(attenuation)));
+    return (new Wall(wns::geometry::LineSegment(a, b), wns::Ratio::from_dB(attenuation)));
 }

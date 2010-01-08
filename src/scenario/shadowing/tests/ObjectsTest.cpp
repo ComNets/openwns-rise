@@ -41,58 +41,53 @@
 namespace rise { namespace scenario { namespace shadowing { namespace tests {
 
     class ObjectsTest :
-	public CppUnit::TestFixture
+        public CppUnit::TestFixture
     {
-	CPPUNIT_TEST_SUITE( ObjectsTest );
-	CPPUNIT_TEST( testGetShadowing );
-	CPPUNIT_TEST_SUITE_END();
+        CPPUNIT_TEST_SUITE( ObjectsTest );
+        CPPUNIT_TEST( testGetShadowing );
+        CPPUNIT_TEST_SUITE_END();
     public:
-	void setUp();
-	void tearDown();
-	void testGetShadowing();
+        void setUp();
+        void tearDown();
+        void testGetShadowing();
 
 
     private:
-	rise::tests::SystemManagerDropIn* systemManager;
-	rise::tests::StationDropIn* station;
-	rise::tests::AntennaDropIn* antenna1;
-	rise::tests::AntennaDropIn* antenna2;
-	rise::tests::AntennaDropIn* antenna3;
-	rise::tests::AntennaDropIn* antenna4;
-	rise::tests::AntennaDropIn* antenna5;
-	rise::tests::AntennaDropIn* antenna6;
-	rise::scenario::shadowing::Objects* objects;
+        rise::tests::SystemManagerDropIn* systemManager;
+        rise::tests::StationDropIn* station;
+        rise::tests::AntennaDropIn* antenna1;
+        rise::tests::AntennaDropIn* antenna2;
+        rise::tests::AntennaDropIn* antenna3;
+        rise::tests::AntennaDropIn* antenna4;
+        rise::tests::AntennaDropIn* antenna5;
+        rise::tests::AntennaDropIn* antenna6;
+        rise::scenario::shadowing::Objects* objects;
     };
 
     CPPUNIT_TEST_SUITE_REGISTRATION( ObjectsTest );
 
     void ObjectsTest::setUp()
     {
-	wns::pyconfig::View configView = wns::pyconfig::helper::
-	    createViewFromDropInConfig("rise.scenario.Shadowing",
-				       "ObjectsTest");
-	systemManager = new rise::tests::SystemManagerDropIn(wns::pyconfig::
-							     helper::createViewFromDropInConfig("rise.System",
-												"DropIn"),
-							     (const std::string) "ObjectTest");
-	station = new rise::tests::StationDropIn(systemManager);
+        wns::pyconfig::View configView = wns::pyconfig::helper::
+            createViewFromDropInConfig("rise.scenario.Shadowing",
+                                       "ObjectsTest");
+        systemManager = new rise::tests::SystemManagerDropIn(wns::pyconfig::
+                                                             helper::createViewFromDropInConfig("rise.System",
+                                                                                                "DropIn"),
+                                                             (const std::string) "ObjectTest");
+        station = new rise::tests::StationDropIn(systemManager);
 
+        antenna1 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 0) );
+        antenna2 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 1) );
+        antenna3 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 2) );
+        antenna4 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 3) );
+        antenna5 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 4) );
+        antenna6 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 5) );
 
-	antenna1 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 0) );
-	antenna2 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 1) );
+        // inform all antennas about their position
+        station->positionChanged();
 
-	antenna3 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 2) );
-	antenna4 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 3) );
-
-	antenna5 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 4) );
-	antenna6 = new rise::tests::AntennaDropIn(station, configView.getView("antennas", 5) );
-
-	// inform all antennas about their position
-	station->positionChanged();
-
-	objects = new rise::scenario::shadowing::Objects(configView);
-
-
+        objects = new rise::scenario::shadowing::Objects(configView);
     }
 
 
@@ -102,12 +97,12 @@ namespace rise { namespace scenario { namespace shadowing { namespace tests {
 
     void ObjectsTest::testGetShadowing()
     {
-	WNS_ASSERT_MAX_REL_ERROR(6.0, objects->getShadowing(*antenna1, *antenna2).get_dB(), 1E-6);
-	WNS_ASSERT_MAX_REL_ERROR(6.0, objects->getShadowing(*antenna2, *antenna1).get_dB(), 1E-6);
-	WNS_ASSERT_MAX_REL_ERROR(14.0, objects->getShadowing(*antenna3, *antenna4).get_dB(), 1E-6);
-	WNS_ASSERT_MAX_REL_ERROR(14.0, objects->getShadowing(*antenna4, *antenna3).get_dB(), 1E-6);
-	WNS_ASSERT_MAX_REL_ERROR(18.0, objects->getShadowing(*antenna5, *antenna6).get_dB(), 1E-6);
-	WNS_ASSERT_MAX_REL_ERROR(18.0, objects->getShadowing(*antenna6, *antenna5).get_dB(), 1E-6);
+        WNS_ASSERT_MAX_REL_ERROR(6.0, objects->getShadowing(*antenna1, *antenna2).get_dB(), 1E-6);
+        WNS_ASSERT_MAX_REL_ERROR(6.0, objects->getShadowing(*antenna2, *antenna1).get_dB(), 1E-6);
+        WNS_ASSERT_MAX_REL_ERROR(14.0, objects->getShadowing(*antenna3, *antenna4).get_dB(), 1E-6);
+        WNS_ASSERT_MAX_REL_ERROR(14.0, objects->getShadowing(*antenna4, *antenna3).get_dB(), 1E-6);
+        WNS_ASSERT_MAX_REL_ERROR(18.0, objects->getShadowing(*antenna5, *antenna6).get_dB(), 1E-6);
+        WNS_ASSERT_MAX_REL_ERROR(18.0, objects->getShadowing(*antenna6, *antenna5).get_dB(), 1E-6);
     }
 }}}}
 

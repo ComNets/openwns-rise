@@ -42,49 +42,35 @@
 
 namespace rise { namespace scenario { namespace shadowing {
 
-	/**
+    /**
 	 * @brief Obstruction based shadowing model.
 	 */
-	class Objects :
-		public Shadowing
-	{
-	public:
-		explicit
-		Objects(const wns::pyconfig::View& config);
+    class Objects :
+        public Shadowing
+    {
+    public:
+        explicit
+        Objects(const wns::pyconfig::View& config);
 
-		virtual
-		~Objects()
-		{};
+        virtual
+        ~Objects()
+            {};
 
-		virtual wns::Ratio
-		getShadowing(const antenna::Antenna& source,
-			     const antenna::Antenna& target) const;
+        virtual wns::Ratio
+        getShadowing(const antenna::Antenna& source,
+                     const antenna::Antenna& target) const;
 
 
-	private:
-		typedef wns::container::Matrix<ObstructionList, 2> BlockObstructionLists;
-		typedef Obstructing<wns::geometry::AxisParallelRectangle> Object;
-		typedef wns::SmartPtr<Object> ObjectPtr;
+    private:
+        static ObstructionList
+        fetchObstructionList(const wns::pyconfig::View& config);
 
-		static ObstructionList
-		fetchObstructionList(const wns::pyconfig::View& config);
+        static ObstructionList
+        fetchObstructionList(Scenario& scenario,
+                             const wns::pyconfig::View& config);
 
-		static ObstructionList
-		fetchObstructionList(Scenario& scenario,
-				     const wns::pyconfig::View& config);
-
-		void
-		createBlockObstructionLists();
-
-		unsigned int xGridBlocks;
-		unsigned int yGridBlocks;
-        double xGridBlockSize;
-        double yGridBlockSize;
-        double sizeX;
-        double sizeY;
-		ObstructionList obstructionList;
-		BlockObstructionLists blockObstructionLists;
-	};
+        ObstructionList obstructionList;
+    };
 
 } // shadowing
 } // scenario

@@ -36,129 +36,73 @@
 #include <string>
 
 using namespace rise::scenario::shadowing;
+using namespace rise::scenario;
 
 STATIC_FACTORY_BROKER_REGISTER(Objects, Shadowing, "Objects");
 
-Objects::Objects(const wns::pyconfig::View& config) :
-    xGridBlocks(config.get<unsigned int>("xGridBlocks")),
-    yGridBlocks(config.get<unsigned int>("yGridBlocks")),
-    sizeX(config.get<double>("sizeX")),
-    sizeY(config.get<double>("sizeY")),
-	obstructionList(Objects::fetchObstructionList(config)),
-	blockObstructionLists()
-{
-    xGridBlockSize = sizeX / double(xGridBlocks);
-    yGridBlockSize = sizeY / double(yGridBlocks);
+STATIC_FACTORY_REGISTER_WITH_CREATOR(Obstructing<wns::geometry::AxisParallelRectangle>,
+                                     IObstruction,
+                                     "rise.shadowing.obstruction.AxisParallelRectangle",
+                                     IObstructionCreator);
 
-	const size_t sizes[2] = {this->xGridBlocks, this->yGridBlocks};
-	this->blockObstructionLists = BlockObstructionLists(sizes);
-	this->createBlockObstructionLists();
+STATIC_FACTORY_REGISTER_WITH_CREATOR(Obstructing<wns::geometry::LineSegment>,
+                                     IObstruction,
+                                     "rise.shadowing.obstruction.LineSegment",
+                                     IObstructionCreator);
+
+Objects::Objects(const wns::pyconfig::View& config) :
+    obstructionList(Objects::fetchObstructionList(config))
+{
 }
 
 
 rise::scenario::ObstructionList
 Objects::fetchObstructionList(const wns::pyconfig::View& config)
 {
-	ObstructionList obstructions;
+    ObstructionList obstructions;
 
-	for( int ii = 0; ii < config.len("obstructionList"); ++ii)
-	{
-		wns::pyconfig::View objectView = config.getView("obstructionList", ii);
+    for( int ii = 0; ii < config.len("obstructionList"); ++ii)
+    {
+        wns::pyconfig::View objectView = config.getView("obstructionList", ii);
+        obstructions.push_front(ObstructionFactory::creator(objectView.get<std::string>("__plugin__"))->create(objectView));
+    }
 
-		assert(objectView.len("pointA") == 3);
-		assert(objectView.len("pointB") == 3);
-
-		wns::geometry::Point a(
-			objectView.get<double>("pointA",0),
-			objectView.get<double>("pointA",1),
-			objectView.get<double>("pointA",2));
-
-		wns::geometry::Point b(
-			objectView.get<double>("pointB",0),
-			objectView.get<double>("pointB",1),
-			objectView.get<double>("pointB",2));
-
-		obstructions.push_front(
-			ObjectPtr(
-				new Object(
-					wns::geometry::AxisParallelRectangle(a,b),
-					objectView.get<wns::Ratio>("attenuation"))));
-	}
-
-	return obstructions;
+    return obstructions;
 }
 
 
 rise::scenario::ObstructionList
 Objects::fetchObstructionList(Scenario& scenario,
-			      const wns::pyconfig::View& config)
+                              const wns::pyconfig::View& config)
 {
-	std::string fileName = config.get<std::string>("obstructionFileName");
+    std::string fileName = config.get<std::string>("obstructionFileName");
 
-	scenario.openSceneryFile(fileName, "WallsFile");
+    scenario.openSceneryFile(fileName, "WallsFile");
 
-	const sceneryfile::Walls& walls =
-		dynamic_cast<const sceneryfile::Walls&>(scenario.getSceneryFile(fileName));
+    const sceneryfile::Walls& walls =
+        dynamic_cast<const sceneryfile::Walls&>(scenario.getSceneryFile(fileName));
 
-	return walls.getObstructionList();
+    return walls.getObstructionList();
 }
 
-
-void
-Objects::createBlockObstructionLists()
-{
-	for (ObstructionList::iterator obstruction = this->obstructionList.begin();
-	     obstruction != this->obstructionList.end();
-	     ++obstruction)
-	{
-		for (unsigned int x = 0; x < this->xGridBlocks; ++x)
-		{
-			for (unsigned int y = 0; y < this->yGridBlocks; ++y)
-			{
-				wns::geometry::Point a(x * this->xGridBlockSize, y * this->yGridBlockSize, 0);
-				wns::geometry::Point b((x+1) * this->xGridBlockSize, (y+1) * this->yGridBlockSize, 0);
-
-				wns::geometry::AxisParallelRectangle currentBlock(a, b);
-
-				wns::geometry::Shape2D& element = dynamic_cast<wns::geometry::Shape2D&>(*(*obstruction));
-				if (currentBlock.intersectsBoundingBoxOf(element))
-				{
-					this->blockObstructionLists[x][y].push_front(*obstruction);
-				}
-			}
-		}
-	}
-}
 
 wns::Ratio
-Objects::getShadowing(
-	const antenna::Antenna& source,
-	const antenna::Antenna& target) const
+Objects::getShadowing(const antenna::Antenna& source,
+                      const antenna::Antenna& target) const
 {
-	const wns::Position& sourcePos = source.getPosition();
-	const wns::Position& targetPos = target.getPosition();
+    const wns::Position& sourcePos = source.getPosition();
+    const wns::Position& targetPos = target.getPosition();
 
-	wns::geometry::LineSegment signalPath(sourcePos, targetPos);
+    wns::geometry::LineSegment signalPath(sourcePos, targetPos);
 
-	wns::Ratio shadowing;
+    wns::Ratio shadowing;
 
-	for (uint32_t x = (uint32_t)std::floor(signalPath.getBoundingBox().getMinX() / xGridBlockSize);
-	     x < std::ceil(signalPath.getBoundingBox().getMaxX() / xGridBlockSize);
-	     ++x)
-	{
-		for (uint32_t y = (uint32_t)std::floor(signalPath.getBoundingBox().getMinY() / yGridBlockSize);
-		     y < std::ceil(signalPath.getBoundingBox().getMaxY() / yGridBlockSize);
-		     ++y)
-		{
-			const ObstructionList& theList = this->blockObstructionLists[x][y];
-			for (ObstructionList::const_iterator obstruction = theList.begin();
-			     obstruction != theList.end();
-			     ++obstruction)
-			{
-				shadowing += (*obstruction)->getAttenuation(signalPath);
-			}
-		}
-	}
+    for (ObstructionList::const_iterator itr = obstructionList.begin();
+         itr != obstructionList.end();
+         ++itr)
+    {
+        shadowing += (*itr)->getAttenuation(signalPath);
+    }
 
-	return shadowing;
+    return shadowing;
 }

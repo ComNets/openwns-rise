@@ -29,19 +29,22 @@
 #define RISE_SCENARIO_OBSTRUCTION_HPP
 
 #include <WNS/geometry/LineSegment.hpp>
+#include <WNS/geometry/AxisParallelRectangle.hpp>
 #include <WNS/SmartPtr.hpp>
 #include <WNS/PowerRatio.hpp>
+#include <WNS/pyconfig/View.hpp>
+#include <WNS/StaticFactory.hpp>
 
 #include <list>
 
 namespace rise { namespace scenario {
 
-	class Obstruction :
+	class IObstruction :
 		virtual public wns::RefCountable
 	{
 	public:
 		virtual
-		~Obstruction()
+		~IObstruction()
 		{};
 
 		const wns::Ratio&
@@ -61,31 +64,61 @@ namespace rise { namespace scenario {
 
 	protected:
 		explicit
-		Obstruction(const wns::Ratio& attenuation) :
+		IObstruction(const wns::Ratio& attenuation) :
 			attenuation(attenuation)
 		{}
 
 		wns::Ratio attenuation;
 	};
 
-	typedef std::list< wns::SmartPtr<Obstruction> > ObstructionList;
+	typedef std::list<IObstruction*> ObstructionList;
 
-	template<class Shape>
+    template <typename T, typename KIND = T>
+    class IObstructionCreator:
+        public IObstructionCreator<KIND, KIND>
+    {
+    public:
+        virtual
+        KIND* create(const wns::pyconfig::View& _config)
+            {
+                return new T(_config);
+            }
+    };
+    template <typename KIND>
+    class IObstructionCreator<KIND, KIND>
+    {
+    public:
+        virtual
+        ~IObstructionCreator() {};
+        virtual KIND*
+        create(const wns::pyconfig::View& _config) = 0;
+    };
+    typedef IObstructionCreator<IObstruction> ObstructionCreator;
+    typedef wns::StaticFactory<ObstructionCreator> ObstructionFactory;
+
+
+
+	template<class SHAPE>
 	class Obstructing :
-		public Obstruction,
-		public Shape
+		public IObstruction,
+		public SHAPE
 	{
 	public:
-		Obstructing(const Shape& shape, const wns::Ratio& attenuation) :
-			Obstruction(attenuation),
-			Shape(shape)
-		{}
+        Obstructing(const wns::pyconfig::View& config):
+            IObstruction(config.get<wns::Ratio>("attenuation")),
+            SHAPE(config)
+            {}
+
+		Obstructing(const SHAPE& shape, const wns::Ratio& attenuation) :
+			IObstruction(attenuation),
+			SHAPE(shape)
+            {}
 
 		virtual wns::Ratio
 		getAttenuation(const wns::geometry::LineSegment& signalPath) const
 		{
 			return wns::Ratio::from_dB(
-				Shape::countBorderIntersections(signalPath) * attenuation.get_dB());
+				SHAPE::countBorderIntersections(signalPath) * attenuation.get_dB());
 
 		}
 	};
