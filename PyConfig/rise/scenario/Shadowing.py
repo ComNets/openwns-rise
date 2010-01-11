@@ -26,6 +26,7 @@
 ###############################################################################
 
 from openwns import dB
+from openwns.geometry import Position
 
 import rise.Scenario
 import rise.Antenna
@@ -125,16 +126,6 @@ class Objects(object):
                  obstructionList):
         self.obstructionList = obstructionList
 
-
-class Point:
-    x = None
-    y = None
-    z = None
-    def __init__(self,x,y,z):
-        self.x = x
-        self.y = y
-        self.z = z
-
 class Shape2D(object):
     pointA  = None
     pointB  = None
@@ -163,7 +154,7 @@ class LineSegment(Shape2D):
 
     def __init__(self, pointA, pointB, attenuation):
         super(LineSegment, self).__init__(pointA, pointB, attenuation)
-    
+
 
 
 class ObjectsTest(Objects):
@@ -173,9 +164,9 @@ class ObjectsTest(Objects):
         super(ObjectsTest, self).__init__(obstructionList = [])
 
         self.obstructionList = [
-            AxisParallelRectangle( Point(1.0,1.0,0.0), Point(5.0,2.0,0.0), attenuation = "3 dB"),
-            AxisParallelRectangle( Point(3.0,3.0,0.0), Point(8.0,4.0,0.0), attenuation = "4 dB"),
-            AxisParallelRectangle( Point(2.0,5.0,0.0), Point(4.0,7.0,0.0), attenuation = "5 dB"),
+            AxisParallelRectangle( Position(1.0,1.0,0.0), Position(5.0,2.0,0.0), attenuation = "3 dB"),
+            AxisParallelRectangle( Position(3.0,3.0,0.0), Position(8.0,4.0,0.0), attenuation = "4 dB"),
+            AxisParallelRectangle( Position(2.0,5.0,0.0), Position(4.0,7.0,0.0), attenuation = "5 dB"),
             ]
         self.scenario = rise.Scenario.Scenario()
         self.antennas = [

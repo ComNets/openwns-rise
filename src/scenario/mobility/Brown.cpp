@@ -200,20 +200,13 @@ BrownianBase::fetchObstructionList(const wns::pyconfig::View& config)
 	{
 		wns::pyconfig::View objectView = config.getView("obstructionList", ii);
 
-		assert(objectView.len("pointA") == 3);
-		assert(objectView.len("pointB") == 3);
+        // ToDo: Implement static factory similar to rise::scenario::shadowing::Object.hpp
+        assure(objectView.get<std::string>("__plugin__") == "rise.shadowing.obstruction.AxisParallelRectangle",
+               "Only AxisParallelRectangle is supported as object");
 
-		wns::geometry::Point a(
-			objectView.get<double>("pointA",0),
-			objectView.get<double>("pointA",1),
-			objectView.get<double>("pointA",2));
-
-		wns::geometry::Point b(
-			objectView.get<double>("pointB",0),
-			objectView.get<double>("pointB",1),
-			objectView.get<double>("pointB",2));
-
-		obstructionList.push_front(wns::geometry::AxisParallelRectangle(a,b));
+        wns::geometry::Point a(objectView.getView("pointA"));
+        wns::geometry::Point b(objectView.getView("pointB"));
+        obstructionList.push_front(wns::geometry::AxisParallelRectangle(a,b));
 	}
 }
 

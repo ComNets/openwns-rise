@@ -382,8 +382,8 @@ class Manhattan(ScenarioBase):
                     attenuation = delta_offset_percent * wallAttenuation
 
                     objs.append(
-                        rise.scenario.Shadowing.AxisParallelRectangle(rise.scenario.Shadowing.Point(ulx+offset, uly+offset, 0.0),
-                                                                      rise.scenario.Shadowing.Point(lrx-offset, lry-offset, 0.0),
+                        rise.scenario.Shadowing.AxisParallelRectangle(Position(ulx+offset, uly+offset, 0.0),
+                                                                      Position(lrx-offset, lry-offset, 0.0),
                                                                       attenuation = "%d dB" % attenuation))
 
         return rise.scenario.Shadowing.Objects(obstructionList = objs)
@@ -660,7 +660,7 @@ class Manhattan(ScenarioBase):
                                     z= 1.5)
                 obstructed = False
                 for object in obstructions:
-                    if object.containsPoint([position.x, position.y]):
+                    if object.containsPoint(position):
                         obstructed = True
                         break
                 if not obstructed:

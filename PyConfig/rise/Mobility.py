@@ -27,7 +27,7 @@
 
 from openwns.distribution import Normal
 from openwns.logger import Logger
-from openwns.geometry.position import Position
+from openwns.geometry import Position
 import openwns.node
 import rise.Roadmap
 import random
@@ -139,7 +139,7 @@ class BrownianRect(Mobility):
 
          positionObstructed = False
          for obstruction in self.obstructionList:
-             if obstruction.containsPoint([ self.coords.x, self.coords.y, self.coords.z ]):
+             if obstruction.containsPoint(self.coords):
                  positionObstructed = True
 
          return not positionObstructed
@@ -184,7 +184,7 @@ class BrownianCirc(Mobility):
 
         positionObstructed = False
         for obstruction in self.obstructionList:
-            if obstruction.containsPoint([ self.coords.x, self.coords.y, self.coords.z ]):
+            if obstruction.containsPoint(self.coords):
                 positionObstructed = True
         return not positionObstructed
 
