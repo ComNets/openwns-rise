@@ -375,16 +375,11 @@ class Manhattan(ScenarioBase):
                     attenuation = delta_offset_percent * wallAttenuation
 
                     objs.append(
-                        rise.scenario.Shadowing.Shape2D(objType="AxisParallelRectangle",
-                                                        pointA = [ulx+offset, uly+offset, 0.0],
-                                                        pointB = [lrx-offset, lry-offset, 0.0],
-                                                        attenuation = "%d dB" % attenuation))
+                        rise.scenario.Shadowing.AxisParallelRectangle(rise.scenario.Shadowing.Point(ulx+offset, uly+offset, 0.0),
+                                                                      rise.scenario.Shadowing.Point(lrx-offset, lry-offset, 0.0),
+                                                                      attenuation = "%d dB" % attenuation))
 
-        return rise.scenario.Shadowing.Objects(obstructionList = objs,
-                                               xGridBlocks = 1,
-                                               yGridBlocks = 1,
-                                               sizeX = sizeX,
-                                               sizeY = sizeY)
+        return rise.scenario.Shadowing.Objects(obstructionList = objs)
 
     def getRelayEnhancedCells(self):
         return self.deploymentStrategy.getRelayEnhancedCells()
