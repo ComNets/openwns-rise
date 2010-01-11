@@ -95,6 +95,10 @@ class Manhattan(ScenarioBase):
 
     mode = None
 
+    sizeX = None
+    sizeY = None
+
+
     def __init__(self, rows, columns, blockWidth=100, blockHeight=100,
                  streetWidth=10, velocity=30, scenarioBuilder=None, deploymentStrategy=None):
         assert (rows>0 and
@@ -138,6 +142,9 @@ class Manhattan(ScenarioBase):
         self.scenarioBuilder = scenarioBuilder
         if self.scenarioBuilder:
             self.scenarioBuilder.setScenario(self)
+
+        self.sizeX = (self.columns + 1) * self.streetWidth + self.columns * self.blockWidth
+        self.sizeY = (self.rows + 1) * self.streetWidth + self.rows * self.blockHeight
 
         #  upper or lower edge crossings of Manhattan scenario
         #
