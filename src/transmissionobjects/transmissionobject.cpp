@@ -26,6 +26,7 @@
  ******************************************************************************/
 
 #include <WNS/osi/PDU.hpp>
+#include <WNS/service/phy/phymode/PhyModeInterface.hpp>
 
 #include <RISE/transmissionobjects/transmissionobject.hpp>
 #include <RISE/transceiver/transmitter.hpp>
@@ -106,4 +107,17 @@ TransmissionObject::~TransmissionObject()
 wns::Ratio TransmissionObject::getTransmittersAntennaGain(const wns::Position& receiverPosition) const
 {
     return getTransmitter()->getAntenna()->getGain(receiverPosition, rise::antenna::PatternPtr());
+}
+
+std::string
+TransmissionObject::toString() const
+{
+    std::stringstream s;
+    s << "TO(";
+    s << transmitter->getDebugInfo()<<","; // rise::Transmitter
+    s << "phyMode="<<getPhyModePtr()->getString();
+    s <<",linkMode="<<getLinkMode();
+    s << ",payload="<<*payload; // wns::osi::PDUPtr
+    s << ")";
+    return s.str();
 }

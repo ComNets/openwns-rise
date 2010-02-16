@@ -81,8 +81,8 @@ namespace rise
             }
 
         /**
-		 * @brief give PhyMode used on this object (reference)
-		 */
+         * @brief give PhyMode used on this object (reference)
+         */
         const wns::service::phy::phymode::PhyModeInterface&
         getPhyMode() const
             {
@@ -90,8 +90,8 @@ namespace rise
             }
 
         /**
-		 * @brief give PhyMode used on this object (Pointer)
-		 */
+         * @brief give PhyMode used on this object (Pointer)
+         */
         const wns::service::phy::phymode::PhyModeInterfacePtr
         getPhyModePtr() const
             {
@@ -258,6 +258,8 @@ namespace rise
             {
                 return this->transmitter;
             }
+
+        std::string toString() const;
 
         enum linkmode
         {
