@@ -43,8 +43,8 @@ void WINNER70::pd_startUp ()
 {
 	type = "Internal";
 	pattern = "WINNER_70";
-	uint32_t horSize = 360;
-	uint32_t vertSize = 180;
+	unsigned long int horSize = 360;
+	unsigned long int vertSize = 180;
 	pd_elevationVector = Double64Vector(vertSize + 1);
 	pd_azimuthVector = Double64Vector(horSize + 1);
 	pd_gain = 14.00;
@@ -53,7 +53,7 @@ void WINNER70::pd_startUp ()
 		pd_elevationVector[ii] = 0.0 ;
 
 	// Preinitialize Pattern with -20dB
-	for (uint32_t i = 0; i <= horSize; i++)
+	for (unsigned long int i = 0; i <= horSize; i++)
 	{
 		pd_azimuthVector[i] = -2.0000000000000000e+01;
 	}

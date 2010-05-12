@@ -68,7 +68,7 @@ namespace rise
 					// const resolution res[dims] is treated as
 					// const resolution* res, which can't be
 					// assigned directly to resolutions
-					for (uint32_t i = 0; i < dims; ++i) {
+					for (unsigned long int i = 0; i < dims; ++i) {
 						resolutions[i] = res[i];
 					}
 				}

@@ -47,7 +47,7 @@ namespace rise { namespace tests {
 		public TransmitterDropIn
 	{
 	public:
-		PropCacheTestTransmitter(uint32_t index, SystemManagerDropIn* systemManager) :
+		PropCacheTestTransmitter(unsigned long int index, SystemManagerDropIn* systemManager) :
 			TransmitterDropIn(new StationDropIn(systemManager),NULL),
 			tId(index)
 		{}
@@ -57,12 +57,12 @@ namespace rise { namespace tests {
 			delete getStation();
 		}
 
-		int32_t getTransmitterId() const
+		long int getTransmitterId() const
 		{
 			return tId;
 		}
 	private:
-		uint32_t tId;
+		unsigned long int tId;
 	};
 
 	class PropCacheTestReceiver :
@@ -83,7 +83,7 @@ namespace rise { namespace tests {
 		   to compare it with the cacheEntry of the Transmitter which has
 		   this index and at the given update level.
 		*/
-		wns::Ratio calculateLoss(uint32_t index, uint32_t numUp)
+		wns::Ratio calculateLoss(unsigned long int index, unsigned long int numUp)
 		{
 			int p = index*numUp;
 			int s = index*numUp;
@@ -96,12 +96,12 @@ namespace rise { namespace tests {
 			return currLoss;
 		}
 
-		void setNumUpdates(uint32_t num)
+		void setNumUpdates(unsigned long int num)
 		{
 			numUpdates = num;
 		}
 
-		uint32_t getNumUpdates()
+		unsigned long int getNumUpdates()
 		{
 			return numUpdates;
 		}
@@ -124,16 +124,16 @@ namespace rise { namespace tests {
 							 Transmitter* t,
 							 double)
 		{
-			uint32_t tId = t->getTransmitterId();
-			uint32_t pathloss = tId * numUpdates;
-			uint32_t shadowing = tId * numUpdates;
-			uint32_t antennaGain = tId * numUpdates;
+			unsigned long int tId = t->getTransmitterId();
+			unsigned long int pathloss = tId * numUpdates;
+			unsigned long int shadowing = tId * numUpdates;
+			unsigned long int antennaGain = tId * numUpdates;
 			cacheEntry.setPathloss(wns::Ratio::from_factor(pathloss));
 			cacheEntry.setShadowing(wns::Ratio::from_factor(shadowing));
 			cacheEntry.setAntennaGain(wns::Ratio::from_factor(antennaGain));
 			cacheEntry.setValid(true);
 		}
-		uint32_t numUpdates;
+		unsigned long int numUpdates;
 	}; // class PropCacheTestReceiver
 
 	class PropCacheTest

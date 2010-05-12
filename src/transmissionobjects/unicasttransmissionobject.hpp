@@ -42,7 +42,7 @@ namespace rise {
         //! Default constructor, used to create a TransmissionObject
         UnicastTransmissionObject(Transmitter* aTransmitter,
                                   receiver::ReceiverInterface* aReceiver,
-                                  uint32_t aLinkMode,
+                                  unsigned long int aLinkMode,
                                   wns::osi::PDUPtr aPayload,
                                   wns::Power power,
                                   int numberOfSpatialStreams);
@@ -50,7 +50,7 @@ namespace rise {
         //! Default constructor, used to create a TransmissionObject
         UnicastTransmissionObject(Transmitter* aTransmitter,
                                   receiver::ReceiverInterface* aReceiver,
-                                  uint32_t aLinkMode,
+                                  unsigned long int aLinkMode,
                                   wns::osi::PDUPtr aPayload,
                                   wns::Power power,
                                   const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr);

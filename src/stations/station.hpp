@@ -117,14 +117,14 @@ namespace rise {
 		 *
 		 * The ID is set by the SystemManager
 		 */
-		int32_t getStationId() const;
+		long int getStationId() const;
 
 		/**
 		 * @brief Set the ID of this Station
 		 *
 		 * The ID is set by the SystemManager
 		 */
-		void setStationId(int32_t id);
+		void setStationId(long int id);
 
 		/**
 		 * @brief Returns a pointer to the Antenna of this Station
@@ -241,7 +241,7 @@ namespace rise {
 		/**
 		 * @brief Station ID
 		 */
-		int32_t stationId;
+		long int stationId;
 
 		/**
 		 * @brief Disallow copy constructor

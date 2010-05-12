@@ -215,14 +215,14 @@ namespace rise
         //! Constructor without PDU
         TransmissionObject(Transmitter* _transmitter,
                            const wns::Power& _txPower,
-                           uint32_t _linkMode = 0,
+                           unsigned long int _linkMode = 0,
                            int numberOfSpatialStreams = 1);
 
         //! Default constructor, used to create a TransmissionObject
         TransmissionObject(Transmitter* _transmitter,
                            wns::osi::PDUPtr _payload,
                            const wns::Power& _txPower,
-                           uint32_t _linkMode = 0,
+                           unsigned long int _linkMode = 0,
                            int numberOfSpatialStreams = 1);
 
         //! Constructor with spectial case numberOfSpatialStreams = 1 and phyMode
@@ -230,20 +230,20 @@ namespace rise
         TransmissionObject(Transmitter* _transmitter,
                            const wns::Power& _txPower,
                            const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-                           uint32_t _linkMode = 0);
+                           unsigned long int _linkMode = 0);
 
         //! Default constructor, used to create a TransmissionObject
         TransmissionObject(Transmitter* _transmitter,
                            wns::osi::PDUPtr _payload,
                            const wns::Power& _txPower,
                            const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-                           uint32_t _linkMode = 0);
+                           unsigned long int _linkMode = 0);
 
         //! Default destructor
         virtual ~TransmissionObject();
 
         //! Returns the link mode. Can be downlink, uplink or direct link
-        uint32_t getLinkMode() const
+        unsigned long int getLinkMode() const
             {
                 return this->linkMode;
             }
@@ -278,7 +278,7 @@ namespace rise
          * Variable describing in which linkmode this TransmissionObject is
          * sent.
          */
-        uint32_t linkMode;
+        unsigned long int linkMode;
     };
 }
 

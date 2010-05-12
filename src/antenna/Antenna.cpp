@@ -93,7 +93,7 @@ Antenna::~Antenna()
 
 void Antenna::drawRadiationPattern() const
 {
-	const uint32_t resolution = 360;
+	const unsigned long int resolution = 360;
 	double step = 2 * M_PI / resolution;
 	double zero_dB_length = radius, length = 0, angle = 0;
 	wns::Ratio gain = wns::Ratio::from_dB(0),
@@ -109,7 +109,7 @@ void Antenna::drawRadiationPattern() const
 	}
 	wns::PositionOffset pOffset;
 	wns::Position position, myPosition = getPosition();
-	for (uint32_t k=0; k<resolution; k++)
+	for (unsigned long int k=0; k<resolution; k++)
 	{
 		angle = step * k;
 		pOffset.setPolar(1, angle, M_PI/2);
@@ -152,7 +152,7 @@ void Antenna::preparePatternOutputFile()
 }
 
 
-uint32_t Antenna::counter = 0;
+unsigned long int Antenna::counter = 0;
 std::set<std::string> Antenna::patternOutputFilePrepared = std::set<std::string>();
 
 

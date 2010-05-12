@@ -42,7 +42,7 @@ namespace rise { namespace scenario { namespace mobility { namespace roadmap {
 	class MapObject
 	{
 	public:
-		typedef uint32_t ID;
+		typedef unsigned long int ID;
 
 		/** @brief constructor */
 		MapObject(ID _id, Map* _map);

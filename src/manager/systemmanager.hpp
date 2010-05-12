@@ -127,7 +127,7 @@ namespace rise {
 		 *
 		 * @return a pointer to a Station with Id i
 		 */
-		Station* getStation(uint32_t i) const {
+		Station* getStation(unsigned long int i) const {
 			return stations.at(i);
 		};
 
@@ -136,7 +136,7 @@ namespace rise {
 		 *
 		 * @return the current number of Stations available in the system
 		 */
-		uint32_t getNumStations() const {
+		unsigned long int getNumStations() const {
 			return stations.size();
 		};
 

@@ -71,7 +71,7 @@ void Transmitter::configureLogger()
  	}
 }
 
-void Transmitter::startTransmitting(TransmissionObjectPtr transmissionObject, int32_t subCarrier)
+void Transmitter::startTransmitting(TransmissionObjectPtr transmissionObject, long int subCarrier)
 {
     assure(prc.at(subCarrier), "SubCarrier with id " << subCarrier << " does not exist");
 	prc[subCarrier]->startTransmission(transmissionObject);
@@ -113,7 +113,7 @@ void Transmitter::stopTransmitting(TransmissionObjectPtr transmissionObject)
 	(*itr)->stopTransmission(transmissionObject);
 }
 
-void Transmitter::tune(double f,double b,int32_t numberOfSubCarriers)
+void Transmitter::tune(double f,double b,long int numberOfSubCarriers)
 {
 	MESSAGE_SINGLE(NORMAL, log, "Transmitter::tune(f="<<f<<",b="<<b<<",#SC="<<numberOfSubCarriers<<")");
 
@@ -129,7 +129,7 @@ void Transmitter::tune(double f,double b,int32_t numberOfSubCarriers)
 	double lowestFrequency = f - b/2;
 	double firstCarrierMidFrequency = lowestFrequency + carrierBandwidth/2;
 
-	for(int32_t i=0; i<numberOfSubCarriers; ++i) {
+	for(long int i=0; i<numberOfSubCarriers; ++i) {
 		double midFrequency = firstCarrierMidFrequency + i*carrierBandwidth;
 		medium::Medium* m = medium::Medium::getInstance();
 		medium::PhysicalResource* p = m->getPhysicalResource(midFrequency, carrierBandwidth);
@@ -162,6 +162,6 @@ void Transmitter::positionWillChange()
 			this));
 }
 
-int32_t Transmitter::nextid = 0;
+long int Transmitter::nextid = 0;
 
 

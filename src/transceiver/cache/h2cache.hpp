@@ -62,7 +62,7 @@ namespace rise {
 		void invalidatePropagationEntries();
 
 		//! Attachs transmitter "t" to the cache
-		void attach(Transmitter* t, uint32_t tId);
+		void attach(Transmitter* t, unsigned long int tId);
 
     private:
 		typedef wns::container::FastList<Transmitter*> TransmitterContainer;

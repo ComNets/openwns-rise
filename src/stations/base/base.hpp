@@ -46,7 +46,7 @@ namespace rise {
 		};
 
 		//! Id of this base station
- 		virtual uint32_t getBaseId() = 0;
+ 		virtual unsigned long int getBaseId() = 0;
 
 	};
 }

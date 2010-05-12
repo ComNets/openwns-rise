@@ -50,7 +50,7 @@ IdVectorCache::~IdVectorCache()
 
 wns::Ratio IdVectorCache::getLoss(Transmitter* t, double frequency)
 {
-	uint32_t tId  = t->getTransmitterId();
+	unsigned long int tId  = t->getTransmitterId();
 	if(!transmitters.contains(t))
 		attach(t, tId);
 	PropCacheEntry& vectorEntry = pathlossShadowGain.at(tId);
@@ -60,12 +60,12 @@ wns::Ratio IdVectorCache::getLoss(Transmitter* t, double frequency)
 	return vectorEntry.getTotalLoss();
 }
 
-void IdVectorCache::attach(Transmitter *t, uint32_t tId)
+void IdVectorCache::attach(Transmitter *t, unsigned long int tId)
 {
 	transmitters.push_front(t);
  	if(pathlossShadowGain.size() <= tId)
  	{
- 		uint32_t size = tId+1;
+ 		unsigned long int size = tId+1;
  		pathlossShadowGain = vector<PropCacheEntry>(size);
  	}
 
@@ -73,7 +73,7 @@ void IdVectorCache::attach(Transmitter *t, uint32_t tId)
 
 void IdVectorCache::invalidatePropagationEntries( Transmitter* t)
 {
-	uint32_t tId = t->getTransmitterId();
+	unsigned long int tId = t->getTransmitterId();
 	if(pathlossShadowGain.size() <= tId)
 		attach(t, tId);
 	PropCacheEntry& vectorEntry = pathlossShadowGain.at(tId);
@@ -87,7 +87,7 @@ void IdVectorCache::invalidatePropagationEntries()
 		itrT!=itrTEnd;
 		++itrT)
     {
-	    uint32_t tId = (*itrT)->getTransmitterId();
+	    unsigned long int tId = (*itrT)->getTransmitterId();
 		PropCacheEntry& vectorEntry = pathlossShadowGain.at(tId);
 		vectorEntry.setValid(false);
     }

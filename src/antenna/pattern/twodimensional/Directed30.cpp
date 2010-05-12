@@ -45,8 +45,8 @@ void Directed30::pd_startUp()
 {
 	type = "Internal";
 	pattern = "Directed_30";
-	uint32_t horSize = 360;
-	uint32_t vertSize = 180;
+	unsigned long int horSize = 360;
+	unsigned long int vertSize = 180;
 	pd_elevationVector = Double64Vector(vertSize + 1);
 	pd_azimuthVector = Double64Vector(horSize + 1);
 	pd_gain = 13;

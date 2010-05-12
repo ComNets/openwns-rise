@@ -63,10 +63,10 @@ wns::Ratio VectorCache::getLoss(Transmitter* t, double freq) {
 
 int VectorCache::getIndex(Transmitter* t)
 {
-	PointerHashMap<Transmitter*, int32_t>::iterator itr=transmitter2Index.find(t);
+	PointerHashMap<Transmitter*, long int>::iterator itr=transmitter2Index.find(t);
  	if(itr==transmitter2Index.end())
 	{
- 		uint32_t index = 0;
+ 		unsigned long int index = 0;
 		FrequencyIterator fItrEnd = frequencies.end();
 		assert(frequencies.size()>0);
 		transmitters.push_back(t);
@@ -91,7 +91,7 @@ void VectorCache::invalidatePropagationEntries(Transmitter* t)
 {
 	if(frequencies.size()>0)
 	{
-		uint32_t index = getIndex(t);
+		unsigned long int index = getIndex(t);
 		FrequencyIterator itrFEnd = frequencies.end();
 		for(FrequencyIterator itrF = frequencies.begin();itrF!=itrFEnd;++itrF)
 		{
@@ -110,7 +110,7 @@ void VectorCache::invalidatePropagationEntries()
 		TransmitterIterator itrTEnd = transmitters.end();
 	   for(TransmitterIterator itrT = transmitters.begin();itrT!=itrTEnd;++itrT)
 	   {
-		   uint32_t index = getIndex(*itrT);
+		   unsigned long int index = getIndex(*itrT);
 		   PropCacheEntry& vectorEntry = pathlossShadowGain[*itrF].at(index);
 		   updatePropEntry(vectorEntry, *itrT, (*itrF));
 		}
@@ -119,13 +119,13 @@ void VectorCache::invalidatePropagationEntries()
 //! Create a new vector for a new frequency
 void VectorCache::attachFrequency(double freq)
 {
-	uint32_t numTx = (transmitter2Index.size()+1);
+	unsigned long int numTx = (transmitter2Index.size()+1);
 	pathlossShadowGain[freq] = std::vector<PropCacheEntry>(numTx);
 	TransmitterIterator itrTEnd = transmitters.end();
 
 	for(TransmitterIterator itrT = transmitters.begin();itrT!=itrTEnd;++itrT)
 	{
-		uint32_t index = getIndex(*itrT);
+		unsigned long int index = getIndex(*itrT);
 		PropCacheEntry& vectorEntry = pathlossShadowGain[freq].at(index);
 		updatePropEntry(vectorEntry, *itrT, freq);
 	}

@@ -43,8 +43,8 @@ void Directed66::pd_startUp ()
 {
 	type = "Internal";
 	pattern = "Directed_66";
-	uint32_t horSize = 360;
-	uint32_t vertSize = 180;
+	unsigned long int horSize = 360;
+	unsigned long int vertSize = 180;
 	pd_elevationVector = Double64Vector(vertSize + 1);
 	pd_azimuthVector = Double64Vector(horSize + 1);
 	pd_gain = 10.65;
@@ -229,7 +229,7 @@ void Directed66::pd_startUp ()
 	pd_elevationVector[87] =   -0.18;
 	pd_elevationVector[88] =   -0.09;
 	pd_elevationVector[89] =   -0.03;
-	for (uint32_t i = 0; i <= horSize; i++)
+	for (unsigned long int i = 0; i <= horSize; i++)
 	{
 		pd_azimuthVector[i] = -30.46;
 	}

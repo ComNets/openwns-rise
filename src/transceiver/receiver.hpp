@@ -133,7 +133,7 @@ namespace rise
 		wns::Power getNoise();
 
 		/** @brief listening on these frequencies */
-		virtual void tune(double f, double b, int32_t numberOfSubCarriers);
+		virtual void tune(double f, double b, long int numberOfSubCarriers);
 
 		//! Called by the PhysicalResource, if a Transmitter moves.
 		/** PhysicalResource will call this function of every Receiver
@@ -176,10 +176,10 @@ namespace rise
 		wns::Ratio CIR;
 
 		//! The Id of the receiver (for messages only)
-		uint32_t receiverId;
+		unsigned long int receiverId;
 
 		//! holds the next id of a receiver
-		static uint32_t nextid;
+		static unsigned long int nextid;
 
 		//! The demodulator used
 		Demodulator *demodulator;

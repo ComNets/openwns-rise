@@ -143,12 +143,12 @@ namespace rise { namespace antenna {
 		/**
 		 * @brief Antenna ID of this antenna
 		 */
-		uint32_t id;
+		unsigned long int id;
 
 		/**
 		 * @brief Counter of antenna ids
 		 */
-		static uint32_t counter;
+		static unsigned long int counter;
 
 		static std::set<std::string> patternOutputFilePrepared;
 	};

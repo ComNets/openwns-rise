@@ -63,7 +63,7 @@ void RISE::configure()
 												 "WARNING: You're about to Instantiate an additional RNG for the RISE Mobility!");
 		mobilityRNG = new wns::rng::RNGen();
 		wns::pyconfig::View rngConfig = config.get("ownMobilityRNG");
-		mobilityRNG->seed(rngConfig.get<uint32_t>("seed"));
+		mobilityRNG->seed(rngConfig.get<unsigned long int>("seed"));
 	} else {
  		mobilityRNG = wns::simulator::getRNG();
 	}

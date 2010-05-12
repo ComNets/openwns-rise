@@ -43,12 +43,12 @@ void Directed120::pd_startUp()
 {
 	type = "Internal";
 	pattern = "Directed_120";
-	uint32_t horSize = 720;
-	uint32_t vertSize = 1;
+	unsigned long int horSize = 720;
+	unsigned long int vertSize = 1;
 	pd_elevationVector = Double64Vector(vertSize + 1);
 	pd_azimuthVector = Double64Vector(horSize + 1);
 	pd_gain = 6.15;
-	for (uint32_t i = 0; i <= vertSize; i++)
+	for (unsigned long int i = 0; i <= vertSize; i++)
 	{
 		pd_elevationVector[i] = 0;
 	}

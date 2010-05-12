@@ -43,12 +43,12 @@ void LambdaHalf::pd_startUp ()
 {
 	type = "Internal";
 	pattern = "Lambda_Half";
- 	uint32_t horSize = 1;
- 	uint32_t vertSize = 360;
+ 	unsigned long int horSize = 1;
+ 	unsigned long int vertSize = 360;
 	pd_elevationVector = Double64Vector(vertSize + 1);
 	pd_azimuthVector = Double64Vector(horSize + 1);
  	pd_gain = 2.15;
-	for (uint32_t i = 0; i <= horSize; i++)
+	for (unsigned long int i = 0; i <= horSize; i++)
 	{
 		pd_azimuthVector[i] = 0;
 	}

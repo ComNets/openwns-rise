@@ -74,7 +74,7 @@ namespace rise {
 		//! Hash that contains a CacheVector for each used Frequency
 		typedef FreqHash<CacheVector> FrequencyHash;
 		//! Stores an individual index for each active transmitter
-		PointerHashMap<Transmitter*, int32_t> transmitter2Index;
+		PointerHashMap<Transmitter*, long int> transmitter2Index;
         //! Cache that stores the total loss towards all active Transmitters
 		/** 
 		 *  Cache stores PropCacheEntry objects, which contains pathloss, shadowing,

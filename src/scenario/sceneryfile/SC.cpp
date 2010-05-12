@@ -61,7 +61,7 @@ SC::SC(const std::string filename, const scenario::Scenario& /*scenario*/) :
 
     // check if we really have a SC file
     char fileMagic[20];
-    int32_t fileVersion = 0;
+    long int fileVersion = 0;
 
     SCfile.getline(fileMagic, 20);
     if (std::string(fileMagic) == "SceneryMap,") fileVersion = 1;
@@ -72,7 +72,7 @@ SC::SC(const std::string filename, const scenario::Scenario& /*scenario*/) :
 		throw wns::Exception(("SC: " + filename + " not a SC map file").c_str());
 
     // read in x and y size
-    int32_t xSize, ySize;
+    long int xSize, ySize;
     if (fileVersion < 3)
 		{
 			SCfile >> xSize;
@@ -88,18 +88,18 @@ SC::SC(const std::string filename, const scenario::Scenario& /*scenario*/) :
 		throw wns::Exception("SC: illegal scenario size");
 
     // read in sqrt of number of shadowing tiles per pathloss/morphology tile
-    uint32_t shadowingSize;
+    unsigned long int shadowingSize;
     SCfile >> shadowingSize;
 
     // read in number of base stations
-    int32_t maxBS;
+    long int maxBS;
     SCfile >> maxBS;
 
     if (maxBS < 1)
 		throw wns::Exception("SC: too few base stations");
 
     // read in resolution
-    uint32_t resolution;
+    unsigned long int resolution;
 
     if (fileVersion >=2)
 		{
@@ -123,18 +123,18 @@ SC::SC(const std::string filename, const scenario::Scenario& /*scenario*/) :
     // fill maps with values
     char aChar;
     SCfile.get(aChar);
-    for (int32_t y = 0; y < ySize; ++y)
+    for (long int y = 0; y < ySize; ++y)
 		{
-			for (int32_t x = 0; x < xSize; ++x)
+			for (long int x = 0; x < xSize; ++x)
 				{
 					// morphology
 					SCfile.get(aChar);
 					morphologyMap[x][y] = (unsigned char)aChar;
 
 					// shadowing
-					for (uint32_t sy = 0; sy < shadowingSize; ++sy)
+					for (unsigned long int sy = 0; sy < shadowingSize; ++sy)
 						{
-							for (uint32_t sx = 0; sx < shadowingSize; ++sx)
+							for (unsigned long int sx = 0; sx < shadowingSize; ++sx)
 								{
 									SCfile.get(aChar);
 									shadowingMap[x*shadowingSize + sx][y*shadowingSize + sy] = aChar;
@@ -142,7 +142,7 @@ SC::SC(const std::string filename, const scenario::Scenario& /*scenario*/) :
 						}
 
 					// pathloss
-					for (int32_t bs = 0; bs < maxBS; ++bs)
+					for (long int bs = 0; bs < maxBS; ++bs)
 						{
 							SCfile.get(aChar);
 							pathlossMaps[bs][x][y] = (unsigned char)aChar;

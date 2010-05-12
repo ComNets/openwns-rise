@@ -43,8 +43,8 @@ void Directed90::pd_startUp ()
 {
 	type = "Internal";
 	pattern = "Directed_90";
-	uint32_t horSize = 720;
-	uint32_t vertSize = 1;
+	unsigned long int horSize = 720;
+	unsigned long int vertSize = 1;
 	pd_elevationVector = Double64Vector(vertSize + 1);
 	pd_azimuthVector = Double64Vector(horSize + 1);
 	pd_gain = 8.01;

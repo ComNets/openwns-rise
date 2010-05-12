@@ -78,8 +78,8 @@ void StationTest::stationId()
 	StationDropIn s2(sm);
 	s1.setStationId(1);
 	s2.setStationId(2);
-	CPPUNIT_ASSERT_EQUAL( int32_t(1), s1.getStationId() );
-	CPPUNIT_ASSERT_EQUAL( int32_t(2), s2.getStationId() );
+	CPPUNIT_ASSERT_EQUAL( (long int)(1), s1.getStationId() );
+	CPPUNIT_ASSERT_EQUAL( (long int)(2), s2.getStationId() );
 }
 
 void StationTest::distance()

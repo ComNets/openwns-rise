@@ -32,7 +32,7 @@ using namespace rise;
 
 UnicastTransmissionObject::UnicastTransmissionObject(Transmitter* aTransmitter,
                                                      receiver::ReceiverInterface* aReceiver,
-                                                     uint32_t aLinkMode,
+                                                     unsigned long int aLinkMode,
                                                      wns::osi::PDUPtr aPayload,
                                                      wns::Power power,
                                                      int numberOfSpatialStreams)
@@ -42,7 +42,7 @@ UnicastTransmissionObject::UnicastTransmissionObject(Transmitter* aTransmitter,
 
 UnicastTransmissionObject::UnicastTransmissionObject(Transmitter* aTransmitter,
                                                      receiver::ReceiverInterface* aReceiver,
-                                                     uint32_t aLinkMode,
+                                                     unsigned long int aLinkMode,
                                                      wns::osi::PDUPtr aPayload,
                                                      wns::Power power,
                                                      const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)

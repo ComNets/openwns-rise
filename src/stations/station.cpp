@@ -154,13 +154,13 @@ void Station::initialize()
 	initialized = true;
 }
 
-int32_t Station::getStationId() const
+long int Station::getStationId() const
 {
 	assure(stationId >= 0, "Station ID not set yet!");
 	return stationId;
 }
 
-void Station::setStationId(int32_t id)
+void Station::setStationId(long int id)
 {
 	assure(id >= 0, "Only station IDs >= 0 allowed!");
 	stationId = id;

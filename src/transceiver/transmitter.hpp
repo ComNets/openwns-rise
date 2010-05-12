@@ -81,7 +81,7 @@ namespace rise
 		    Transmitter by using tune(PhysicalResource *resource).
 		    Transmitting is set true. If the Transmitter is already in state
 		    transmitting, the function will do nothing. */
-		virtual void startTransmitting(TransmissionObjectPtr transmissionObject, int32_t Sub_band_Id);
+		virtual void startTransmitting(TransmissionObjectPtr transmissionObject, long int Sub_band_Id);
 
 		//! Used to stop a transmisson.
 		/** stopTransmitting() will fail if the Transmitter has no
@@ -92,12 +92,12 @@ namespace rise
 		virtual void stopTransmitting(TransmissionObjectPtr transmissionObject);
 
 		//! Returns the the ID of this transmitter.
-		virtual int32_t getTransmitterId() const
+		virtual long int getTransmitterId() const
 		{
 			return transmitterId;
 		}
         //! Tune the Transceiver to a PhysicalResource.
-		virtual void tune(double f, double b, int32_t numberOfSubCarriers);
+		virtual void tune(double f, double b, long int numberOfSubCarriers);
 		//! called if Transmitter moved
 		virtual void positionChanged();
 
@@ -137,7 +137,7 @@ namespace rise
 		//! The wns::Power the Transmitter is currently adjusted to
 		wns::Power txPwr;
 		//! The Id of the transmitter (for messages only)
-		int32_t transmitterId;
+		long int transmitterId;
 		//! The wns::Power the Transmitter is currently adjusted to
 		wns::Power maxTxPwr;
 		bool pd_debugFlag;
@@ -166,7 +166,7 @@ namespace rise
 
 	private:
 
-		static int32_t nextid;
+		static long int nextid;
 
 		bool active;
 

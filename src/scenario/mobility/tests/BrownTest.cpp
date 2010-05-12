@@ -80,7 +80,7 @@ namespace rise { namespace scenario {
 				posObservation(),
 				pdf( 0,  // double    aMinXValue        = defaultMinXValue, 
 					 50, // double    aMaxXValue        = defaultMaxXValue,
-					 50, // uint32_t      aResolution       = defaultResolution,
+					 50, // unsigned long int      aResolution       = defaultResolution,
                                      wns::evaluation::statistics::PDF::linear, // scaleType
                                      wns::evaluation::statistics::StatEval::fixed,  //formatType  aFormat           = defaultFormat,
 					 "UsersPerElement", //const char* aName             = nil,

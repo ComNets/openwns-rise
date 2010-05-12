@@ -49,7 +49,7 @@ Beamforming::Beamforming(const wns::pyconfig::View& pyConfigView,
 	  dis(0.0, positionErrorVariance, wns::simulator::getRNG())
 
 {
-	pd_noAntennaElements = pyConfigView.get<int32_t>("noOfElements");
+	pd_noAntennaElements = pyConfigView.get<long int>("noOfElements");
 	if (pyConfigView.get<std::string>("arrayLayout") == "circular")
 		arrayLayout = circular;
 
@@ -66,10 +66,10 @@ Beamforming::Beamforming(const wns::pyconfig::View& pyConfigView,
 	// ArrayLayout) which is known once the BF antenna is created.
 	steervectors.resize(360, 0);
 
-	for (uint32_t i = 0; i < 360; i++)
+	for (unsigned long int i = 0; i < 360; i++)
 	{
 		steervectors[i] = new boost::numeric::ublas::vector<std::complex<double> >(pd_noAntennaElements);
-		for (uint32_t j = 0; j < pd_noAntennaElements; j++)
+		for (unsigned long int j = 0; j < pd_noAntennaElements; j++)
 		{
             // Now I have to add pi here!?
 			std::complex<double> c = std::polar(1.0, calculatePhaseDelta(j, double(i)*M_PI/180+M_PI)); 
@@ -80,7 +80,7 @@ Beamforming::Beamforming(const wns::pyconfig::View& pyConfigView,
 
 Beamforming::~Beamforming()
 {
-	for (uint32_t i = 0; i < 360; ++i)
+	for (unsigned long int i = 0; i < 360; ++i)
 	{
 		delete steervectors[i];
 	}
@@ -102,7 +102,7 @@ Beamforming::getGain(const wns::Position& pos,
 {
 	double phi = (pos - getPosition()).getAzimuth();
 	if (phi < 0) phi += M_PI + M_PI;
-	uint32_t index = (uint32_t)(180 * phi / M_PI + 0.5); // 0.5 to round
+	unsigned long int index = (unsigned long int)(180 * phi / M_PI + 0.5); // 0.5 to round
 	if(index == 360) index = 0;
 	assure(index < pattern->getSize(), "pattern index out of range");
 
@@ -114,7 +114,7 @@ Beamforming::getGain(const wns::Position& pos,
 }
 
 wns::Ratio
-Beamforming:: pd_getGainEntry(uint32_t index,
+Beamforming:: pd_getGainEntry(unsigned long int index,
 							  PatternPtr pattern) const
 {
 	assure(index < pattern->getSize(), "pattern index out of range");
@@ -212,7 +212,7 @@ Beamforming::calculateCandIsTx(const std::map<Station*, wns::Power>& station2iIn
 		double iIntra = 0.0;
 
 		// the angle is fixed, traverse the patterns
-		uint32_t grad = uint32_t(pd_azimuthAngles[*s]*180/M_PI + 0.5); //0.5 to round
+		unsigned long int grad = (unsigned long int)(pd_azimuthAngles[*s]*180/M_PI + 0.5); //0.5 to round
 		if (grad == 360) grad = 0;
 		assure(grad < outpattern[*s]->getSize(), "pattern index (grad) out of range");
 
@@ -277,11 +277,11 @@ Beamforming::calculateCandIsRx(const std::vector<Station*>& combination,
 		double signal = 0.0;
  		double iIntra = 0.0;
 
-		uint32_t grad = 0;
+		unsigned long int grad = 0;
 		// the pattern is fixed, angles change
 		for (std::vector<Station*>::const_iterator interferer = combination.begin(); interferer != combination.end(); interferer++)
 		{
-			grad = uint32_t(pd_azimuthAngles[*interferer]*180/M_PI +0.5); //0.5 to round
+			grad = (unsigned long int)(pd_azimuthAngles[*interferer]*180/M_PI +0.5); //0.5 to round
 			if(grad == 360) grad = 0;
 			assure(grad < outpattern[*s]->getSize(), "pattern index (grad) out of range");
 
@@ -399,7 +399,7 @@ Beamforming::p_calculateBeam(Station* id,
 	 	if (pd_azimuthAngles[*s] < 0)
  			pd_azimuthAngles[*s] += M_PI + M_PI;
 
-		for (uint32_t i = 0; i < pd_noAntennaElements; i++)
+		for (unsigned long int i = 0; i < pd_noAntennaElements; i++)
 		{
 			c = std::polar(1.0, calculatePhaseDelta(i, pd_azimuthAngles[*s]));
 			steervector(i) = c;
@@ -417,7 +417,7 @@ Beamforming::p_calculateBeam(Station* id,
 
  	if (pd_azimuthAngles[id] < 0)
  		pd_azimuthAngles[id] += M_PI + M_PI;
-    for (uint32_t i = 0; i < pd_noAntennaElements; i++)
+    for (unsigned long int i = 0; i < pd_noAntennaElements; i++)
 	{
 		c = std::polar(1.0, calculatePhaseDelta(i, pd_azimuthAngles[id]));
 		steervector(i) = c;
@@ -429,7 +429,7 @@ Beamforming::p_calculateBeam(Station* id,
 
    //covariance matrix almost complete, now only noise entries necessary:
     std::complex<double> n = std::complex<double>(omniPower.get_mW(), 0);
-    for (uint32_t i = 0; i < pd_noAntennaElements; i++){
+    for (unsigned long int i = 0; i < pd_noAntennaElements; i++){
 		kov(i, i) = kov(i, i) + n;
     }
     //Calculate Weight vector
@@ -445,18 +445,18 @@ Beamforming::p_calculateBeam(Station* id,
     // compute antenna pattern:
     std::complex<double> pattern[360];
     boost::numeric::ublas::vector<std::complex<double> > wTrans = boost::numeric::ublas::trans(w);
-    for (uint32_t i = 0; i < 360; i++){
+    for (unsigned long int i = 0; i < 360; i++){
         pattern[i] = boost::numeric::ublas::inner_prod(wTrans, (*steervectors[i]));
 	}
     //Normalize pattern to transmit / receive the same power as an omni-antenna:
 	double sumPower = 0.0;
-    for (uint32_t i = 0; i < 360; i++)
+    for (unsigned long int i = 0; i < 360; i++)
 		sumPower += pow(std::abs(pattern[i]),2);
 	sumPower = sumPower / 360;
 
 	PatternPtr beam(new Pattern());
 	beam->pattern.reserve(360);
-    for (uint32_t i = 0; i < 360; i++)
+    for (unsigned long int i = 0; i < 360; i++)
 	{
 		double amplitudeFactor = std::abs(pattern[i])/sqrt(sumPower);
 		beam->pattern.push_back(amplitudeFactor);
@@ -464,7 +464,7 @@ Beamforming::p_calculateBeam(Station* id,
 	assure(beam->getSize() == 360, "pattern has no valid size");
     // the omni attenuation factor is no longer needed, it is always one
 	//beam->omniAttenuation = wns::Ratio::from_factor(1);
-	uint32_t grad = uint32_t(pd_azimuthAngles[id]*180/M_PI +0.5); //0.5 to round
+	unsigned long int grad = (unsigned long int)(pd_azimuthAngles[id]*180/M_PI +0.5); //0.5 to round
 	if(grad == 360) grad = 0;
 	assure(grad < beam->pattern.size(), "pattern index (grad) out of range");
 	double desiredAntennaFactor =  beam->pattern.at(grad);
@@ -473,14 +473,14 @@ Beamforming::p_calculateBeam(Station* id,
 	m << "antenna factor in look direction: "<< desiredAntennaFactor << "\n";
 	m << "antenna factor(s) to undesired station(s): ";
 	for (std::vector<Station*>::const_iterator s = undesired.begin(); s != undesired.end(); s ++){
-		grad = uint32_t(pd_azimuthAngles[*s]*180/M_PI +0.5); //0.5 to round
+		grad = (unsigned long int)(pd_azimuthAngles[*s]*180/M_PI +0.5); //0.5 to round
 		if(grad == 360) grad = 0;
 		m << beam->pattern.at(grad) << " ";
 	}
 	MESSAGE_END();
 
 	for (std::vector<Station*>::const_iterator s = undesired.begin(); s != undesired.end(); s ++){
-		grad = uint32_t(pd_azimuthAngles[*s]*180/M_PI +0.5); //0.5 to round
+		grad = (unsigned long int)(pd_azimuthAngles[*s]*180/M_PI +0.5); //0.5 to round
 		if(grad == 360) grad = 0;
 
 		if( beam->pattern.at(grad) < desiredAntennaFactor){
@@ -496,13 +496,13 @@ Beamforming::p_calculateBeam(Station* id,
 }
 
 
-void Beamforming::p_herm_rest(boost::numeric::ublas::matrix<std::complex<double> >& c, const uint32_t m) const
+void Beamforming::p_herm_rest(boost::numeric::ublas::matrix<std::complex<double> >& c, const unsigned long int m) const
 {
 	//Restoration of efficiently stored hermitian matrix
 	std::complex<double> z;
 	double re, im;
-	for (uint32_t i = 0; i < m; i++){
-		for (uint32_t j = i+1; j < m; j++){
+	for (unsigned long int i = 0; i < m; i++){
+		for (unsigned long int j = i+1; j < m; j++){
 			re = c(i, j).real();
 			im = c(i, j).imag();
 			z = std::complex<double>(re, -im);
@@ -514,7 +514,7 @@ void Beamforming::p_herm_rest(boost::numeric::ublas::matrix<std::complex<double>
 
 void Beamforming::drawRadiationPattern(std::string file, PatternPtr pattern)
 {
-	const uint32_t resolution = 360;
+	const unsigned long int resolution = 360;
 	double step = 2 * M_PI / resolution;
 	//double zero_dB_length = radius;
     double length = 0, angle = 0;
@@ -530,7 +530,7 @@ void Beamforming::drawRadiationPattern(std::string file, PatternPtr pattern)
 		return;
 	}
 	wns::Position myPosition = getPosition();
-	for (uint32_t k=0; k<resolution; k++)
+	for (unsigned long int k=0; k<resolution; k++)
 	{
 		angle = step * k;
 		gain = pd_getGainEntry(k, pattern);
@@ -546,7 +546,7 @@ void Beamforming::drawRadiationPattern(std::string file, PatternPtr pattern)
 
 void Beamforming::drawRadiationPattern() const
 {
-	const uint32_t resolution = 360;
+	const unsigned long int resolution = 360;
 	double step = 2 * M_PI / resolution, length = radius, angle = 0;
 	std::fstream outfile;
 	outfile.open(patternOutputFile.c_str(), std::ios::out | std::ios::app);
@@ -558,7 +558,7 @@ void Beamforming::drawRadiationPattern() const
 		return;
 	}
 	wns::Position myPosition = getPosition();
-	for (uint32_t k=0; k<resolution; k++)
+	for (unsigned long int k=0; k<resolution; k++)
 	{
 		angle = step * k;
 		outfile << myPosition.getX() + length * cos(angle) <<  " "

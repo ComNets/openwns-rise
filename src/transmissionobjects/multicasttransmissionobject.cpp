@@ -35,7 +35,7 @@ using namespace rise;
 
 MulticastTransmissionObject::MulticastTransmissionObject(Transmitter* aTransmitter,
                                                          ReceiverContainer aMultiGroup,
-                                                         uint32_t,
+                                                         unsigned long int,
                                                          wns::osi::PDUPtr aPayload,
                                                          wns::Power power)
     : TransmissionObject(aTransmitter, aPayload, power),
@@ -44,7 +44,7 @@ MulticastTransmissionObject::MulticastTransmissionObject(Transmitter* aTransmitt
 
 MulticastTransmissionObject::MulticastTransmissionObject(Transmitter* aTransmitter,
                                                          ReceiverContainer aMultiGroup,
-                                                         uint32_t aLinkMode,
+                                                         unsigned long int aLinkMode,
                                                          wns::osi::PDUPtr aPayload,
                                                          wns::Power power,
                                                          const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr)
@@ -56,7 +56,7 @@ MulticastTransmissionObject::~MulticastTransmissionObject() {}
 
 bool MulticastTransmissionObject::isForMe(const receiver::ReceiverInterface* r) const
 {
-    for (uint32_t i=0; i <= multiGroup.size(); ++i)
+    for (unsigned long int i=0; i <= multiGroup.size(); ++i)
     {
         if (multiGroup.at(i) == r) return true;
     }

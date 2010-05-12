@@ -122,8 +122,8 @@ void ReceiverBase::startReceiving()
 	MESSAGE_END();
 	//std::cout << "rise::ReceiverBase::startReceiving" << std::endl;
 	assure(!active, "Receiver already active!");
-	int32_t nSB = prc.size();
-	for(int32_t i=0; i < nSB; ++i) 
+	long int nSB = prc.size();
+	for(long int i=0; i < nSB; ++i) 
     {
 		assert(prc.at(i));
 		prc.at(i)->attach(this);
@@ -137,8 +137,8 @@ void ReceiverBase::stopReceiving()
 	MESSAGE_END();
 	//std::cout << "rise::ReceiverBase::stopReceiving" << std::endl;
 	assure(active, "Receiver is not active!");
-	int32_t nSC = prc.size();
-	for(int32_t i = 0; i < nSC; ++i)
+	long int nSC = prc.size();
+	for(long int i = 0; i < nSC; ++i)
     {
 		assert(prc.at(i));
 		prc.at(i)->detach(this);
@@ -239,7 +239,7 @@ void ReceiverBase::writeCacheEntry(PropCacheEntry& cacheEntry,
 	cacheEntry.setValid(true);
 }
 
-void ReceiverBase::tune(double f,double b,int32_t numberOfSubCarriers)
+void ReceiverBase::tune(double f,double b,long int numberOfSubCarriers)
 {
 	assure(!active, "Tuning not possible.Transceiver is active!");
 	assure(f>0, "No negative frequencies allowed.");
@@ -251,7 +251,7 @@ void ReceiverBase::tune(double f,double b,int32_t numberOfSubCarriers)
 	midFrequency = f;
 	double subCarrierBandwidth = b/numberOfSubCarriers;
 	double lowerFrequency = f - b/2;
-	for(int32_t i = 0; i < numberOfSubCarriers; ++i) {
+	for(long int i = 0; i < numberOfSubCarriers; ++i) {
 		double subCarrierCenterFrequency = lowerFrequency + (2*i + 1) * subCarrierBandwidth/2;
 		prc.push_back(medium::Medium::getInstance()->getPhysicalResource(subCarrierCenterFrequency, subCarrierBandwidth));
 		// TODO [rs]: way to give the subChannel number into the PhysicalResource
@@ -280,7 +280,7 @@ bool ReceiverBase::contains(TransmissionObjectPtr t)
 	return find(transmissionObjects.begin(), transmissionObjects.end(), t) != transmissionObjects.end();
 }
 
-uint32_t ReceiverBase::nextid = 0;
+unsigned long int ReceiverBase::nextid = 0;
 
 Receiver::Receiver(Station* s,
 				   antenna::Antenna* a,
@@ -298,8 +298,8 @@ Receiver::~Receiver()
 wns::Ratio Receiver::getLoss(Transmitter* t)
 {
 	double freq = 0;
-	int32_t nSB = prc.size();
-	for(int32_t i = 0; i < nSB; ++i)
+	long int nSB = prc.size();
+	for(long int i = 0; i < nSB; ++i)
 		freq += prc[i]->getFrequency();
 	return propCache->getLoss(t, freq);
 }

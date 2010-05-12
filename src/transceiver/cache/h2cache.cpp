@@ -53,7 +53,7 @@ H2Cache::~H2Cache()
 
 wns::Ratio H2Cache::getLoss(Transmitter* t, double freq)
 {
- 	uint32_t tId = t->getTransmitterId();
+ 	unsigned long int tId = t->getTransmitterId();
  	if(!transmitters.contains(t))
  		attach(t, tId);
  	PropCacheEntry& cacheEntry = pathlossShadowGain.at(tId);
@@ -66,19 +66,19 @@ wns::Ratio H2Cache::getLoss(Transmitter* t, double freq)
 }
 
 
-void H2Cache::attach(Transmitter* t, uint32_t tId) {
+void H2Cache::attach(Transmitter* t, unsigned long int tId) {
 	
  	transmitters.push_back(t);
 	if(pathlossShadowGain.size() <= tId)
  	{
-  		uint32_t numTx = tId+1;
+  		unsigned long int numTx = tId+1;
  		pathlossShadowGain = std::vector<PropCacheEntry>(numTx);
  	}
 }
 
 void H2Cache::invalidatePropagationEntries(Transmitter* t)
 {
- 	uint32_t tId = t->getTransmitterId();
+ 	unsigned long int tId = t->getTransmitterId();
 	if(tId >= pathlossShadowGain.size())
 		attach(t, tId);
 	pathlossShadowGain.at(tId).setValid(false);
@@ -91,7 +91,7 @@ void H2Cache::invalidatePropagationEntries()
 		itrT!=itrTEnd;
 		++itrT)
     {
-	    uint32_t tId = (*itrT)->getTransmitterId();
+	    unsigned long int tId = (*itrT)->getTransmitterId();
 		pathlossShadowGain.at(tId).setValid(false);
     }
 }

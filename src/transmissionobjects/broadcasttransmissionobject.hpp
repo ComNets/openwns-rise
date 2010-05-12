@@ -42,7 +42,7 @@ namespace rise
         BroadcastTransmissionObject(Transmitter* aTransmitter,
                                     wns::osi::PDUPtr aPayload,
                                     wns::Power power,
-                                    uint32_t aLinkMode = 0,
+                                    unsigned long int aLinkMode = 0,
                                     int numberOfSpatialStreams = 1);
 
         //! Default constructor, used to create a TransmissionPbject
@@ -50,7 +50,7 @@ namespace rise
                                     wns::osi::PDUPtr aPayload,
                                     wns::Power power,
                                     const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-                                    uint32_t aLinkMode = 0);
+                                    unsigned long int aLinkMode = 0);
 
         /** isForMe of BroadcastTransmissionObject always returns true. You have to
             check for yourself, if you are associated to the sender. */

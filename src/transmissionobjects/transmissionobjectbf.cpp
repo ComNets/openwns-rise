@@ -38,7 +38,7 @@ TransmissionObjectBF::TransmissionObjectBF(Transmitter* _transmitter,
                                            wns::osi::PDUPtr _payload,
                                            wns::Power _txPower,
                                            rise::antenna::PatternPtr _pattern,
-                                           uint32_t _linkMode,
+                                           unsigned long int _linkMode,
                                            int _numberOfSpatialStreams)
     : UnicastTransmissionObject(_transmitter, _aReceiver, _linkMode, _payload, _txPower, _numberOfSpatialStreams),
       antennaBF(_antennaBF),
@@ -53,7 +53,7 @@ TransmissionObjectBF::TransmissionObjectBF(Transmitter* _transmitter,
                                            wns::Power _txPower,
                                            const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
                                            rise::antenna::PatternPtr _pattern,
-                                           uint32_t _linkMode)
+                                           unsigned long int _linkMode)
     : UnicastTransmissionObject(_transmitter, _aReceiver, _linkMode, _payload, _txPower, _phyModePtr),
       antennaBF(_antennaBF),
       pattern(_pattern)

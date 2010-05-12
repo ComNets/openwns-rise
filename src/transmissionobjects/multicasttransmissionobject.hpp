@@ -45,13 +45,13 @@ namespace rise {
         //! Default constructor, used to create a TransmissionObject
         MulticastTransmissionObject(Transmitter* aTransmitter,
                                     ReceiverContainer multiGroup,
-                                    uint32_t aLinkMode,
+                                    unsigned long int aLinkMode,
                                     wns::osi::PDUPtr aPayload,
                                     wns::Power power);
 
         MulticastTransmissionObject(Transmitter* aTransmitter,
                                     ReceiverContainer multiGroup,
-                                    uint32_t aLinkMode,
+                                    unsigned long int aLinkMode,
                                     wns::osi::PDUPtr aPayload,
                                     wns::Power power,
                                     const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr);

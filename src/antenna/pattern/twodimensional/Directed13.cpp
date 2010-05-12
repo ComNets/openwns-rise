@@ -43,16 +43,16 @@ void Directed13::pd_startUp ()
 {
 	type = "Internal";
 	pattern = "Directed_13";
-	uint32_t horSize = 720;
-	uint32_t vertSize = 1;
+	unsigned long int horSize = 720;
+	unsigned long int vertSize = 1;
 	pd_elevationVector = Double64Vector(vertSize + 1);
 	pd_azimuthVector = Double64Vector(horSize + 1);
 	pd_gain = 18;
-	for (uint32_t i = 0; i <= vertSize; i++)
+	for (unsigned long int i = 0; i <= vertSize; i++)
 	{
 		pd_elevationVector[i] = 0;
 	}
-	for (uint32_t i = 0; i <= horSize; i++)
+	for (unsigned long int i = 0; i <= horSize; i++)
 	{
 		pd_azimuthVector[i] = -35;
 	}

@@ -48,7 +48,7 @@ TransmissionInterface::~TransmissionInterface()
 
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,
                                        const wns::Power& _txPower,
-                                       uint32_t _linkMode,
+                                       unsigned long int _linkMode,
                                        int _numberOfSpatialStreams) :
     transmitter(_transmitter),
     payload(NULL),
@@ -62,7 +62,7 @@ TransmissionObject::TransmissionObject(Transmitter* _transmitter,
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,
                                        wns::osi::PDUPtr _payload,
                                        const wns::Power& _txPower,
-                                       uint32_t _linkMode,
+                                       unsigned long int _linkMode,
                                        int _numberOfSpatialStreams) :
     transmitter(_transmitter),
     payload(_payload),
@@ -75,7 +75,7 @@ TransmissionObject::TransmissionObject(Transmitter* _transmitter,
 TransmissionObject::TransmissionObject(Transmitter* _transmitter,
                                        const wns::Power& _txPower,
                                        const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-                                       uint32_t _linkMode) :
+                                       unsigned long int _linkMode) :
     transmitter(_transmitter),
     payload(NULL),
     linkMode(_linkMode)
@@ -90,7 +90,7 @@ TransmissionObject::TransmissionObject(Transmitter* _transmitter,
                                        wns::osi::PDUPtr _payload,
                                        const wns::Power& _txPower,
                                        const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
-                                       uint32_t _linkMode) :
+                                       unsigned long int _linkMode) :
     transmitter(_transmitter),
     payload(_payload),
     linkMode(_linkMode)

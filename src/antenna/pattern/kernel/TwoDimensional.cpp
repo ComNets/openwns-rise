@@ -101,10 +101,10 @@ void TwoDimensional::pd_startUp()
 
 wns::Ratio TwoDimensional::getGain(const wns::Direction& direction)
 {
- 	uint32_t elevation_index = ((uint32_t)(direction.getElevation()/pd_elevationAngleStep));
+ 	unsigned long int elevation_index = ((unsigned long int)(direction.getElevation()/pd_elevationAngleStep));
 	elevation_index %= pd_elevationVector.size();
 
- 	uint32_t azimuth_index = ((uint32_t)(direction.getAzimuth()/pd_azimuthAngleStep));
+ 	unsigned long int azimuth_index = ((unsigned long int)(direction.getAzimuth()/pd_azimuthAngleStep));
 	azimuth_index %= pd_azimuthVector.size();
 
 	assure(pd_elevationVector.size() > elevation_index, "Elevation Range exception");

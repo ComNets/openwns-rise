@@ -83,7 +83,7 @@ namespace rise {
 		/**
 		 * @brief Attaches transmitter to cache using its id
 		 */
-		void attach(Transmitter* t, uint32_t tId);
+		void attach(Transmitter* t, unsigned long int tId);
     };
 }
 

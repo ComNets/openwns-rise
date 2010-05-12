@@ -48,7 +48,7 @@ namespace rise
                              receiver::ReceiverInterface* _aReceiver,
                              wns::Power _txPower,
                              rise::antenna::PatternPtr _pattern,
-                             uint32_t _linkMode = 0,
+                             unsigned long int _linkMode = 0,
                              int numberOfSpatialStreams = 1);
 
         //! Default constructor, used to create a TransmissionObject
@@ -58,7 +58,7 @@ namespace rise
                              wns::osi::PDUPtr _payload,
                              wns::Power _txPower,
                              rise::antenna::PatternPtr _pattern,
-                             uint32_t _linkMode = 0,
+                             unsigned long int _linkMode = 0,
                              int numberOfSpatialStreams = 1);
 
         //! Constructor without PDU
@@ -67,7 +67,7 @@ namespace rise
                              wns::Power _txPower,
                              const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
                              rise::antenna::PatternPtr _pattern,
-                             uint32_t _linkMode = 0);
+                             unsigned long int _linkMode = 0);
 
         //! Default constructor, used to create a TransmissionObject
         TransmissionObjectBF(Transmitter* _transmitter,
@@ -77,7 +77,7 @@ namespace rise
                              wns::Power _txPower,
                              const wns::service::phy::phymode::PhyModeInterfacePtr _phyModePtr,
                              rise::antenna::PatternPtr _pattern,
-                             uint32_t _linkMode = 0);
+                             unsigned long int _linkMode = 0);
 
         //! Default destructor
         virtual ~TransmissionObjectBF();

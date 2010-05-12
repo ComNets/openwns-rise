@@ -75,7 +75,7 @@ void Planet::readPattern()
 	patternfile >> r;
 	pd_gain = r.get_dB();
 
-	uint32_t i = 0, horSize = 0, vertSize = 0;
+	unsigned long int i = 0, horSize = 0, vertSize = 0;
 	double tmp_double = 0;
 
 	while (tmp_string != "HORIZONTAL")
@@ -116,8 +116,8 @@ void Planet::pd_startUp()
 
 wns::Ratio Planet::getGain(const wns::Direction& direction)
 {
- 	uint32_t azimuth_index      = (uint32_t)(direction.getAzimuth()/pd_azimuthAngleStep);
- 	uint32_t elevation_index    = 0;
+ 	unsigned long int azimuth_index      = (unsigned long int)(direction.getAzimuth()/pd_azimuthAngleStep);
+ 	unsigned long int elevation_index    = 0;
  	double vert_plane_angle = 0;
  	if (((direction.getAzimuth() >= 0)        && (direction.getAzimuth() <= M_PI/2)) ||
  		((direction.getAzimuth() >= 3*M_PI/2) && (direction.getAzimuth() <= 2*M_PI)))
@@ -125,10 +125,10 @@ wns::Ratio Planet::getGain(const wns::Direction& direction)
  		vert_plane_angle = direction.getElevation() + 3*M_PI/2;
  		if (vert_plane_angle > M_PI + M_PI)
  			vert_plane_angle -= (M_PI + M_PI);
- 		elevation_index =(uint32_t)(vert_plane_angle/pd_elevationAngleStep);
+ 		elevation_index =(unsigned long int)(vert_plane_angle/pd_elevationAngleStep);
  	} else {
  		vert_plane_angle = 3*M_PI/2 - direction.getElevation();
- 		elevation_index =(uint32_t)(vert_plane_angle/pd_elevationAngleStep);
+ 		elevation_index =(unsigned long int)(vert_plane_angle/pd_elevationAngleStep);
  	}
  	wns::Ratio directivity;
   	directivity.set_dB(pd_elevationVector.at(elevation_index) +

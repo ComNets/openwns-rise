@@ -44,8 +44,8 @@ ThreeDimensional::ThreeDimensional(const std::string type,
 
 wns::Ratio ThreeDimensional::getGain(const wns::Direction& direction)
 {
-	uint32_t elevation_index = (uint32_t)(direction.getElevation() * 180 / M_PI);
-	uint32_t azimuth_index = (uint32_t)(direction.getAzimuth() * 180 / M_PI);
+	unsigned long int elevation_index = (unsigned long int)(direction.getElevation() * 180 / M_PI);
+	unsigned long int azimuth_index = (unsigned long int)(direction.getAzimuth() * 180 / M_PI);
 	wns::Ratio directivity;
 	directivity.set_dB(pd_pattern3DVector[elevation_index][azimuth_index]
 					   + pd_gain);

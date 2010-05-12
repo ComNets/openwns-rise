@@ -120,9 +120,9 @@ namespace rise { namespace antenna {
 										  PatternPtr pattern);
 
 	protected:
-		virtual wns::Ratio pd_getGainEntry(uint32_t index,
+		virtual wns::Ratio pd_getGainEntry(unsigned long int index,
 										   PatternPtr patternId) const;
-		uint32_t pd_noAntennaElements;
+		unsigned long int pd_noAntennaElements;
 		std::map <Station*, wns::Power> pd_lastPowerReceived;
 		std::map <Station*, wns::Power> pd_lastTxPower;
 		std::map <Station*, double> pd_azimuthAngles;
@@ -134,7 +134,7 @@ namespace rise { namespace antenna {
 	private:
 
 		std::vector<boost::numeric::ublas::vector<std::complex<double> >*> steervectors;
-		void p_herm_rest(boost::numeric::ublas::matrix<std::complex<double> >& c, const uint32_t m) const;
+		void p_herm_rest(boost::numeric::ublas::matrix<std::complex<double> >& c, const unsigned long int m) const;
 
 		PatternPtr p_calculateBeam(Station* id,
 								  const std::vector<Station*>& undesired,
