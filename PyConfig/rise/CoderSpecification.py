@@ -85,9 +85,23 @@ class CoderMapping(object):
                          (  "Turbo_EAB-1/3",    1.0/3.0 ),
                          (  "Turbo_EAB-1/2",    1.0/2.0 ),
                          (  "Turbo_EAB-2/3",    2.0/3.0 ),
-                         (  "WIMAX-1/2",        1.0/2.0 ),
-                         (  "WIMAX-2/3",        2.0/3.0 ),
-                         (  "WIMAX-3/4",        3.0/4.0 )]:
+                         (  "WiMAX-320",	0.117 ),
+                         (  "WiMAX-720",	0.189 ),
+                         (  "WiMAX-1020",	0.267 ),
+                         (  "WiMAX-1320",	0.379 ),
+                         (  "WiMAX-1520",	0.479 ),
+                         (  "WiMAX-1720",	0.615 ),
+                         (  "WiMAX-1920",	0.391 ),
+                         (  "WiMAX-2120",	0.479 ),
+                         (  "WiMAX-2320",	0.615 ),
+                         (  "WiMAX-2420",	0.458 ),
+                         (  "WiMAX-2520",	0.521 ),
+                         (  "WiMAX-2620",	0.615 ),
+                         (  "WiMAX-2720",	0.688 ),
+                         (  "WiMAX-2820",	0.781 ),
+                         (  "WiMAX-2920",	0.819 ),
+                         (  "WiMAX-3020",	0.917 )]:
+
             coderName = codeSpec[0];
             rate = codeSpec[1]
             # choose one of the methods for MI2PER mapping
