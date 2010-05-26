@@ -27,6 +27,7 @@
 
 #include <RISE/scenario/pathloss/ITUSMa.hpp>
 #include <RISE/scenario/pathloss/HashRNG.hpp>
+#include <RISE/stations/station.hpp>
 
 #include <WNS/distribution/Uniform.hpp>
 
@@ -58,7 +59,9 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
     static size_t initialSeed = dis() * pow(2, sizeof(size_t)*8);
     static double normalize = pow(2, sizeof(std::size_t) * 8);
 
-    detail::HashRNG hrng(initialSeed, source.getPosition(), target.getPosition(), distance);
+    detail::HashRNG hrng(initialSeed, source.getPosition(), target.getPosition(),
+                         source.getStation()->getStationId(), target.getStation()->getStationId(),
+                         distance);
 
     wns::Ratio pl;
 

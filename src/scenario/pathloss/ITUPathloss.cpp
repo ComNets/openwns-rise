@@ -26,6 +26,8 @@
  ******************************************************************************/
 
 #include <RISE/scenario/pathloss/ITUPathloss.hpp>
+#include <RISE/stations/station.hpp>
+
 #include <WNS/distribution/Uniform.hpp>
 
 #include <boost/random.hpp>
@@ -48,7 +50,9 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
     static wns::distribution::Uniform dis(0.0, 1.0, wns::simulator::getRNG());
     static size_t initialSeed = dis() * pow(2, sizeof(size_t)*8);
 
-    detail::HashRNG hrng(initialSeed, source.getPosition(), target.getPosition(), distance);
+    detail::HashRNG hrng(initialSeed, source.getPosition(), target.getPosition(),
+                         source.getStation()->getStationId(), target.getStation()->getStationId(),
+                         distance);
 
     wns::Ratio pl;
 

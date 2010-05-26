@@ -44,7 +44,7 @@ namespace detail {
 class HashRNG
 {
 public:
-    HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, double distance);
+    HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t id1, int32_t id2, double distance);
 
     static const bool has_fixed_range = true;
 

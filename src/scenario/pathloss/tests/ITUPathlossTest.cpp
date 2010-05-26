@@ -166,6 +166,8 @@ void ITUPathlossTest::prepare()
 
     station1_->moveTo(wns::Position(0.0, 0.0, 25.0));
     station2_->moveTo(wns::Position(0.0, 0.0, 1.5));
+    station1_->setStationId(12);
+    station2_->setStationId(2);
 }
 
 void
@@ -214,7 +216,7 @@ ITUPathlossTest::testRNG()
             {
                 wns::Position pos1(xx, yy, zz);
                 wns::Position pos2(xx+100, yy +30, zz);
-                detail::HashRNG hrng(0, pos1, pos2, (pos1-pos2).abs());
+                detail::HashRNG hrng(0, pos1, pos2, 1, 2,(pos1-pos2).abs());
                 boost::normal_distribution<double> dis(1.0, 2.0);
                 e.put(dis(hrng));
             }
@@ -253,5 +255,5 @@ ITUPathlossTest::testPerformance()
         sum += r.get_dB();
     }
     sum = sum / 65000;
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.38, sum, 3e-03);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.38, sum, 4e-03);
 }

@@ -32,16 +32,20 @@
 
 using namespace rise::scenario::pathloss::detail;
 
-HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, double distance)
+HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t id1, int32_t id2, double distance)
 {
+    assert(id1 != id2);
+
     static double normalize = pow(2, sizeof(std::size_t) * 8);
     size_t seed = initialSeed;
     boost::hash_combine(seed, std::max(p1.getX(),p2.getX()));
     boost::hash_combine(seed, std::max(p1.getY(),p2.getY()));
     boost::hash_combine(seed, std::max(p1.getZ(),p2.getZ()));
+    boost::hash_combine(seed, std::max(id1,id2));
     boost::hash_combine(seed, std::min(p1.getX(),p2.getX()));
     boost::hash_combine(seed, std::min(p1.getY(),p2.getY()));
     boost::hash_combine(seed, std::min(p1.getZ(),p2.getZ()));
+    boost::hash_combine(seed, std::min(id1,id2));
     size_t seed2 = seed;
     boost::hash_combine(seed2, distance);
     size_t seed3 = seed2;
