@@ -49,6 +49,13 @@ Transmitter::Transmitter(const wns::pyconfig::View& config, Station* s, antenna:
 	  log(config.getView("logger")),
 	  active(false)
 {
+    if (RISE::getPyConfigView().get<bool>("debug.transmitter"))
+    {
+        log.switchOn();
+    } else {
+        log.switchOff();
+    }
+
 	MESSAGE_SINGLE(NORMAL, log, "rise::Transmitter created");
 	this->startObserving(s);
 }
@@ -56,19 +63,6 @@ Transmitter::Transmitter(const wns::pyconfig::View& config, Station* s, antenna:
 Transmitter::~Transmitter() {
  	MESSAGE_BEGIN(NORMAL, log, m, "Shutting down ...");
  	MESSAGE_END();
-}
-
-void Transmitter::configureLogger()
-{
- 	if (RISE::getPyConfigView().get<bool>("debug.transmitter"))
-	{
-		log.switchOn();
- 		pd_debugFlag = true;
-		//MESSAGE_SINGLE(NORMAL, log, "configureLogger(): switchOn. transmitterId="<<transmitterId);
- 	} else {
- 		log.switchOff();
- 		pd_debugFlag = false;
- 	}
 }
 
 void Transmitter::startTransmitting(TransmissionObjectPtr transmissionObject, long int subCarrier)

@@ -140,7 +140,6 @@ namespace rise
 		long int transmitterId;
 		//! The wns::Power the Transmitter is currently adjusted to
 		wns::Power maxTxPwr;
-		bool pd_debugFlag;
 
 		typedef std::vector<medium::PhysicalResource*> PhysicalResourceContainer;
 		typedef PhysicalResourceContainer::iterator PhysicalResourceIterator;
@@ -161,7 +160,6 @@ namespace rise
 		double midFrequency;
 
 		//! Logs messages to a main logger.
-		//RISELogger log;
 		wns::logger::Logger log;
 
 	private:
@@ -169,8 +167,6 @@ namespace rise
 		static long int nextid;
 
 		bool active;
-
-		void configureLogger();
 	};
 }
 
