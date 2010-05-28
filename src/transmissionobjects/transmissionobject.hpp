@@ -36,6 +36,7 @@
 #include <WNS/Assure.hpp>
 #include <WNS/Position.hpp>
 #include <WNS/osi/PDU.hpp>
+#include <WNS/Birthmark.hpp>
 
 
 namespace rise
@@ -152,6 +153,7 @@ namespace rise
 
     class TransmissionInterface :
         virtual public wns::RefCountable,
+        virtual public wns::HasBirthmark,
         virtual public TransmitterAspect,
         virtual public CastingAspect
     {

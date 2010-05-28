@@ -37,6 +37,7 @@
 #include <WNS/Assure.hpp>
 #include <WNS/PowerRatio.hpp>
 #include <WNS/TimeWeightedAverage.hpp>
+#include <WNS/Birthmark.hpp>
 
 #include <map>
 
@@ -146,8 +147,8 @@ namespace rise { namespace receiver {
 	class NoTransmissionAveraging :
 		virtual public TransmissionAveragingStrategy
 	{
-		typedef std::map<TransmissionObjectPtr, wns::Power> CurrentSignalMap;
-		typedef std::map<TransmissionObjectPtr, bool> CalledEndOfTransmission;
+		typedef std::map<wns::Birthmark, std::pair<TransmissionObjectPtr, wns::Power> > CurrentSignalMap;
+		typedef std::map<wns::Birthmark, std::pair<TransmissionObjectPtr, bool> > CalledEndOfTransmission;
 	public:
 		NoTransmissionAveraging();
 		virtual ~NoTransmissionAveraging();
@@ -176,8 +177,8 @@ namespace rise { namespace receiver {
 		virtual public TransmissionAveragingStrategy
 	{
 		typedef wns::TimeWeightedAverage<wns::Power, wns::events::scheduler::Interface> SignalAverage;
-		typedef std::map<TransmissionObjectPtr, SignalAverage> AveragedSignalMap;
-		typedef std::map<TransmissionObjectPtr, bool> CalledEndOfTransmission;
+		typedef std::map<wns::Birthmark, std::pair<TransmissionObjectPtr, SignalAverage> > AveragedSignalMap;
+		typedef std::map<wns::Birthmark, std::pair<TransmissionObjectPtr, bool> > CalledEndOfTransmission;
 	public:
 		TimeWeightedTransmissionAveraging();
 		virtual ~TimeWeightedTransmissionAveraging();
