@@ -226,18 +226,20 @@ class randomNumberGenerator:
         self.minX = minX
         self.minY = minY
         self.maxDistance = maxDistance
-        self.lastHash = 0
         self.r = random.Random()
 
-    def random(self, sourceX, sourceY, targetX, targetY):
+    def random(self, sourceX, sourceY, targetX, targetY, numValues = 1):
         # Hash must be symmetric
         hash = ((sourceX+targetX-2*self.minX) + (sourceY+targetY-2*self.minY)*self.maxDistance)+1
-        if(hash == self.lastHash):
+        self.r.seed(hash)
+        if numValues == 1:
             return self.r.random()
         else:
-            self.lastHash = hash
-            self.r.seed(hash)
-            return self.r.random()
+            val = []
+            for i in xrange(numValues):
+                val.append(self.r.random())
+
+            return val
 
 class NLoSDecider:
     def __init__(self,
@@ -267,7 +269,7 @@ class NLoSDecider:
         else:
             self.r = rng
 
-    def isLoS(self, sourceX, sourceY, targetX, targetY):
+    def isLoS(self, sourceX, sourceY, targetX, targetY, randVal = -1):
         d = self.distance.calc(sourceX, sourceY, targetX, targetY)
         if(d < self.min):
             return True
@@ -275,7 +277,10 @@ class NLoSDecider:
             return False
 
         p_los = self.P_LoS.calc(d)
-        return(p_los >= self.r.random(sourceX, sourceY, targetX, targetY))
+        if(randVal < 0):
+            randVal = self.r.random(sourceX, sourceY, targetX, targetY)
+
+        return(p_los >= randVal)
 
 
 class UMiP_LoS:
@@ -332,10 +337,12 @@ class UMi(UMiOutdoor):
                                    distanceClass,
                                    self.r)
         self.shadowing = SpatialCorrelated(7.0, 13, seed = seed)
+        self.pOutdoor = 0.5
 
     def calculatePathloss(self, sourceX, sourceY, targetX, targetY, frequency, baseHeight):
-        isLos = self.decider.isLoS(sourceX, sourceY, targetX, targetY)
-        isOutdoor = (self.r.random(sourceX, sourceY, targetX, targetY) > 0.5)
+        randVal = self.r.random(sourceX, sourceY, targetX, targetY, 3)
+        isLos = self.decider.isLoS(sourceX, sourceY, targetX, targetY, randVal[0])
+        isOutdoor = (randVal[1] > self.pOutdoor)
 
         if(isOutdoor):
             if(isLos):
@@ -343,13 +350,13 @@ class UMi(UMiOutdoor):
             else:
                 return(self.NLoS.calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight))
         else:
-            if(isLos):
-                pl = self.LoS.calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight, withShadowing=False)
-            else:
-                pl = self.NLoS.calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight, withShadowing=False)
+            #if(isLos):
+            #    pl = self.LoS.calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight, withShadowing=False)
+            #else:
+            pl = self.NLoS.calculatePathloss(sourceX, sourceY, targetX, targetY, frequency, baseHeight, withShadowing=False)
 
             # add indoor part
-            pl = fromdB(pl) + self.r.random(sourceX, sourceY, targetX, targetY)*25*0.5 + 20
+            pl = fromdB(pl) + randVal[2]*25*0.5 + 20
 
             # add indoor shadowing (sigma = 7)
             pl += fromdB(self.shadowing.getShadowing(sourceX, sourceY, targetX, targetY))
