@@ -44,7 +44,7 @@ class Receiver(object):
         self.propagation = propagation
         self.propagationCharacteristicName = propagationCharacteristicName
         self.propagationCharacteristicId = propagation.getId(propagationCharacteristicName)
-        self.FTFadingStrategy = FTFadingOff()
+        self.FTFadingStrategy = FTFadingOff(parentLogger = parentLogger)
         self.logger = Logger("RISE", "PHY.Receiver", True, parentLogger)
         attrsetter(self, kwds)
 
@@ -53,7 +53,7 @@ class ReceiverDropIn(Receiver):
     def __init__(self, propagation = DropInPropagation.getInstance(), propagationCharacteristicName = "DropIn", parentLogger = None):
         super(ReceiverDropIn, self).__init__(propagation , propagationCharacteristicName, parentLogger)
         self.logger = Logger("RISE", "PHY.ReceiverDropIn", True, parentLogger)
-        self.FTFadingStrategy = FTFadingOff()
+        self.FTFadingStrategy = FTFadingOff(parentLogger = parentLogger)
         self.receiverNoiseFigure = "0 dB"
 
 class SCReceiverDropIn(ReceiverDropIn):
