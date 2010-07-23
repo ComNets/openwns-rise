@@ -60,13 +60,13 @@ double SNR2MI::convertSNR2MIB(const wns::Ratio& snr, wns::service::phy::phymode:
 }
 
 
-double SNR2MI::MIB2SNR(double mib, wns::service::phy::phymode::Modulation modTYPE) const
+wns::Ratio SNR2MI::convertMIB2SNR(const double& mib, const wns::service::phy::phymode::Modulation& modTYPE) const
 {
 	// nullstellenproblem: find x satisfying f(x)=0 with f(x)=SNR2MI(snr)-mib
 	// solution: see rootFindByBisection() function in .hpp
 	const unsigned int maxIterations = 100;
 	const double accuracy = 1e-6; // determines (runtime) cost of this function
-	double &offset = mib; // alias
+	const double &offset = mib; // alias
 	unsigned int iteration=0;
 	// initial bracket: [-inf;+inf] would be too much
 	double x1       = -10.0;
@@ -74,8 +74,8 @@ double SNR2MI::MIB2SNR(double mib, wns::service::phy::phymode::Modulation modTYP
 	// convertSNR2MIB() should be switched to "formula" mode for best results
 	double f    = convertSNR2MIB(wns::Ratio().from_dB(x1),modTYPE) - offset;
 	double fmid = convertSNR2MIB(wns::Ratio().from_dB(x2),modTYPE) - offset;
-	if (f==0.0)    return x1;
-	if (fmid==0.0) return x2;
+    if (f==0.0)    return wns::Ratio::from_dB(x1);
+    if (fmid==0.0) return wns::Ratio::from_dB(x2);
 	// expand bracket if necessary:
 	//const double expandFactor = 1.6; // numerical recipes recommendation
 	while((f*fmid>=0.0) && (++iteration<maxIterations)) {
@@ -83,13 +83,13 @@ double SNR2MI::MIB2SNR(double mib, wns::service::phy::phymode::Modulation modTYP
 			//x1+=expandFactor*(x1-x2); // move left
 			x1-=5.0; // 5dB to the left
 			f = convertSNR2MIB(wns::Ratio().from_dB(x1),modTYPE) - offset;
-			if (f==0.0)    return x1;
+            if (f==0.0)    return wns::Ratio::from_dB(x1);
 		}
 		if (fmid<=0.0) {
 			//x2+=expandFactor*(x2-x1); // move right
 			x2+=5.0; // 5dB to the right
 			fmid = convertSNR2MIB(wns::Ratio().from_dB(x2),modTYPE) - offset;
-			if (fmid==0.0) return x2;
+            if (fmid==0.0) return wns::Ratio::from_dB(x2);
 		}
 	}
 	// now bracket should be ok (negative@x1, positive@x2):
@@ -100,10 +100,10 @@ double SNR2MI::MIB2SNR(double mib, wns::service::phy::phymode::Modulation modTYP
 		double xmid=rtb+(dx *= 0.5);
 		fmid = convertSNR2MIB(wns::Ratio().from_dB(xmid),modTYPE) - offset;
 		if (fmid <= 0.0) rtb=xmid;
-		if ((fabs(dx) < accuracy) || (fmid == 0.0)) return rtb;
+        if ((fabs(dx) < accuracy) || (fmid == 0.0)) return wns::Ratio::from_dB(rtb);
 	}
 	assure(false,"rootFindByBisection(): too many iterations: "<<maxIterations);
-	return rtb;
+    return wns::Ratio::from_dB(rtb);
 }
 
 double SNR2MI::BER2MIB(double ber)

@@ -226,6 +226,13 @@ double PhyMode::getSINR2PER(const wns::Ratio& sinr, unsigned int bits) const
     return coderMapper->mapMI2PER(snr2miMapper->convertSNR2MIB(sinr,*this),bits,coding);
 }
 
+wns::Ratio
+PhyMode::getMIB2SINR(const double& mib) const
+{
+    assure(coderMapper != NULL, "invalid coderMapper");
+    return snr2miMapper->convertMIB2SNR(mib, getModulation());
+}
+
 unsigned int
 PhyMode::getBitCapacityFractional(simTimeType duration) const
 {

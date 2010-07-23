@@ -220,13 +220,13 @@ PhyModeMapper::calculateSINRRanges(double targetPER, unsigned int bl)
 	PhyMode previousPhyMode = *(phyModeVector[0]); // worst PhyMode (BPSK*)
 	{
 		double mib = coderMapper->PER2MIB(targetPER, bl, previousPhyMode.getCoding()); // inversion
-		minimumSINR = snr2miMapper->MIB2SNR(mib,previousPhyMode.getModulation());
+        minimumSINR = snr2miMapper->convertMIB2SNR(mib,previousPhyMode.getModulation()).get_dB();
 		//std::cout<<"  minimumSINR("<<previousPhyMode<<") = "<<minimumSINR<<std::endl;
 	}
 	for(unsigned int phymodeIndex=1; phymodeIndex<phyModeCount; phymodeIndex++) { // start with 2nd
 		wns::SmartPtr<PhyMode> phyModePtr = phyModeVector[phymodeIndex];
 		double mib = coderMapper->PER2MIB(targetPER, bl, phyModePtr->getCoding()); // inversion
-		to = snr2miMapper->MIB2SNR(mib,phyModePtr->getModulation());
+        to = snr2miMapper->convertMIB2SNR(mib,phyModePtr->getModulation()).get_dB();
 		// sinr range for previous PhyMode
 		wns::service::phy::phymode::SINRRange sinrRange =
 			wns::service::phy::phymode::SINRRange::FromExcluding(from).ToIncluding(to);
