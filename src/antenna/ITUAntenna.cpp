@@ -33,7 +33,10 @@ using namespace rise::antenna;
 ITUAntenna::ITUAntenna(const wns::pyconfig::View& pyConfigView, Station* const station):
     Antenna(pyConfigView, station),
     gain_(pyConfigView.get<wns::Ratio>("antennaGain")),
-    direction_(pyConfigView.get<double>("elevation"), pyConfigView.get<double>("azimuth")),
+    direction_(pyConfigView.get<double>("elevation"),
+               pyConfigView.get<double>("azimuth")),
+    theta_3dB(pyConfigView.get<double>("theta_3dB")),
+    phi_3dB(pyConfigView.get<double>("phi_3dB")),
     gainCC_("rise.antenna.ITUAntenna.gain")
 {
 }
@@ -58,11 +61,15 @@ ITUAntenna::getGain(const wns::Position& pos, const PatternPtr pattern) const
         azimuth = azimuth - 2 * 3.14159265;
     }
     // theta_3dB = 70 degree = 1.221730475 rad
-    double horiz = -1.0 * std::min(12.0 * pow(azimuth/1.221730475, 2), 20.0);
+    double horiz = -1.0 * std::min(12.0 * pow(azimuth/theta_3dB, 2), 20.0);
 
     // Elevation of main lobe is 90 degree = 1.570796325 rad in rise!
     // phi_3dB = 15 degree = 0.261799387 rad
-    double vert = -1.0 * std::min(12.0 * pow(elevation/0.261799387, 2), 20.0);
+    double vert = 0.0;
+    if(phi_3dB > 0)
+    {
+        double vert = -1.0 * std::min(12.0 * pow(elevation/phi_3dB, 2), 20.0);
+    }
 
     double directivity = -1 * std::min( -1 * (horiz + vert), 20.0);
 

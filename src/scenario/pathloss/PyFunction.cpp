@@ -31,6 +31,10 @@
 #include <WNS/StaticFactoryBroker.hpp>
 
 #include <string>
+#include <string>
+#include <iostream>
+#include <iomanip>
+
 
 using namespace rise::scenario::pathloss;
 
@@ -53,13 +57,22 @@ PyFunction::calculatePathloss(const antenna::Antenna& source,
     const antenna::Antenna& baseAntenna(sourceIsBase ? source : target);
     wns::Distance baseHeight = baseAntenna.getPosition().getZ();
 
-    std::string s = "calculatePathloss(" +wns::Ttos(source.getPosition().getX())+ ","
-        +wns::Ttos(source.getPosition().getY())+ ","
-        +wns::Ttos(target.getPosition().getX())+ ","
-        +wns::Ttos(target.getPosition().getY())+ ","
-        +wns::Ttos(frequency)+ ","
-        +wns::Ttos(baseHeight)+ ")";
+    std::string s = "calculatePathloss("
+        +preciseDtos(source.getPosition().getX())+ ","
+        +preciseDtos(source.getPosition().getY())+ ","
+        +preciseDtos(target.getPosition().getX())+ ","
+        +preciseDtos(target.getPosition().getY())+ ","
+        +preciseDtos(frequency)+ ","
+        +preciseDtos(baseHeight)+ ")";
     wns::Ratio pl = config.get<wns::Ratio>(s);
 
     return(pl);
+}
+
+std::string
+PyFunction::preciseDtos(double value) const
+{
+    std::ostringstream temp;
+    temp << std::setiosflags(std::ios::fixed) << std::setprecision(3) << value;
+    return temp.str();
 }

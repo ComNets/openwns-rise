@@ -44,6 +44,12 @@ class ITU(Antenna):
         self.azimuth = azimuth
         self.elevation = elevation
 
+        # half power beam width (horizontal), by default 70deg = 1.22... rad
+        self.theta_3dB = 1.221730475
+
+        # half power beam width (vertical), by default 15deg = 0.266... rad
+        self.phi_3dB = 0.261799387
+
 class Internal(Antenna):
     elevation = None
     azimuth = None

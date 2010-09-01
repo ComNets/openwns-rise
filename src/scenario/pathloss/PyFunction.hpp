@@ -53,8 +53,10 @@ namespace rise { namespace scenario { namespace pathloss {
                                      const wns::Frequency& frequency,
                                      const wns::Distance& distance) const;
     private:
-        const wns::pyconfig::View config;
+        std::string
+        preciseDtos(double value) const;
 
+        const wns::pyconfig::View config;
     };
 }}}
 

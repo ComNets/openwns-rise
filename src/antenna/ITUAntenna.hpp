@@ -54,6 +54,9 @@ private:
     wns::Direction direction_;
 
     wns::probe::bus::ContextCollector gainCC_;
+
+    double theta_3dB;
+    double phi_3dB;
 };
 
 } // antenna
