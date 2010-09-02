@@ -50,6 +50,13 @@ class ITU(Antenna):
         # half power beam width (vertical), by default 15deg = 0.266... rad
         self.phi_3dB = 0.261799387
 
+class ITUwithWrap(ITU):
+    def __init__(self, antennaGain, coordOffset, azimuth, elevation, sizeX, sizeY):
+        ITU.__init__(self, antennaGain, coordOffset, azimuth, elevation)
+        self.__plugin__ = "ITUwithWrap"
+        self.sizeX = sizeX
+        self.sizeY = sizeY
+
 class Internal(Antenna):
     elevation = None
     azimuth = None

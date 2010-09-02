@@ -32,6 +32,7 @@
 #include <RISE/antenna/Antenna.hpp>
 #include <RISE/antenna/Static.hpp>
 #include <RISE/antenna/ITUAntenna.hpp>
+#include <RISE/antenna/ITUAntennaWithWrap.hpp>
 #include <RISE/antenna/Beamforming.hpp>
 #include <RISE/scenario/mobility/Mobility.hpp>
 #include <RISE/scenario/sceneryfile/SceneryFile.hpp>
@@ -65,22 +66,34 @@ Station::~Station()
 void
 Station::createAntenna()
 {
-	wns::pyconfig::View antennaView = pyConfigView.getView("antennas", 0);
-	assure(pyConfigView.len("antennas") == 1, "Only one antenna supported at the moment!");
-	std::string s = antennaView.get<std::string>("__plugin__");
-	if (s=="Internal"|| s=="Antenna3D"|| s=="Planet")
-		pd_antenna = new antenna::Static(antennaView, this);
-	else {
+    wns::pyconfig::View antennaView = pyConfigView.getView("antennas", 0);
+    assure(pyConfigView.len("antennas") == 1, "Only one antenna supported at the moment!");
+    std::string s = antennaView.get<std::string>("__plugin__");
+    // this could be done by a factory pattern
+    if (s=="Internal"|| s=="Antenna3D"|| s=="Planet")
+    {
+        pd_antenna = new antenna::Static(antennaView, this);
+    }
+    else
+    {
         if (s=="ITU")
         {
             pd_antenna = new antenna::ITUAntenna(antennaView, this);
-        }else
-        {
-		  wns::Exception e;
-		  e << "No such antenna type";
-		  throw e;
         }
-	}
+        else
+        {
+            if(s=="ITUwithWrap")
+            {
+                pd_antenna =  new antenna::ITUAntennaWithWrap(antennaView, this);
+            }
+            else
+            {
+                wns::Exception e;
+                e << "No such antenna type";
+                throw e;
+            }
+        }
+    }
 }
 
 
