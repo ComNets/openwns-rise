@@ -64,12 +64,14 @@ namespace rise { namespace plmapping {
 	    virtual double convertSNR2MI(const wns::Ratio& snr, const wns::service::phy::phymode::PhyModeInterface& phyMode) const;
 		/** @brief invert the SNR2MIB function */
         /** @author Rainer Schoenen (rs@comnets.rwth-aachen.de) */
-		double MIB2SNR(double mib, wns::service::phy::phymode::Modulation modTYPE) const;
+        virtual wns::Ratio convertMIB2SNR(const double& mib, const wns::service::phy::phymode::Modulation& mod) const;
+
 	private:
 		/** @brief the actual conversion method, has to be overloaded */
 		virtual double mapSNR2MI(const wns::Ratio& snr, wns::service::phy::phymode::Modulation modTYPE) const = 0;
 		/** @brief returns the Mutual Information value per Bit (MIB) */
 	    double convertSNR2MIB(const wns::Ratio& snr, wns::service::phy::phymode::Modulation modTYPE) const;
+
 		/** @brief functional dependency between BER (bit error ratio) and MIB (mutual information) */
 		/** @see http://de.wikipedia.org/wiki/Kanalkapazit%C3%A4t */
         /** @author Rainer Schoenen (rs@comnets.rwth-aachen.de) */

@@ -260,7 +260,7 @@ void SNR2MITest::testMIB2SNR()
 		    wns::Ratio snr = wns::Ratio::from_dB(snrdb);
 		    double mib = testSNR2MIformula->convertSNR2MIB(snr,modulation);
 		    // inverse function:
-		    double snr2 = testSNR2MIformula->MIB2SNR(mib,modulation); // inversion
+		    double snr2 = testSNR2MIformula->convertMIB2SNR(mib,modulation).get_dB(); // inversion
 		    //if (useCout) std::cout << "testMIB2SNR(mod="<<modulation<<"): SNR="<<snr<<" => MIB="<<mib<<" => SNR="<<snr2<<std::endl;
 		    CPPUNIT_ASSERT_DOUBLES_EQUAL(snrdb,snr2,1e-3); // tight
 	    } // forall sinrs
@@ -271,7 +271,7 @@ void SNR2MITest::testMIB2SNR()
 		    wns::Ratio snr = wns::Ratio::from_dB(snrdb);
 		    double mib = testSNR2MItable->convertSNR2MIB(snr,modulation);
 		    // inverse function:
-		    double snr2 = testSNR2MItable->MIB2SNR(mib,modulation); // inversion
+		    double snr2 = testSNR2MItable->convertMIB2SNR(mib,modulation).get_dB(); // inversion
 		    //if (useCout) std::cout << "testMIB2SNR(mod="<<modulation<<"): SNR="<<snr<<" => MIB="<<mib<<" => SNR="<<snr2<<std::endl;
 		    if ((mib>0.0) && (mib<1.0)) { // useful region
 			    CPPUNIT_ASSERT_DOUBLES_EQUAL(snrdb,snr2,1.0); // loose

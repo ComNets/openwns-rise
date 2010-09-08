@@ -166,7 +166,7 @@ namespace tests {
             virtual double getMI2PER(const double mib, unsigned int bits) const;
             /** @brief PER = f(SINR,bits), blockLength bits (=payload[net], not CWL[gross]) */
             virtual double getSINR2PER(const wns::Ratio& sinr, unsigned int bits) const;
-
+            virtual wns::Ratio getMIB2SINR(const double& mib) const;
             /** @brief calculate capacity[bits] of a phyResource (chunk) */
             /** @see use like phyCapacity(myCommand->local.phymode, ...) in PhyUser.cpp */
             /** here the OFDM symbol boundaries are not checked. Any fraction is accepted */
