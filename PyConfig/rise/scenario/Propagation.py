@@ -54,6 +54,15 @@ class NotConfigured(Exception):
             print
             print "Propagation not properly configured: Requested non-existent pair " + pair
 
+class ChannelModelConfiguration():
+    """
+    Holds the configuration for a specific transceiver pair
+    """
+
+    def __init__(self, transceiverPair, channelmodel):
+        self.transceiverPair = transceiverPair
+        self.channelmodel = channelmodel
+
 class Propagation:
     """Class to hold the propagation configuration.
 
@@ -101,6 +110,13 @@ class Propagation:
         if (not self.knowsPairById(transmitterId, receiverId)):
             self.__pairs[transmitterId, receiverId] = Configuration()
         return self.__pairs[transmitterId, receiverId]
+
+    def configure(self, configurations):
+        """
+        Configure pairs given by a list of ChannelModelConfigurations
+        """
+        for c in configurations:
+            self.configurePair(c.transceiverPair[0], c.transceiverPair[1], c.channelmodel)
 
     def configurePair(self, transmitterName, receiverName, configuration):
         """ Configure a propagation pair.
