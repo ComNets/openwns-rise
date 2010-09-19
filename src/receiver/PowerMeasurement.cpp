@@ -32,12 +32,16 @@ PowerMeasurement::PowerMeasurement(rise::TransmissionObjectPtr t,
                                    wns::node::Interface* _sourceNode,
                                    wns::Power _rxPower,
                                    wns::Power _interference,
+                                   wns::Ratio _iot,
+                                   wns::Ratio _fading,
                                    wns::Ratio _omniAttenuation,
                                    std::vector<wns::Ratio> _postProcessingSINRFactor
                                    )
     : wns::service::phy::power::PowerMeasurementInterface(), // inherited
       rxPower(_rxPower),
       interference(_interference),
+      iot(_iot),
+      fading(_fading),
       omniAttenuation(_omniAttenuation),
       transmissionObjectPtr(t),
       sourceNode(_sourceNode),
@@ -85,6 +89,12 @@ PowerMeasurement::getOmniInterferencePower() const
 }
 
 const wns::Ratio
+PowerMeasurement::getIoT() const
+{
+    return iot;
+}
+
+const wns::Ratio
 PowerMeasurement::getSINR() const
 {
     // interference contains noise
@@ -120,7 +130,19 @@ PowerMeasurement::getTxPower() const
 const wns::Ratio
 PowerMeasurement::getPathLoss() const
 {
+    return transmissionObjectPtr->getTxPower()/rxPower + getFading();
+}
+
+const wns::Ratio
+PowerMeasurement::getLoss() const
+{
     return transmissionObjectPtr->getTxPower()/rxPower;
+}
+
+const wns::Ratio
+PowerMeasurement::getFading() const
+{
+    return fading;
 }
 
 const wns::Power
@@ -154,6 +176,7 @@ std::string PowerMeasurement::getString() const
 {
     std::stringstream s;
     s << "[RxP="<<getRxPower()<<", I="<<getInterferencePower()<<", SINR="<<getSINR();
+    s << ", IoT="<<getIoT();
     if(postProcessingSINRFactor.size() > 1 or (not postProcessingSINRFactor.empty() and postProcessingSINRFactor[0].get_factor() != 1.0))
     {
         s << " +(";

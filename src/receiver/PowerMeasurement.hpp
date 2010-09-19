@@ -52,6 +52,8 @@ namespace rise { namespace receiver {
                          wns::node::Interface* _sourceNode,
                          wns::Power _rxPower,
                          wns::Power _interference,
+                         wns::Ratio _iot,
+                         wns::Ratio _fading,
                          wns::Ratio _omniAttenuation,
                          std::vector<wns::Ratio> _postProcessingSINRFactor);
 
@@ -66,6 +68,12 @@ namespace rise { namespace receiver {
 
         virtual const wns::Power
         getOmniInterferencePower() const;
+
+        /**
+         * @brief Returns the Interference over Thermal Noise Ration
+         */
+        virtual const wns::Ratio
+        getIoT() const;
 
         virtual const wns::Ratio
         getSINR() const;
@@ -84,9 +92,17 @@ namespace rise { namespace receiver {
         virtual const wns::Power
         getTxPower() const;
 
-        // total including dynamic fading
+        // not including dynamic fading
         virtual const wns::Ratio
         getPathLoss() const;
+
+        // total including dynamic fading
+        virtual const wns::Ratio
+        getLoss() const;
+
+        // dynamic fading
+        virtual const wns::Ratio
+        getFading() const;
 
          // received signal strength (S+I)
         virtual const wns::Power
@@ -110,7 +126,9 @@ namespace rise { namespace receiver {
 
         wns::Power rxPower;
         wns::Power interference;
+        wns::Ratio iot;
         wns::Ratio omniAttenuation;
+        wns::Ratio fading;
         std::vector<wns::Ratio> postProcessingSINRFactor;
 
         wns::service::phy::phymode::PhyModeInterfacePtr phyModePtr;
