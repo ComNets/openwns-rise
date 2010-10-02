@@ -29,14 +29,36 @@
 
 #include <boost/random.hpp>
 #include <boost/functional/hash.hpp>
+#include <sstream>
 
 using namespace rise::scenario::pathloss::detail;
 
-HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t id1, int32_t id2, double distance)
+HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t id1, int32_t id2, double distance):
+    myHash(5381),
+    normalize(pow(2, 8*sizeof(int)))
 {
     assert(id1 != id2);
 
-    static double normalize = pow(2, sizeof(std::size_t) * 8);
+    double xMax = std::max(p1.getX(), p2.getX());
+    double xMin = std::min(p1.getX(), p2.getX());
+    double yMax = std::max(p1.getY(), p2.getY());
+    double yMin = std::min(p1.getY(), p2.getY());
+    double zMax = std::max(p1.getZ(), p2.getZ());
+    double zMin = std::min(p1.getZ(), p2.getZ());
+    int32_t idMax = std::max(id1, id2);
+    int32_t idMin = std::min(id1, id2);
+
+    combine(myHash, initialSeed);
+    combine(myHash, xMax);
+    combine(myHash, xMin);
+    combine(myHash, yMax);
+    combine(myHash, yMin);
+    combine(myHash, zMax);
+    combine(myHash, zMin);
+    combine(myHash, idMax);
+    combine(myHash, idMin);
+
+    /*static double normalize = pow(2, sizeof(std::size_t) * 8);
     size_t seed = initialSeed;
     boost::hash_combine(seed, std::max(p1.getX(),p2.getX()));
     boost::hash_combine(seed, std::max(p1.getY(),p2.getY()));
@@ -46,9 +68,9 @@ HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t
     boost::hash_combine(seed, std::min(p1.getY(),p2.getY()));
     boost::hash_combine(seed, std::min(p1.getZ(),p2.getZ()));
     boost::hash_combine(seed, std::min(id1,id2));
+*/
+    //rng.seed(hash);
 
-    rng.seed(seed);
-    
     /*size_t seed2 = seed;
     boost::hash_combine(seed2, distance);
     size_t seed3 = seed2;
@@ -69,9 +91,13 @@ HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t
 double
 HashRNG::operator()()
 {
-    boost::uniform_real<> uni(0.0, 1.0);
-    boost::variate_generator<boost::mt19937&, boost::uniform_real<> > dis(HashRNG::rng, uni);
-    return dis();
+    double r = double(myHash);
+    // Generate a new hash by combining with itself
+    // This is arbitrarily chosen here, not sure if it is a good decision
+    combine(myHash, myHash);
+    return  r / normalize;
+    
+    //return dis();
 /*    if (giveA)
     {
         giveA = false;

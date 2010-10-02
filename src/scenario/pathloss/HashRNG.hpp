@@ -68,8 +68,30 @@ public:
         return 1.0;
     }
 
-    boost::mt19937 rng;
+private:
+    template<typename T>
+    void combine( unsigned int& hash, T t)
+    {
+        unsigned int* it= (unsigned int*)(&t);
 
+        assure(sizeof(T) % sizeof(unsigned int) == 0, "Incompatible hash types in HashRNG::combineDouble");
+
+        int count = sizeof(T) / sizeof(unsigned int);
+
+        for (int ii=0; ii < count; ++ii)
+        {
+            hash = ((hash << 5) + hash) + *it;
+            it++;
+        }
+    }
+
+    /*boost::mt19937 rng;
+    boost::uniform_real<> uni;
+    boost::variate_generator<boost::mt19937&, boost::uniform_real<> > dis;*/
+
+    unsigned int myHash;
+    double normalize;
+    
     /*bool giveA;
     double a;
     double b;
