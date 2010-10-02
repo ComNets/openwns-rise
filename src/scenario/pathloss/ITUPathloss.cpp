@@ -56,7 +56,7 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
 
     wns::Ratio pl;
 
-    if (hrng.c < getLOSProbability(distance))
+    if (hrng() < getLOSProbability(distance))
     {
         losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);

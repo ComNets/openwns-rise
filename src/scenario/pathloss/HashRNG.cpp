@@ -46,7 +46,10 @@ HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t
     boost::hash_combine(seed, std::min(p1.getY(),p2.getY()));
     boost::hash_combine(seed, std::min(p1.getZ(),p2.getZ()));
     boost::hash_combine(seed, std::min(id1,id2));
-    size_t seed2 = seed;
+
+    rng.seed(seed);
+    
+    /*size_t seed2 = seed;
     boost::hash_combine(seed2, distance);
     size_t seed3 = seed2;
     boost::hash_combine(seed3, distance);
@@ -60,13 +63,16 @@ HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t
     c = ( (double) seed3 / normalize);
     d = ( (double) seed4 / normalize);
     e = ( (double) seed5 / normalize);
-    giveA = true;
+    giveA = true;*/
 }
 
 double
 HashRNG::operator()()
 {
-    if (giveA)
+    boost::uniform_real<> uni(0.0, 1.0);
+    boost::variate_generator<boost::mt19937&, boost::uniform_real<> > dis(HashRNG::rng, uni);
+    return dis();
+/*    if (giveA)
     {
         giveA = false;
         return a;
@@ -75,5 +81,5 @@ HashRNG::operator()()
     {
         giveA = true;
         return b;
-    }
+    }*/
 }

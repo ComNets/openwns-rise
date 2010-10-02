@@ -62,7 +62,7 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
 
     wns::Ratio pl;
     double sh;
-    if (hrng.c < getLOSProbability(distance))
+    if (hrng() < getLOSProbability(distance))
     {
         losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
@@ -95,7 +95,7 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
     if (isIndoor)
     {
         //d_in is uniformly distributed between 0 and 25
-        double d_in = hrng.d * 25.0;
+        double d_in = hrng() * 25.0;
         pl += wns::Ratio::from_dB(20.0 + 0.5 * d_in);
         boost::normal_distribution<double> shadow(0.0, getIndoorShadowingStd(source, target, frequency, distance));
         sh = shadow(hrng);

@@ -94,7 +94,7 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
 
     bool isIndoor = (seed/normalize) < 0.5;
 
-    if (hrng.c < getLOSProbability(distance))
+    if (hrng() < getLOSProbability(distance))
     {
         losProbabilityCC_.put(distance);
 
