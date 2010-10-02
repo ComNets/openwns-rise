@@ -29,6 +29,7 @@
 #define RISE_SCENARIO_PATHLOSS_DETAIL_HASHRNG_HPP
 
 #include <RISE/scenario/pathloss/DistanceDependent.hpp>
+#include <boost/random.hpp>
 
 namespace rise { namespace scenario { namespace pathloss {
 
@@ -48,9 +49,9 @@ public:
 
     static const bool has_fixed_range = true;
 
-    static const double min_value = 0.0;
+/*    static const double min_value = boost::mt19937::min_value;
 
-    static const double max_value = 1.0;
+    static const double max_value = boost::mt19937::max_value;*/
 
     double
     operator()();
@@ -67,12 +68,14 @@ public:
         return 1.0;
     }
 
-    bool giveA;
+    boost::mt19937 rng;
+
+    /*bool giveA;
     double a;
     double b;
     double c;
     double d;
-    double e;
+    double e;*/
 };
 
 } // detail
