@@ -33,79 +33,73 @@
 
 using namespace rise::scenario::pathloss::detail;
 
-HashRNG::HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t id1, int32_t id2, double distance):
+HashRNG::HashRNG(unsigned int initialSeed,
+                 wns::Position p1,
+                 wns::Position p2,
+                 bool correlateBS, bool correlateUT):
     myHash(5381),
-    normalize(pow(2, 8*sizeof(int)))
+    uni(0.0, 1.0),
+    dis(rng, uni)
 {
-    assert(id1 != id2);
-
-    double xMax = std::max(p1.getX(), p2.getX());
-    double xMin = std::min(p1.getX(), p2.getX());
-    double yMax = std::max(p1.getY(), p2.getY());
-    double yMin = std::min(p1.getY(), p2.getY());
-    double zMax = std::max(p1.getZ(), p2.getZ());
-    double zMin = std::min(p1.getZ(), p2.getZ());
-    int32_t idMax = std::max(id1, id2);
-    int32_t idMin = std::min(id1, id2);
-
+    // First take care of the initial seed
     combine(myHash, initialSeed);
-    combine(myHash, xMax);
-    combine(myHash, xMin);
-    combine(myHash, yMax);
-    combine(myHash, yMin);
-    combine(myHash, zMax);
-    combine(myHash, zMin);
-    combine(myHash, idMax);
-    combine(myHash, idMin);
 
-    /*static double normalize = pow(2, sizeof(std::size_t) * 8);
-    size_t seed = initialSeed;
-    boost::hash_combine(seed, std::max(p1.getX(),p2.getX()));
-    boost::hash_combine(seed, std::max(p1.getY(),p2.getY()));
-    boost::hash_combine(seed, std::max(p1.getZ(),p2.getZ()));
-    boost::hash_combine(seed, std::max(id1,id2));
-    boost::hash_combine(seed, std::min(p1.getX(),p2.getX()));
-    boost::hash_combine(seed, std::min(p1.getY(),p2.getY()));
-    boost::hash_combine(seed, std::min(p1.getZ(),p2.getZ()));
-    boost::hash_combine(seed, std::min(id1,id2));
-*/
-    //rng.seed(hash);
+    // BS and UT are defined by the z coordinate
+    // the higher one is the BS
+    wns::Position bs;
+    wns::Position ut;
 
-    /*size_t seed2 = seed;
-    boost::hash_combine(seed2, distance);
-    size_t seed3 = seed2;
-    boost::hash_combine(seed3, distance);
-    size_t seed4 = seed2;
-    boost::hash_combine(seed4, seed);
-    size_t seed5 = seed2;
-    boost::hash_combine(seed5, seed);
+    if (p1.getZ() > p2.getZ())
+    {
+        bs = p1;
+        ut = p2;
+    }
+    else
+    {
+        bs = p2;
+        ut = p1;
+    }
 
-    a = ( (double) seed / normalize);
-    b = ( (double) seed2 / normalize);
-    c = ( (double) seed3 / normalize);
-    d = ( (double) seed4 / normalize);
-    e = ( (double) seed5 / normalize);
-    giveA = true;*/
+    if (correlateBS && correlateUT)
+    {
+        // Feed to seed, but such that swapping p1 and p2 yields the same results
+        // channel is reciprocal
+        double xMax = std::max(bs.getX(), ut.getX());
+        double xMin = std::min(bs.getX(), ut.getX());
+        double yMax = std::max(bs.getY(), ut.getY());
+        double yMin = std::min(bs.getY(), ut.getY());
+        double zMax = std::max(bs.getZ(), ut.getZ());
+        double zMin = std::min(bs.getZ(), ut.getZ());
+
+        combine(myHash, xMax);
+        combine(myHash, xMin);
+        combine(myHash, yMax);
+        combine(myHash, yMin);
+        combine(myHash, zMax);
+        combine(myHash, zMin);
+    }
+    else if (correlateBS)
+    {
+        combine(myHash, bs.getX());
+        combine(myHash, bs.getY());
+        combine(myHash, bs.getZ());
+    }
+    else if (correlateUT)
+    {
+        combine(myHash, ut.getX());
+        combine(myHash, ut.getY());
+        combine(myHash, ut.getZ());
+    }
+    else
+    {
+        assure(false, "Unsupported case in HashRNG. Correlate the RNG either to BS, UT or to both!");
+    }
+
+    rng.seed(myHash);
 }
 
 double
 HashRNG::operator()()
 {
-    double r = double(myHash);
-    // Generate a new hash by combining with itself
-    // This is arbitrarily chosen here, not sure if it is a good decision
-    combine(myHash, myHash);
-    return  r / normalize;
-    
-    //return dis();
-/*    if (giveA)
-    {
-        giveA = false;
-        return a;
-    }
-    else
-    {
-        giveA = true;
-        return b;
-    }*/
+    return dis();
 }

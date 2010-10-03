@@ -72,6 +72,11 @@ public:
                         const wns::Frequency& frequency,
                         const wns::Distance& distance) const;
 
+    virtual double
+    getCarPenetrationStd() const;
+
+    virtual double
+    getCarPenetrationMean() const;
 };
 
 } // pathloss

@@ -113,6 +113,12 @@ public:
                         const wns::Frequency& frequency,
                         const wns::Distance& distance) const = 0;
 
+    virtual double
+    getCarPenetrationStd() const = 0;
+
+    virtual double
+    getCarPenetrationMean() const = 0;
+
 private:
     wns::probe::bus::ContextCollector losProbabilityCC_;
     wns::probe::bus::ContextCollector shadowingCC_;

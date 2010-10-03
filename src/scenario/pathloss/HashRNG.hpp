@@ -45,13 +45,13 @@ namespace detail {
 class HashRNG
 {
 public:
-    HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t id1, int32_t id2, double distance);
+    HashRNG(unsigned int initialSeed,
+            wns::Position p1,
+            wns::Position p2,
+            bool correlateBS,
+            bool correlateUT);
 
     static const bool has_fixed_range = true;
-
-/*    static const double min_value = boost::mt19937::min_value;
-
-    static const double max_value = boost::mt19937::max_value;*/
 
     double
     operator()();
@@ -80,24 +80,17 @@ private:
 
         for (int ii=0; ii < count; ++ii)
         {
+            // DJB Hash function
             hash = ((hash << 5) + hash) + *it;
             it++;
         }
     }
 
-    /*boost::mt19937 rng;
+    boost::mt19937 rng;
     boost::uniform_real<> uni;
-    boost::variate_generator<boost::mt19937&, boost::uniform_real<> > dis;*/
+    boost::variate_generator<boost::mt19937&, boost::uniform_real<> > dis;
 
     unsigned int myHash;
-    double normalize;
-    
-    /*bool giveA;
-    double a;
-    double b;
-    double c;
-    double d;
-    double e;*/
 };
 
 } // detail
