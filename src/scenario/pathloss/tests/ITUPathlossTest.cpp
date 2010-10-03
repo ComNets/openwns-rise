@@ -295,14 +295,6 @@ ITUPathlossTest::testRNG()
 
     // Check if the resulting distribution is really uniform
     // e.print();
-
-    // Only used as guard to ensure changes don't break randomness
-    // This is no test of correctness for the stochastical behaviour
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, eNorm.mean(), 0.03);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0, eNorm.variance(), 0.05);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, eBase.mean(), 0.03);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0/12.0, eBase.variance(), 0.005);
-
     std::ofstream myfile;
     myfile.open("rise.pathloss.detail.HashRNG.Norm_PDF.dat");
     eNorm.print(myfile);
@@ -311,6 +303,13 @@ ITUPathlossTest::testRNG()
     myfile.open("rise.pathloss.detail.HashRNG.Base_PDF.dat");
     eBase.print(myfile);
     myfile.close();
+
+    // Only used as guard to ensure changes don't break randomness
+    // This is no test of correctness for the stochastical behaviour
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, eNorm.mean(), 0.03);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0, eNorm.variance(), 0.05);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, eBase.mean(), 0.03);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0/12.0, eBase.variance(), 0.005);
 }
 
 void
