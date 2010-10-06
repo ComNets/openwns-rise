@@ -91,7 +91,10 @@ private:
     wns::probe::bus::ContextCollector losProbabilityCC_;
     wns::probe::bus::ContextCollector shadowingCC_;
 
-  double outdoorProbability;
+    double outdoorProbability;
+
+    bool useShadowing_;
+
 };
 
 } // pathloss

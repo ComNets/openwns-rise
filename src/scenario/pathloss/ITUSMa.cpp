@@ -43,7 +43,9 @@ using namespace rise::scenario::pathloss;
 ITUSMa::ITUSMa(const wns::pyconfig::View& pyco):
     rise::scenario::pathloss::DistanceDependent(pyco),
     losProbabilityCC_("rise.scenario.pathloss.ITUPathloss.losProbability"),
-    shadowingCC_("rise.scenario.pathloss.ITUPathloss.shadowing")
+    shadowingCC_("rise.scenario.pathloss.ITUPathloss.shadowing"),
+    useShadowing_(pyco.get<bool>("useShadowing")),
+    useCarPenetration_(pyco.get<bool>("useCarPenetration"))
 {
     streetWidth_ = pyco.get<double>("streetWidth");
     buildingHeight_ = pyco.get<double>("buildingHeight");
@@ -96,33 +98,44 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
         double shadowingMean = 0.0;
         if (isIndoor)
         {
-            shadowingMean = 20.0;
-            if (distance < dBP)
+            if (useShadowing_)
             {
-                shadowingStd = 4.0;
+                shadowingMean = 20.0;
+                if (distance < dBP)
+                {
+                    shadowingStd = 4.0;
+                }
+                else
+                {
+                    shadowingStd = 6.0;
+                }
+                boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
+                sh = wns::Ratio::from_dB(shadow(hrng));
             }
-            else
-            {
-                shadowingStd = 6.0;
-            }
-            boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
-            sh = wns::Ratio::from_dB(shadow(hrng));
         }else
         {
-            shadowingMean = 0.0;
+            if (useShadowing_)
+            {
+                shadowingMean = 0.0;
 
-            if (distance < dBP)
-            {
-                shadowingStd = 4.0;
+                if (distance < dBP)
+                {
+                    shadowingStd = 4.0;
+                }
+                else
+                {
+                    shadowingStd = 6.0;
+                }
+            
+                boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
+                sh = wns::Ratio::from_dB(shadow(hrng));
             }
-            else
+
+            if (useCarPenetration_)
             {
-                shadowingStd = 6.0;
+                boost::normal_distribution<double> carPenetration(9.0, 5.0);
+                sh += wns::Ratio::from_dB(carPenetration(hrngOnlyUTPos));
             }
-            boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
-            sh = wns::Ratio::from_dB(shadow(hrng));
-            boost::normal_distribution<double> carPenetration(9.0, 5.0);
-            sh += wns::Ratio::from_dB(carPenetration(hrngOnlyUTPos));
         }
 
         shadowingCC_.put(sh.get_dB());
@@ -134,20 +147,32 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
 
         double shadowingStd = 0.0;
         double shadowingMean = 0.0;
+        wns::Ratio sh = wns::Ratio::from_dB(0.0);
+
         if (isIndoor)
         {
-            shadowingMean = 20.0;
-            shadowingStd = 8.0;
-            boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
-            sh = wns::Ratio::from_dB(shadow(hrng));
+            if (useShadowing_)
+            {
+                shadowingMean = 20.0;
+                shadowingStd = 8.0;
+                boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
+                sh = wns::Ratio::from_dB(shadow(hrng));
+            }
         }else
         {
-            shadowingMean = 0.0;
-            shadowingStd = 8.0;
-            boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
-            sh = wns::Ratio::from_dB(shadow(hrng));
-            boost::normal_distribution<double> carPenetration(9.0, 5.0);
-            sh += wns::Ratio::from_dB(carPenetration(hrngOnlyUTPos));
+            if (useShadowing_)
+            {
+                shadowingMean = 0.0;
+                shadowingStd = 8.0;
+                boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
+                sh = wns::Ratio::from_dB(shadow(hrng));
+            }
+
+            if (useCarPenetration_)
+            {
+                boost::normal_distribution<double> carPenetration(9.0, 5.0);
+                sh += wns::Ratio::from_dB(carPenetration(hrngOnlyUTPos));
+            }
         }
         shadowingCC_.put(sh.get_dB());
         pl += sh;

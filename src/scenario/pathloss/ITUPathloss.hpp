@@ -122,6 +122,8 @@ public:
 private:
     wns::probe::bus::ContextCollector losProbabilityCC_;
     wns::probe::bus::ContextCollector shadowingCC_;
+    bool useShadowing_;
+    bool useCarPenetration_;
 };
 
 } // pathloss
