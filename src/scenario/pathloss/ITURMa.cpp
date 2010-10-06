@@ -73,7 +73,7 @@ ITURMa::getLOSPathloss(const rise::antenna::Antenna& source,
 
     if (distance < dBP)
     {
-        double pl = 9.0 + 20.0 * log10(distance * 40 * 3.14 * frequency/3000.0);
+        double pl = 20.0 * log10(distance * 40 * 3.14 * frequency/3000.0);
         pl += std::min(0.03 * pow(buildingHeight_, 1.72), 10.0) * log10(distance);
         pl -= std::min(0.044 * pow(buildingHeight_, 1.72), 14.77);
         pl += 0.002*log10(buildingHeight_)*distance;
@@ -82,7 +82,7 @@ ITURMa::getLOSPathloss(const rise::antenna::Antenna& source,
     }
     else
     {
-        double pl = 9.0 + 20.0 * log10(dBP * 40 * 3.14 * frequency/3000.0);
+        double pl = 20.0 * log10(dBP * 40 * 3.14 * frequency/3000.0);
         pl += std::min(0.03 * pow(buildingHeight_, 1.72), 10.0) * log10(dBP);
         pl -= std::min(0.044 * pow(buildingHeight_, 1.72), 14.77);
         pl += 0.002*log10(buildingHeight_)*dBP;
@@ -115,9 +115,6 @@ ITURMa::getNLOSPathloss(const rise::antenna::Antenna& source,
     pl += 20.0 * log10(frequency/1000.0);
     pl -= 3.2 * pow(log10(11.75 * utHeight), 2) - 4.97;
 
-    // Also all users are outdoors and in cars, 9 dB loss for that cmp. Table 8.2
-    pl += 9.0;
-
     return wns::Ratio::from_dB(pl);
 }
 
@@ -143,16 +140,13 @@ ITURMa::getLOSShadowingStd(const rise::antenna::Antenna& source,
 
     double dBP = 2 * 3.14 * bsHeight * utHeight * frequency / 3.0e02;
 
-    // Superposition of Car penentration loss variance and shadowing
-    // Sum of two normal distributions X1 = N(mu1, var1) and  X 2= N(mu2, var2)
-    // results in Xsum = N(mu1 + mu2, var1 + var2)
     if (distance < dBP)
     {
-        return 6.40312;
+        return 4.0;
     }
     else
     {
-        return 7.810249676;
+        return 6.0;
     }
 }
 
@@ -165,8 +159,17 @@ ITURMa::getNLOSShadowingStd(const rise::antenna::Antenna& source,
     assure(distance > 10.0, "This model is only valid for a minimum distance of 10m");
     assure(distance < 5000.0, "This model is only valid for a maximum distance of 5000m");
 
-    // Superposition of Car penentration loss variance and shadowing
-    // Sum of two normal distributions X1 = N(mu1, var1) and  X 2= N(mu2, var2)
-    // results in Xsum = N(mu1 + mu2, var1 + var2)
-    return 9.433981132;
+    return 8.0;
+}
+
+double
+ITURMa::getCarPenetrationStd() const
+{
+    return 5.0;
+}
+
+double
+ITURMa::getCarPenetrationMean() const
+{
+    return 9.0;
 }

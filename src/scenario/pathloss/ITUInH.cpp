@@ -104,3 +104,15 @@ ITUInH::getNLOSShadowingStd(const rise::antenna::Antenna& source,
 
     return 4.0;
 }
+
+double
+ITUInH::getCarPenetrationStd() const
+{
+    return 0.0;
+}
+
+double
+ITUInH::getCarPenetrationMean() const
+{
+    return 0.0;
+}

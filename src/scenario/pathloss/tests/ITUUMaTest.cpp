@@ -30,10 +30,124 @@
 #include <RISE/stations/tests/StationDropIn.hpp>
 
 #include <WNS/TestFixture.hpp>
+#include <WNS/evaluation/statistics/pdf.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 
 namespace rise { namespace scenario { namespace pathloss { namespace tests {
+
+    class ITUUMaTester:
+        public ITUUMa
+        {
+            public:
+
+            enum LOSBEHAVIOUR {
+                NORMALLOS,
+                FIXEDLOS,
+                FIXEDNLOS
+            };
+
+            enum SHADOWINGBEHAVIOUR {
+                NORMALSHADOWING,
+                OFF
+            };
+
+            enum CARPENETRATIONBEHAVIOUR {
+                NORMALCARPEN,
+                NOCARPEN
+            };
+
+            ITUUMaTester(const wns::pyconfig::View& config):
+                ITUUMa(config),
+                losBehaviour(NORMALLOS),
+                shadowingBehaviour(NORMALSHADOWING),
+                carpenetrationBehaviour(NORMALCARPEN)
+            {
+            };
+
+            void
+            setLOSBehaviour(LOSBEHAVIOUR b)
+            {
+                this->losBehaviour = b;
+            };
+
+            void
+            setShadowingBehaviour(SHADOWINGBEHAVIOUR b)
+            {
+                this->shadowingBehaviour = b;
+            }
+
+            void
+            setCarPenetrationBehaviour(CARPENETRATIONBEHAVIOUR b)
+            {
+                this->carpenetrationBehaviour = b;
+            }
+
+            virtual double
+            getLOSProbability(double distance) const
+            {
+                if(this->losBehaviour == FIXEDLOS)
+                {
+                    return 1.0;
+                }
+                if(this->losBehaviour == FIXEDNLOS)
+                {
+                    return 0.0;
+                }
+                return ITUUMa::getLOSProbability(distance);
+            }
+
+            virtual double
+            getLOSShadowingStd(const rise::antenna::Antenna& source,
+                               const rise::antenna::Antenna& target,
+                               const wns::Frequency& frequency,
+                               const wns::Distance& distance) const
+            {
+                if (shadowingBehaviour == OFF)
+                {
+                    return 0.0;
+                }
+                return ITUUMa::getLOSShadowingStd(source, target, frequency, distance);
+            }
+
+            virtual double
+            getNLOSShadowingStd(const rise::antenna::Antenna& source,
+                                const rise::antenna::Antenna& target,
+                                const wns::Frequency& frequency,
+                                const wns::Distance& distance) const
+            {
+                if (shadowingBehaviour == OFF)
+                {
+                    return 0.0;
+                }
+                return ITUUMa::getNLOSShadowingStd(source, target, frequency, distance);
+            }
+
+            virtual double
+            getCarPenetrationStd() const
+            {
+                if (carpenetrationBehaviour == NOCARPEN)
+                {
+                    return 0.0;
+                }
+                return ITUUMa::getCarPenetrationStd();
+            }
+
+            virtual double
+            getCarPenetrationMean() const
+            {
+                if(carpenetrationBehaviour == NOCARPEN)
+                {
+                    return 0.0;
+                }
+                return ITUUMa::getCarPenetrationMean();
+            }
+
+            private:
+                LOSBEHAVIOUR losBehaviour;
+                SHADOWINGBEHAVIOUR shadowingBehaviour;
+                CARPENETRATIONBEHAVIOUR carpenetrationBehaviour;
+        };
 
 class ITUUMaTest:
     public wns::TestFixture
@@ -43,6 +157,7 @@ class ITUUMaTest:
     CPPUNIT_TEST( testShadowing );
     CPPUNIT_TEST( testLOSPathloss );
     CPPUNIT_TEST( testNLOSPathloss );
+    CPPUNIT_TEST( testCarPenetration );
     CPPUNIT_TEST( testPlotLosProbability );
     CPPUNIT_TEST( testPlotLosPathloss );
     CPPUNIT_TEST( testPlotNLosPathloss );
@@ -69,6 +184,9 @@ public:
     testNLOSPathloss();
 
     void
+    testCarPenetration();
+
+    void
     testPlotLosProbability();
 
     void
@@ -78,7 +196,7 @@ public:
     testPlotNLosPathloss();
 
 private:
-    ITUUMa* testee_;
+    ITUUMaTester* testee_;
 
     rise::tests::SystemManagerDropIn* systemManager_;
     rise::tests::StationDropIn* station1_;
@@ -97,7 +215,7 @@ void ITUUMaTest::prepare()
 
     wns::pyconfig::View configView(config, "testee");
 
-    testee_ = new ITUUMa(configView);
+    testee_ = new ITUUMaTester(configView);
 
     systemManager_ = new rise::tests::SystemManagerDropIn();
 
@@ -146,29 +264,32 @@ ITUUMaTest::testShadowing()
     station2_->moveTo(wns::Position(0.0, 2.0, 1.50));
     double f = 2000;
 
-    // The standard deviation of the shadowing shall include
-    // the standard deviation of the car penetration loss (Table 8.2)
-    // The variance of the sum of two gaussian distributed variables is
-    // the sum of the individual variances
-    double LOSShadowing = sqrt(4.0*4.0 + 5.0*5.0);
+    double LOSShadowing = 4.0;
 
     CPPUNIT_ASSERT_DOUBLES_EQUAL(LOSShadowing, testee_->getLOSShadowingStd(a1, a2, f, 20.0), 1e-05);
 
-    double NLOSShadowing = sqrt(6.0*6.0 + 5.0*5.0);
+    double NLOSShadowing = 6.0;
 
     CPPUNIT_ASSERT_DOUBLES_EQUAL(NLOSShadowing, testee_->getNLOSShadowingStd(a1, a2, f, 20.0), 1e-05);
+
+    double carPenetrationStd = 5.0;
+
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(carPenetrationStd, testee_->getCarPenetrationStd(), 1e-05);
+
+    double carPenetrationMean = 9.0;
+    
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(carPenetrationMean, testee_->getCarPenetrationMean(), 1e-05);
 }
 
 void
 ITUUMaTest::testLOSPathloss()
 {
     // At 2 GHz the breakpoint distance is 320m, so we stay below
-    // Pathloss includes car penetration loss of 9dB
 
     double f = 2000;
     double d1 = 100;
     double d1plane = sqrt(d1*d1 + 23.5*23.5);
-    double pl1 = 78.020599913 + 9.0;
+    double pl1 = 78.020599913;
 
     rise::tests::AntennaDropIn a1(station1_);
     station1_->moveTo(wns::Position(0.0, 0.0, 25.0));
@@ -180,7 +301,7 @@ ITUUMaTest::testLOSPathloss()
     // Now above breakpoint distance
     double d2 = 400;
     double d2plane = sqrt(d2*d2 + 23.5*23.5);
-    double pl2 = 93.059197216 + 9.0;
+    double pl2 = 93.059197216;
 
     station1_->moveTo(wns::Position(0.0, 0.0, 25.0));
     station2_->moveTo(wns::Position(0.0, d2plane, 1.50));
@@ -197,7 +318,7 @@ ITUUMaTest::testNLOSPathloss()
     double f = 2000;
     double d1 = 340;
     double d1plane = sqrt(d1*d1 + 23.5*23.5);
-    double pl1 = 118.511659003 + 9.0;
+    double pl1 = 118.511659003;
 
     rise::tests::AntennaDropIn a1(station1_);
     station1_->moveTo(wns::Position(0.0, 0.0, 25.0));
@@ -206,6 +327,57 @@ ITUUMaTest::testNLOSPathloss()
 
     CPPUNIT_ASSERT_DOUBLES_EQUAL(pl1, testee_->getNLOSPathloss(a1,a2,f,d1).get_dB(), 1e-06);
 
+}
+
+void
+ITUUMaTest::testCarPenetration()
+{
+    // Turn off shadowing and fix LOS
+    // Only random thing is car penetration which depends only on UT position
+    testee_->setShadowingBehaviour(ITUUMaTester::OFF);
+    testee_->setLOSBehaviour(ITUUMaTester::FIXEDLOS);
+
+    double f = 2000;
+    double d1 = 340;
+    double d1plane = sqrt(d1*d1 + 23.5*23.5);
+    
+    rise::tests::AntennaDropIn a1(station1_);
+    station1_->moveTo(wns::Position(0.0, 0.0, 25.0));
+    rise::tests::AntennaDropIn a2(station2_);
+    station2_->moveTo(wns::Position(0.0, d1plane, 1.50));
+
+    double pl = testee_->calculatePathloss(a1, a2, f, d1).get_dB();
+
+    // Now if we move station1_ keeping the distance constant
+    // PL should remain the same, since user is the same,
+    // thus the _car_ is the same
+    station1_->moveTo(wns::Position(0.0, 2*d1plane, 25.0));
+    double pl2 = testee_->calculatePathloss(a1, a2, f, d1).get_dB();
+
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(pl, pl2, 1e-06);
+
+    // Now if station2_ is moved the car penetration should change
+    // We now measure stddev and mean
+    using namespace wns::evaluation::statistics;
+    PDF carPenPDF(-20.0, 40.0, 1000, PDF::linear, StatEval::fixed, "rise.pathloss.ITUUMa.carPenetration", "Test CarPenetration");
+
+    for (int ii = 0; ii < 20000; ++ii)
+    {
+        station2_->moveTo(wns::Position(0.0, 0.0 + (d1plane/50000.0 * ii), 1.50));
+        testee_->setCarPenetrationBehaviour(ITUUMaTester::NORMALCARPEN);
+        pl = testee_->calculatePathloss(a1, a2, f, d1).get_dB();
+        testee_->setCarPenetrationBehaviour(ITUUMaTester::NOCARPEN);
+        pl2 = testee_->calculatePathloss(a1, a2, f, d1).get_dB();
+        carPenPDF.put(pl-pl2);
+    }
+
+    std::ofstream myfile;
+    myfile.open("rise.pathloss.detail.ITUUMa.carPenetration_PDF.dat");
+    carPenPDF.print(myfile);
+    myfile.close();
+
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(9.0, carPenPDF.mean() , 0.1);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(25.0, carPenPDF.variance() , 0.1);
 }
 
 void

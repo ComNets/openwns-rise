@@ -53,16 +53,21 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
 			  const wns::Distance& distance) const
 {
     static wns::distribution::Uniform dis(0.0, 1.0, wns::simulator::getRNG());
-    static size_t initialSeed = dis() * pow(2, sizeof(size_t)*8);
-    static double normalize = pow(2, sizeof(std::size_t) * 8);
+    static unsigned int initialSeed = dis() * pow(2, sizeof(unsigned int)*8);
 
-    detail::HashRNG hrng(initialSeed, source.getPosition(), target.getPosition(),
-                         source.getStation()->getStationId(), target.getStation()->getStationId(),
-                         distance);
+    detail::HashRNG hrng(initialSeed,
+                         source.getPosition(),
+                         target.getPosition(),
+                         true, true);
+
+    detail::HashRNG hrngOnlyUTPos(initialSeed + 2637,
+                                source.getPosition(),
+                                target.getPosition(),
+                                false, true);
 
     wns::Ratio pl;
     double sh;
-    if (hrng.c < getLOSProbability(distance))
+    if (hrng() < getLOSProbability(distance))
     {
         losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
@@ -76,26 +81,15 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
         sh = shadow(hrng);
     }
 
-    size_t seed = initialSeed;
-    if (source.getPosition().getZ() < target.getPosition().getZ())
-    {
-        boost::hash_combine(seed, source.getPosition().getX());
-        boost::hash_combine(seed, source.getPosition().getY());
-        boost::hash_combine(seed, source.getPosition().getZ());
-    }
-    else
-    {
-        boost::hash_combine(seed, target.getPosition().getX());
-        boost::hash_combine(seed, target.getPosition().getY());
-        boost::hash_combine(seed, target.getPosition().getZ());
-    }
-
-    bool isIndoor = (seed/normalize) > outdoorProbability;
+    bool isIndoor = hrngOnlyUTPos() > outdoorProbability;
 
     if (isIndoor)
     {
         //d_in is uniformly distributed between 0 and 25
-        double d_in = hrng.d * 25.0;
+        /**
+         * @todo: dbn: Handle case if BS-UT distance less than 25m
+         */
+        double d_in = hrngOnlyUTPos() * 25.0;
         pl += wns::Ratio::from_dB(20.0 + 0.5 * d_in);
         boost::normal_distribution<double> shadow(0.0, getIndoorShadowingStd(source, target, frequency, distance));
         sh = shadow(hrng);
@@ -206,3 +200,14 @@ ITUUMi::getIndoorShadowingStd(const rise::antenna::Antenna& source,
     return 7;
 }
 
+double
+ITUUMi::getCarPenetrationStd() const
+{
+    return 0.0;
+}
+
+double
+ITUUMi::getCarPenetrationMean() const
+{
+    return 0.0;
+}

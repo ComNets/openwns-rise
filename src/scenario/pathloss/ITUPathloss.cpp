@@ -50,13 +50,15 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
     static wns::distribution::Uniform dis(0.0, 1.0, wns::simulator::getRNG());
     static size_t initialSeed = dis() * pow(2, sizeof(size_t)*8);
 
-    detail::HashRNG hrng(initialSeed, source.getPosition(), target.getPosition(),
-                         source.getStation()->getStationId(), target.getStation()->getStationId(),
-                         distance);
+    
+    detail::HashRNG hrng(initialSeed,
+                         source.getPosition(),
+                         target.getPosition(),
+                         true, true);
 
     wns::Ratio pl;
 
-    if (hrng.c < getLOSProbability(distance))
+    if (hrng() < getLOSProbability(distance))
     {
         losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
@@ -75,5 +77,18 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
         pl += wns::Ratio::from_dB(sh);
     }
 
-    return pl;
+    // Take car of car penetration loss
+    // Pathloss models that do not exhibit car penetration
+    // should return zero mean and zero std as distribution parameters
+
+    // Only take into account the UT for in-car penetration loss
+    detail::HashRNG onlyUT(initialSeed + 2637,
+                            source.getPosition(),
+                            target.getPosition(),
+                            false, true);
+
+    boost::normal_distribution<double> shadow(getCarPenetrationMean(), getCarPenetrationStd());
+    double penetrationLoss = shadow(onlyUT);
+
+    return pl + wns::Ratio::from_dB(penetrationLoss);;
 }
