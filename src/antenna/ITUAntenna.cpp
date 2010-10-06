@@ -68,7 +68,7 @@ ITUAntenna::getGain(const wns::Position& pos, const PatternPtr pattern) const
     double vert = 0.0;
     if(phi_3dB > 0)
     {
-        double vert = -1.0 * std::min(12.0 * pow(elevation/phi_3dB, 2), 20.0);
+        vert = -1.0 * std::min(12.0 * pow(elevation/phi_3dB, 2), 20.0);
     }
 
     double directivity = -1 * std::min( -1 * (horiz + vert), 20.0);

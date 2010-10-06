@@ -86,6 +86,9 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
     if (isIndoor)
     {
         //d_in is uniformly distributed between 0 and 25
+        /**
+         * @todo: dbn: Handle case if BS-UT distance less than 25m
+         */
         double d_in = hrngOnlyUTPos() * 25.0;
         pl += wns::Ratio::from_dB(20.0 + 0.5 * d_in);
         boost::normal_distribution<double> shadow(0.0, getIndoorShadowingStd(source, target, frequency, distance));
