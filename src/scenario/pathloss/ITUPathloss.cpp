@@ -65,10 +65,11 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
         losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
 
+	double sh = 0.0;
         if (useShadowing_)
         {
             boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(source, target, frequency, distance));
-            double sh = shadow(hrng);
+            sh = shadow(hrng);
             pl += wns::Ratio::from_dB(sh);
         }
         shadowingCC_.put(sh);
@@ -76,10 +77,11 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
     else
     {
         pl = getNLOSPathloss(source, target, frequency, distance);
+	double sh = 0.0;
         if (useShadowing_)
         {
             boost::normal_distribution<double> shadow(0.0, getNLOSShadowingStd(source, target, frequency, distance));
-            double sh = shadow(hrng);
+            sh = shadow(hrng);
             pl += wns::Ratio::from_dB(sh);
         }
         shadowingCC_.put(sh);
