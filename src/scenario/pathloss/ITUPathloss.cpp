@@ -50,7 +50,7 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
                                const wns::Distance& distance) const
 {
     static wns::distribution::Uniform dis(0.0, 1.0, wns::simulator::getRNG());
-    static size_t initialSeed = dis() * pow(2, sizeof(size_t)*8);
+    static unsigned int initialSeed = dis() * pow(2, sizeof(unsigned int)*8);
 
     
     detail::HashRNG hrng(initialSeed,
