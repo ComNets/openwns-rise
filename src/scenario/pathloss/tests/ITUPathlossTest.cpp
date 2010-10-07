@@ -168,7 +168,9 @@ void ITUPathlossTest::prepare()
     "   pass\n"
     "\n"
     "testee = A()\n"
-    "testee.minPathloss = \"0.0 dB\""
+    "testee.minPathloss = \"0.0 dB\"\n"
+    "testee.useShadowing = True\n"
+    "testee.useCarPenetration = True\n"
     );
 
     wns::pyconfig::View configView(config, "testee");

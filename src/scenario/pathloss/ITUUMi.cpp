@@ -41,7 +41,8 @@ using namespace rise::scenario::pathloss;
 ITUUMi::ITUUMi(const wns::pyconfig::View& pyco):
     DistanceDependent(pyco),
     losProbabilityCC_("rise.scenario.pathloss.ITUPathloss.losProbability"),
-    shadowingCC_("rise.scenario.pathloss.ITUPathloss.shadowing")
+    shadowingCC_("rise.scenario.pathloss.ITUPathloss.shadowing"),
+    useShadowing_(pyco.get<bool>("useShadowing"))
 {
     outdoorProbability = pyco.get<double>("outdoorProbability");
 }
@@ -66,33 +67,49 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
                                 false, true);
 
     wns::Ratio pl;
-    double sh;
+    double sh = 0.0;
     if (hrng() < getLOSProbability(distance))
     {
         losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
-        boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(source, target, frequency, distance));
-        sh = shadow(hrng);
+        if (useShadowing_)
+        {
+            boost::normal_distribution<double> shadow(0.0, getLOSShadowingStd(source, target, frequency, distance));
+            sh = shadow(hrng);
+        }
     }
     else
     {
         pl = getNLOSPathloss(source, target, frequency, distance);
-        boost::normal_distribution<double> shadow(0.0, getNLOSShadowingStd(source, target, frequency, distance));
-        sh = shadow(hrng);
+        if (useShadowing_)
+        {
+            boost::normal_distribution<double> shadow(0.0, getNLOSShadowingStd(source, target, frequency, distance));
+            sh = shadow(hrng);
+        }
     }
 
     bool isIndoor = hrngOnlyUTPos() > outdoorProbability;
 
     if (isIndoor)
     {
-        //d_in is uniformly distributed between 0 and 25
-        /**
-         * @todo: dbn: Handle case if BS-UT distance less than 25m
-         */
-        double d_in = hrngOnlyUTPos() * 25.0;
+        double d_in = 0.0;
+        if (distance > 25.0)
+        {
+            //d_in is uniformly distributed between 0 and 25
+            d_in = hrng() * 25.0;
+        }
+        else
+        {
+            //d_in is uniformly distributed between 0 and distance
+            d_in = hrng() * distance;
+        }
         pl += wns::Ratio::from_dB(20.0 + 0.5 * d_in);
-        boost::normal_distribution<double> shadow(0.0, getIndoorShadowingStd(source, target, frequency, distance));
-        sh = shadow(hrng);
+
+        if (useShadowing_)
+        {
+            boost::normal_distribution<double> shadow(0.0, getIndoorShadowingStd(source, target, frequency, distance));
+            sh = shadow(hrng);
+        }
       }
     shadowingCC_.put(sh);
     pl += wns::Ratio::from_dB(sh);
