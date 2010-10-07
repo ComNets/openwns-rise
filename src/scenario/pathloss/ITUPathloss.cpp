@@ -101,7 +101,7 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
                                 false, true);
 
         boost::normal_distribution<double> shadow(getCarPenetrationMean(), getCarPenetrationStd());
-        double penetrationLoss = shadow(onlyUT);
+        penetrationLoss = shadow(onlyUT);
     }
 
     return pl + wns::Ratio::from_dB(penetrationLoss);;
