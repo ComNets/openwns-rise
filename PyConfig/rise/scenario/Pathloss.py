@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###############################################################################
 # This file is part of openWNS (open Wireless Network Simulator)
 # _____________________________________________________________________________
@@ -682,6 +683,8 @@ class ITUInH(Pathloss):
 
     def __init__(self, minPathloss = "0.0 dB"):
         self.minPathloss = minPathloss
+        self.useShadowing = True
+        self.useCarPenetration = False
 
 class ITUUMa(Pathloss):
     """
@@ -699,6 +702,8 @@ class ITUUMa(Pathloss):
         self.minPathloss = minPathloss
         self.streetWidth = 20.0
         self.buildingHeight = 20.0
+        self.useShadowing = True
+        self.useCarPenetration = True
 
 class ITUSMa(Pathloss):
     """
@@ -716,6 +721,8 @@ class ITUSMa(Pathloss):
         self.minPathloss = minPathloss
         self.streetWidth = 10.0
         self.buildingHeight = 5.0
+        self.useShadowing = True
+        self.useCarPenetration = True
 
 class ITURMa(Pathloss):
     """
@@ -733,6 +740,8 @@ class ITURMa(Pathloss):
         self.minPathloss = minPathloss
         self.streetWidth = 20.0
         self.buildingHeight = 5.0
+        self.useShadowing = True
+        self.useCarPenetration = True
 
 class ITUUMi(Pathloss):
     """
@@ -747,3 +756,5 @@ class ITUUMi(Pathloss):
         self.minPathloss = minPathloss
         self.streetWidth = 20.0
         self.outdoorProbability = outdoorProbability
+        self.useShadowing = True
+        self.useCarPenetration = False

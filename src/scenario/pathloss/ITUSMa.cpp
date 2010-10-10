@@ -43,7 +43,9 @@ using namespace rise::scenario::pathloss;
 ITUSMa::ITUSMa(const wns::pyconfig::View& pyco):
     rise::scenario::pathloss::DistanceDependent(pyco),
     losProbabilityCC_("rise.scenario.pathloss.ITUPathloss.losProbability"),
-    shadowingCC_("rise.scenario.pathloss.ITUPathloss.shadowing")
+    shadowingCC_("rise.scenario.pathloss.ITUPathloss.shadowing"),
+    useShadowing_(pyco.get<bool>("useShadowing")),
+    useCarPenetration_(pyco.get<bool>("useCarPenetration"))
 {
     streetWidth_ = pyco.get<double>("streetWidth");
     buildingHeight_ = pyco.get<double>("buildingHeight");
@@ -56,12 +58,17 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
                                const wns::Distance& distance) const
 {
     static wns::distribution::Uniform dis(0.0, 1.0, wns::simulator::getRNG());
-    static size_t initialSeed = dis() * pow(2, sizeof(size_t)*8);
-    static double normalize = pow(2, sizeof(std::size_t) * 8);
+    static unsigned int initialSeed = dis() * pow(2, sizeof(unsigned int)*8);
 
-    detail::HashRNG hrng(initialSeed, source.getPosition(), target.getPosition(),
-                         source.getStation()->getStationId(), target.getStation()->getStationId(),
-                         distance);
+    detail::HashRNG hrng(initialSeed,
+                         source.getPosition(),
+                         target.getPosition(),
+                         true, true);
+
+    detail::HashRNG hrngOnlyUTPos(initialSeed + 2773,
+                                  source.getPosition(),
+                                  target.getPosition(),
+                                  false, true);
 
     wns::Ratio pl;
 
@@ -78,23 +85,10 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
 
     double dBP = 2 * 3.14 * bsHeight * utHeight * frequency / 3.0e02;
 
-    size_t seed = initialSeed;
-    if (source.getPosition().getZ() < target.getPosition().getZ())
-    {
-        boost::hash_combine(seed, source.getPosition().getX());
-        boost::hash_combine(seed, source.getPosition().getY());
-        boost::hash_combine(seed, source.getPosition().getZ());
-    }
-    else
-    {
-        boost::hash_combine(seed, target.getPosition().getX());
-        boost::hash_combine(seed, target.getPosition().getY());
-        boost::hash_combine(seed, target.getPosition().getZ());
-    }
+    bool isIndoor = hrngOnlyUTPos() < 0.5;
+    wns::Ratio sh = wns::Ratio::from_dB(0.0);
 
-    bool isIndoor = (seed/normalize) < 0.5;
-
-    if (hrng.c < getLOSProbability(distance))
+    if (hrng() < getLOSProbability(distance))
     {
         losProbabilityCC_.put(distance);
 
@@ -104,32 +98,48 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
         double shadowingMean = 0.0;
         if (isIndoor)
         {
-            shadowingMean = 20.0;
-            if (distance < dBP)
+            if (useShadowing_)
             {
-                shadowingStd = 4.0;
-            }
-            else
-            {
-                shadowingStd = 6.0;
+                shadowingMean = 20.0;
+                if (distance < dBP)
+                {
+                    shadowingStd = 4.0;
+                }
+                else
+                {
+                    shadowingStd = 6.0;
+                }
+                boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
+                sh = wns::Ratio::from_dB(shadow(hrng));
             }
         }else
         {
-            shadowingMean = 9.0;
+            if (useShadowing_)
+            {
+                shadowingMean = 0.0;
 
-            if (distance < dBP)
-            {
-                shadowingStd = 6.403124237;
+                if (distance < dBP)
+                {
+                    shadowingStd = 4.0;
+                }
+                else
+                {
+                    shadowingStd = 6.0;
+                }
+            
+                boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
+                sh = wns::Ratio::from_dB(shadow(hrng));
             }
-            else
+
+            if (useCarPenetration_)
             {
-                shadowingStd = 7.810249676;
+                boost::normal_distribution<double> carPenetration(9.0, 5.0);
+                sh += wns::Ratio::from_dB(carPenetration(hrngOnlyUTPos));
             }
         }
-        boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
-        double sh = shadow(hrng);
-        shadowingCC_.put(sh);
-        pl += wns::Ratio::from_dB(sh);
+
+        shadowingCC_.put(sh.get_dB());
+        pl += sh;
     }
     else
     {
@@ -137,19 +147,35 @@ ITUSMa::calculatePathloss(const rise::antenna::Antenna& source,
 
         double shadowingStd = 0.0;
         double shadowingMean = 0.0;
+        wns::Ratio sh = wns::Ratio::from_dB(0.0);
+
         if (isIndoor)
         {
-            shadowingMean = 20.0;
-            shadowingStd = 8.0;
+            if (useShadowing_)
+            {
+                shadowingMean = 20.0;
+                shadowingStd = 8.0;
+                boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
+                sh = wns::Ratio::from_dB(shadow(hrng));
+            }
         }else
         {
-            shadowingMean = 9.0;
-            shadowingStd = 9.433981132;
+            if (useShadowing_)
+            {
+                shadowingMean = 0.0;
+                shadowingStd = 8.0;
+                boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
+                sh = wns::Ratio::from_dB(shadow(hrng));
+            }
+
+            if (useCarPenetration_)
+            {
+                boost::normal_distribution<double> carPenetration(9.0, 5.0);
+                sh += wns::Ratio::from_dB(carPenetration(hrngOnlyUTPos));
+            }
         }
-        boost::normal_distribution<double> shadow(shadowingMean, shadowingStd);
-        double sh = shadow(hrng);
-        shadowingCC_.put(sh);
-        pl += wns::Ratio::from_dB(sh);
+        shadowingCC_.put(sh.get_dB());
+        pl += sh;
     }
     return pl;
 }
@@ -230,4 +256,18 @@ ITUSMa::getNLOSPathloss(const rise::antenna::Antenna& source,
     pl -= 3.2 * pow(log10(11.75 * utHeight), 2) - 4.97;
 
     return wns::Ratio::from_dB(pl);
+}
+
+double
+ITUSMa::getCarPenetrationStd() const
+{
+    // Handled above, because of mix of indoor and outdoor users
+    return 0.0;
+}
+
+double
+ITUSMa::getCarPenetrationMean() const
+{
+    // Handled above, because of mix of indoor and outdoor users
+    return 0.0;
 }

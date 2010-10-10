@@ -29,6 +29,7 @@
 #define RISE_SCENARIO_PATHLOSS_DETAIL_HASHRNG_HPP
 
 #include <RISE/scenario/pathloss/DistanceDependent.hpp>
+#include <boost/random.hpp>
 
 namespace rise { namespace scenario { namespace pathloss {
 
@@ -44,13 +45,13 @@ namespace detail {
 class HashRNG
 {
 public:
-    HashRNG(size_t initialSeed, wns::Position p1, wns::Position p2, int32_t id1, int32_t id2, double distance);
+    HashRNG(unsigned int initialSeed,
+            wns::Position p1,
+            wns::Position p2,
+            bool correlateBS,
+            bool correlateUT);
 
     static const bool has_fixed_range = true;
-
-    static const double min_value = 0.0;
-
-    static const double max_value = 1.0;
 
     double
     operator()();
@@ -67,12 +68,29 @@ public:
         return 1.0;
     }
 
-    bool giveA;
-    double a;
-    double b;
-    double c;
-    double d;
-    double e;
+private:
+    template<typename T>
+    void combine( unsigned int& hash, T t)
+    {
+        unsigned int* it= (unsigned int*)(&t);
+
+        assure(sizeof(T) % sizeof(unsigned int) == 0, "Incompatible hash types in HashRNG::combineDouble");
+
+        int count = sizeof(T) / sizeof(unsigned int);
+
+        for (int ii=0; ii < count; ++ii)
+        {
+            // DJB Hash function
+            hash = ((hash << 5) + hash) + *it;
+            it++;
+        }
+    }
+
+    boost::mt19937 rng;
+    boost::uniform_real<> uni;
+    boost::variate_generator<boost::mt19937&, boost::uniform_real<> > dis;
+
+    unsigned int myHash;
 };
 
 } // detail

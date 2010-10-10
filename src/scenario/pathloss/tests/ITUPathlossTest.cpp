@@ -94,6 +94,18 @@ public:
         return nlosSh_;
     }
 
+    virtual double
+    getCarPenetrationStd() const
+    {
+        return 0.0;
+    }
+
+    virtual double
+    getCarPenetrationMean() const
+    {
+        return 0.0;
+    }
+
 private:
     double losProbability_;
     double losPL_;
@@ -106,6 +118,7 @@ class ITUPathlossTest:
     public wns::TestFixture
 {
     CPPUNIT_TEST_SUITE( ITUPathlossTest );
+    CPPUNIT_TEST( testBaseRNG );
     CPPUNIT_TEST( testRNG );
     CPPUNIT_TEST( testSwap );
     CPPUNIT_TEST( testPerformance );
@@ -118,6 +131,9 @@ public:
 
     void
     cleanup();
+
+    void
+    testBaseRNG();
 
     void
     testRNG();
@@ -152,7 +168,9 @@ void ITUPathlossTest::prepare()
     "   pass\n"
     "\n"
     "testee = A()\n"
-    "testee.minPathloss = \"0.0 dB\""
+    "testee.minPathloss = \"0.0 dB\"\n"
+    "testee.useShadowing = True\n"
+    "testee.useCarPenetration = True\n"
     );
 
     wns::pyconfig::View configView(config, "testee");
@@ -198,12 +216,57 @@ ITUPathlossTest::testSwap()
 }
 
 void
+ITUPathlossTest::testBaseRNG()
+{
+    std::ofstream tracefile;
+    tracefile.open("rise.pathloss.detail.HashRNG.acorr.py");
+    tracefile << "from pylab import *" << std::endl;
+    tracefile << "x = [" << std::endl;
+
+    std::ofstream tracefile2;
+    tracefile2.open("rise.pathloss.detail.RNG.acorr.py");
+    tracefile2 << "from pylab import *" << std::endl;
+    tracefile2 << "x = [" << std::endl;
+    
+    wns::Position pos1(12.34, 23.2, 15.0);
+    wns::Position pos2(100, 30, 30.0);
+
+    detail::HashRNG hrngBase(0,
+                             pos1,
+                             pos2,
+                             true, true);
+
+    for (int ii=0; ii < 1000; ++ii)
+    {
+        double b = hrngBase();
+        tracefile << b << "," << std::endl;
+        tracefile2 << (*wns::simulator::getRNG())() << "," << std::endl;
+    }
+
+    tracefile << "]" << std::endl;
+    tracefile << "acorr(x, normed=True, detrend=mlab.detrend_mean, maxlags=10)" << std::endl;
+    tracefile << "show()" << std::endl;
+    tracefile.close();
+    
+    tracefile2 << "]" << std::endl;
+    tracefile2 << "acorr(x, detrend=mlab.detrend_mean, maxlags=10)" << std::endl;
+    tracefile2 << "show()" << std::endl;
+    tracefile2.close();
+}
+
+void
 ITUPathlossTest::testRNG()
 {
     double last = 0.0;
 
+    std::ofstream tracefile;
+    tracefile.open("rise.pathloss.detail.HashRNG.position.acorr.py");
+    tracefile << "from pylab import *" << std::endl;
+    tracefile << "x = [" << std::endl;
+    
     using namespace wns::evaluation::statistics;
-    PDF e(-10.0, 10.0, 1000, PDF::linear, StatEval::fixed, "rise.pathloss.detail.HashRNG", "Test randomness of HashRNG");
+    PDF eNorm(-10.0, 10.0, 1000, PDF::linear, StatEval::fixed, "rise.pathloss.detail.HashRNG.Norm", "Test randomness of HashRNG");
+    PDF eBase(0.0, 1.0, 1000, PDF::linear, StatEval::fixed, "rise.pathloss.detail.HashRNG.Base", "Test randomness of HashRNG");
 
     // Decrease step size and use e.print
     // to validate externally
@@ -216,24 +279,39 @@ ITUPathlossTest::testRNG()
             {
                 wns::Position pos1(xx, yy, zz);
                 wns::Position pos2(xx+100, yy +30, zz);
-                detail::HashRNG hrng(0, pos1, pos2, 1, 2,(pos1-pos2).abs());
+                detail::HashRNG hrngNorm(0, pos1, pos2, true, true);
+                detail::HashRNG hrngBase(0, pos1, pos2, true, true);
                 boost::normal_distribution<double> dis(1.0, 2.0);
-                e.put(dis(hrng));
+                eNorm.put(dis(hrngNorm));
+                double b = hrngBase();
+                tracefile << b << "," << std::endl;
+                eBase.put(b);
             }
         }
     }
 
+    tracefile << "]" << std::endl;
+    tracefile << "acorr(x, normed=True, detrend=mlab.detrend_mean, maxlags=10)" << std::endl;
+    tracefile << "show()" << std::endl;
+    tracefile.close();
+
     // Check if the resulting distribution is really uniform
     // e.print();
+    std::ofstream myfile;
+    myfile.open("rise.pathloss.detail.HashRNG.Norm_PDF.dat");
+    eNorm.print(myfile);
+    myfile.close();
+
+    myfile.open("rise.pathloss.detail.HashRNG.Base_PDF.dat");
+    eBase.print(myfile);
+    myfile.close();
 
     // Only used as guard to ensure changes don't break randomness
     // This is no test of correctness for the stochastical behaviour
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, e.mean(), 0.03);
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0, e.variance(), 0.05);
-    std::ofstream myfile;
-    myfile.open("rise.pathloss.detail.HashRNG_PDF.dat");
-    e.print(myfile);
-    myfile.close();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, eNorm.mean(), 0.03);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0, eNorm.variance(), 0.05);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, eBase.mean(), 0.03);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0/12.0, eBase.variance(), 0.005);
 }
 
 void

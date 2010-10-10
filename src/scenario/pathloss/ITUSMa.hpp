@@ -66,6 +66,12 @@ public:
                     const wns::Frequency& frequency,
                     const wns::Distance& distance) const;
 
+    virtual double
+    getCarPenetrationStd() const;
+
+    virtual double
+    getCarPenetrationMean() const;
+
 private:
     double streetWidth_;
 
@@ -74,6 +80,10 @@ private:
     wns::probe::bus::ContextCollector losProbabilityCC_;
 
     wns::probe::bus::ContextCollector shadowingCC_;
+
+    bool useShadowing_;
+
+    bool useCarPenetration_;
 };
 
 } // pathloss
