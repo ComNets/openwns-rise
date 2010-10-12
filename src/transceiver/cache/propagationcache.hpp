@@ -32,11 +32,7 @@
 #include <WNS/PowerRatio.hpp>
 #include <WNS/Position.hpp>
 #include <string>
-#ifndef WNS_USE_STLPORT
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
+#include <boost/unordered_map.hpp>
 #include <algorithm>
 
 namespace rise {
@@ -50,11 +46,7 @@ namespace rise {
      * @brief Functor as hash function to the FreqHash
      */
     class FreqHashFunctor :
-#ifndef WNS_USE_STLPORT
-		public __gnu_cxx::hash<double const>
-#else
-		public std::hash<double const>
-#endif
+		public boost::hash<double const>
     {
     public:
 		size_t operator()(double const k) const {
@@ -67,11 +59,7 @@ namespace rise {
      */
     template<class Value>
     class FreqHash :
-#ifndef WNS_USE_STLPORT
-		public __gnu_cxx::hash_map<double const,
-#else
-		public std::hash_map<double const,
-#endif
+		public boost::unordered_map<double const,
 							 Value,
 							 FreqHashFunctor,
 							 std::equal_to<double> >

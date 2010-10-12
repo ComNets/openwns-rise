@@ -29,22 +29,14 @@
 #define _POINTERHASHMAP_HPP
 #include <WNS/SmartPtr.hpp>
 #include <functional>
-#ifndef WNS_USE_STLPORT
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
+#include <boost/unordered_map.hpp>
 
 namespace rise {
 	//! The hash function for pointers
 	/** @ingroup MISC */
 	template<class Key>
 	class PointerHashMapFunctor :
-#ifndef WNS_USE_STLPORT
-		public __gnu_cxx::hash<Key const>
-#else
-		public std::hash<Key const>
-#endif
+		public boost::hash<Key const>
 	{
 	public:
 		ptrdiff_t operator()(Key const k) const {
@@ -56,11 +48,7 @@ namespace rise {
 	/** @ingroup MISC */
 	template<class Key>
 	class PointerHashMapFunctor<wns::SmartPtr<Key> > :
-#ifndef WNS_USE_STLPORT
-		public __gnu_cxx::hash<Key* const>
-#else
-		public std::hash<Key* const>
-#endif
+		public boost::hash<Key* const>
 	{
 	public:
 		ptrdiff_t operator()(wns::SmartPtr<Key> const k) const {
@@ -72,21 +60,13 @@ namespace rise {
 	/** @ingroup MISC */
 	template<class Key, class Value>
 	class PointerHashMap :
-#ifndef WNS_USE_STLPORT
-		public __gnu_cxx::hash_map<Key const,
-#else
-		public std::hash_map<Key const,
-#endif
+		public boost::unordered_map<Key const,
 								   Value,
 								   PointerHashMapFunctor<Key>,
 								   std::equal_to<Key> > {
 	public:
 		PointerHashMap() :
-#ifndef WNS_USE_STLPORT
-			__gnu_cxx::hash_map<Key const,
-#else
-			std::hash_map<Key const,
-#endif
+			boost::unordered_map<Key const,
 								Value,
 								PointerHashMapFunctor<Key>,
 								std::equal_to<Key> >() {};
