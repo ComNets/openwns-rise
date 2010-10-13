@@ -32,8 +32,18 @@
 #include <WNS/PowerRatio.hpp>
 #include <WNS/Position.hpp>
 #include <string>
-#include <boost/unordered_map.hpp>
 #include <algorithm>
+
+#include <boost/version.hpp>
+
+// From Boost 1.38 on the unordered_map container is present
+// at the same time hash_map becomes deprecated in GNU C++
+#if BOOST_VERSION < 103800
+    #define WNS_USE_OLD_HASH_MAP
+    #include <ext/hash_map>
+#else
+    #include <boost/unordered_map.hpp>
+#endif
 
 namespace rise {
     class PropCacheEntry;
@@ -46,7 +56,11 @@ namespace rise {
      * @brief Functor as hash function to the FreqHash
      */
     class FreqHashFunctor :
+#ifdef WNS_USE_OLD_HASH_MAP
+		public __gnu_cxx::hash<double const>
+#else
 		public boost::hash<double const>
+#endif
     {
     public:
 		size_t operator()(double const k) const {
@@ -59,7 +73,11 @@ namespace rise {
      */
     template<class Value>
     class FreqHash :
+#ifdef WNS_USE_OLD_HASH_MAP
+		public __gnu_cxx::hash_map<double const,
+#else
 		public boost::unordered_map<double const,
+#endif
 							 Value,
 							 FreqHashFunctor,
 							 std::equal_to<double> >

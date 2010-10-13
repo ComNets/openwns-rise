@@ -29,14 +29,27 @@
 #define _POINTERHASHMAP_HPP
 #include <WNS/SmartPtr.hpp>
 #include <functional>
-#include <boost/unordered_map.hpp>
+#include <boost/version.hpp>
+
+// From Boost 1.38 on the unordered_map container is present
+// at the same time hash_map becomes deprecated in GNU C++
+#if BOOST_VERSION < 103800
+    #define WNS_USE_OLD_HASH_MAP
+    #include <ext/hash_map>
+#else
+    #include <boost/unordered_map.hpp>
+#endif
 
 namespace rise {
 	//! The hash function for pointers
 	/** @ingroup MISC */
 	template<class Key>
 	class PointerHashMapFunctor :
+#ifdef WNS_USE_OLD_HASH_MAP
+		public __gnu_cxx::hash<Key const>
+#else
 		public boost::hash<Key const>
+#endif
 	{
 	public:
 		ptrdiff_t operator()(Key const k) const {
@@ -48,7 +61,11 @@ namespace rise {
 	/** @ingroup MISC */
 	template<class Key>
 	class PointerHashMapFunctor<wns::SmartPtr<Key> > :
+#ifdef WNS_USE_OLD_HASH_MAP
+		public __gnu_cxx::hash<Key* const>
+#else
 		public boost::hash<Key* const>
+#endif
 	{
 	public:
 		ptrdiff_t operator()(wns::SmartPtr<Key> const k) const {
@@ -60,13 +77,21 @@ namespace rise {
 	/** @ingroup MISC */
 	template<class Key, class Value>
 	class PointerHashMap :
+#ifdef WNS_USE_OLD_HASH_MAP
+        public __gnu_cxx::hash_map<Key const,
+#else
 		public boost::unordered_map<Key const,
+#endif
 								   Value,
 								   PointerHashMapFunctor<Key>,
 								   std::equal_to<Key> > {
 	public:
 		PointerHashMap() :
-			boost::unordered_map<Key const,
+#ifdef WNS_USE_OLD_HASH_MAP
+            __gnu_cxx::hash_map<Key const,
+#else
+    		boost::unordered_map<Key const,
+#endif
 								Value,
 								PointerHashMapFunctor<Key>,
 								std::equal_to<Key> >() {};
