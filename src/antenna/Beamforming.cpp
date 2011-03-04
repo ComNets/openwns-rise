@@ -483,7 +483,7 @@ Beamforming::p_calculateBeam(Station* id,
 		grad = (unsigned long int)(pd_azimuthAngles[*s]*180/M_PI +0.5); //0.5 to round
 		if(grad == 360) grad = 0;
 
-		if( beam->pattern.at(grad) < desiredAntennaFactor){
+		if( beam->pattern.at(grad) > desiredAntennaFactor){
 			MESSAGE_BEGIN(NORMAL, log, m, "");
 			m << "antenna factor in look direction: "<< desiredAntennaFactor
 			  << " is smaller than antenna factor to undesired station "
