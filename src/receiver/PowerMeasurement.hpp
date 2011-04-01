@@ -55,6 +55,7 @@ namespace rise { namespace receiver {
                          wns::Ratio _iot,
                          wns::Ratio _fading,
                          wns::Ratio _omniAttenuation,
+                         double distance,
                          std::vector<wns::Ratio> _postProcessingSINRFactor);
 
         virtual ~PowerMeasurement();
@@ -104,6 +105,10 @@ namespace rise { namespace receiver {
         virtual const wns::Ratio
         getFading() const;
 
+        // Link distance
+        virtual const double
+        getDistance() const;
+
          // received signal strength (S+I)
         virtual const wns::Power
         getRSS() const;
@@ -129,6 +134,7 @@ namespace rise { namespace receiver {
         wns::Ratio iot;
         wns::Ratio omniAttenuation;
         wns::Ratio fading;
+        double distance;
         std::vector<wns::Ratio> postProcessingSINRFactor;
 
         wns::service::phy::phymode::PhyModeInterfacePtr phyModePtr;

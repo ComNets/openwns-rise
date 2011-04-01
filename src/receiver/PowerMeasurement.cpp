@@ -35,6 +35,7 @@ PowerMeasurement::PowerMeasurement(rise::TransmissionObjectPtr t,
                                    wns::Ratio _iot,
                                    wns::Ratio _fading,
                                    wns::Ratio _omniAttenuation,
+                                   double _distance,
                                    std::vector<wns::Ratio> _postProcessingSINRFactor
                                    )
     : wns::service::phy::power::PowerMeasurementInterface(), // inherited
@@ -45,6 +46,7 @@ PowerMeasurement::PowerMeasurement(rise::TransmissionObjectPtr t,
       omniAttenuation(_omniAttenuation),
       transmissionObjectPtr(t),
       sourceNode(_sourceNode),
+      distance(_distance),
       postProcessingSINRFactor(_postProcessingSINRFactor)
 {
     assure(transmissionObjectPtr,"transmissionObjectPtr==NULL");
@@ -143,6 +145,12 @@ const wns::Ratio
 PowerMeasurement::getFading() const
 {
     return fading;
+}
+
+const double
+PowerMeasurement::getDistance() const
+{
+    return distance;
 }
 
 const wns::Power
