@@ -63,7 +63,7 @@ wns::Ratio Static::getGain(const wns::Position& pos) const
 	wns::PositionOffset p = pos - getPosition();
 	wns::Direction d = direction.calcAngles(p);
  	wns::Ratio directivity = kernel->getGain(d);
-	MESSAGE_BEGIN(NORMAL, log, m,"Directivity in (");
+	MESSAGE_BEGIN(NORMAL, log, m,"Static Directivity in (");
 	m << pos.getX() << "," << pos.getY() <<  "," << pos.getZ() << "): "
  	  << directivity.get_dB();
 	MESSAGE_END();

@@ -107,7 +107,7 @@ Beamforming::getGain(const wns::Position& pos,
 	assure(index < pattern->getSize(), "pattern index out of range");
 
 	wns::Ratio a_directivity = pd_getGainEntry(index, pattern);
-	MESSAGE_BEGIN(VERBOSE, log, m,"Directivity in (");
+	MESSAGE_BEGIN(NORMAL, log, m,"Beamforming Directivity in (");
 	m << pos.getX() << "," << pos.getY() <<  "," << pos.getZ() << "): " << a_directivity.get_dB();
 	MESSAGE_END();
     return a_directivity;
