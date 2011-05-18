@@ -222,13 +222,13 @@ Beamforming::calculateCandIsTx(const std::map<Station*, wns::Power>& station2iIn
 		{
 			assure(pd_lastTxPower.find(*interferer) != pd_lastTxPower.end(),
 				   "TX power of station not yet registred at this antenna!");
-
+                        wns::Ratio sectorGain = getStation()->getAntenna()->getGain((*s)->getAntenna()->getPosition(), PatternPtr());
 			if ((*s) == (*interferer))
 				signal = outpattern[*s]->pattern.at(grad) * outpattern[*s]->pattern.at(grad) *
-					txPower.get_mW() / pathloss / txPowerReduction;
+					txPower.get_mW() * sectorGain.get_factor() / pathloss / txPowerReduction;
 			else
 				iIntra += outpattern[*interferer]->pattern.at(grad) * outpattern[*interferer]->pattern.at(grad) *
-					txPower.get_mW() / pathloss / txPowerReduction;
+					txPower.get_mW() * sectorGain.get_factor() / pathloss / txPowerReduction;
 		}
 
 		// sum up entire interference
@@ -284,20 +284,22 @@ Beamforming::calculateCandIsRx(const std::vector<Station*>& combination,
 			grad = (unsigned long int)(pd_azimuthAngles[*interferer]*180/M_PI +0.5); //0.5 to round
 			if(grad == 360) grad = 0;
 			assure(grad < outpattern[*s]->getSize(), "pattern index (grad) out of range");
-
+                        wns::Ratio sectorGain = getStation()->getAntenna()->getGain((*s)->getAntenna()->getPosition(), PatternPtr());
 			if ((*s) == (*interferer))
 			{
 				MESSAGE_BEGIN(VERBOSE, log, m, "");
-				m << "amplitude factor to desired station: " << outpattern[*s]->pattern.at(grad);
+				m << "amplitude factor to desired station: " << outpattern[*s]->pattern.at(grad) 
+				  << " with a sector gain: " << sectorGain;
 				MESSAGE_END();
-				signal = outpattern[*s]->pattern.at(grad) * outpattern[*s]->pattern.at(grad) * pd_lastPowerReceived[*s].get_mW();
+				signal = outpattern[*s]->pattern.at(grad) * outpattern[*s]->pattern.at(grad) * pd_lastPowerReceived[*s].get_mW() * sectorGain.get_factor();
 			}
 			else
 			{
 				MESSAGE_BEGIN(VERBOSE, log, m, "");
-				m << "amplitude factor to interferer: " << outpattern[*s]->pattern.at(grad);
+				m << "amplitude factor to interferer: " << outpattern[*s]->pattern.at(grad) 
+				  << " with a sector gain: " << sectorGain;
 				MESSAGE_END();
-				iIntra += outpattern[*s]->pattern.at(grad) * outpattern[*s]->pattern.at(grad) * pd_lastPowerReceived[*interferer].get_mW();
+				iIntra += outpattern[*s]->pattern.at(grad) * outpattern[*s]->pattern.at(grad) * pd_lastPowerReceived[*interferer].get_mW() * sectorGain.get_factor();
 			}
 		}
 		//sum up the entire interference

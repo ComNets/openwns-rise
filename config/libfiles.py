@@ -293,7 +293,6 @@ hppFiles = [
     'src/transceiver/cache/vectorcache.hpp',
     'src/transceiver/cache/h2cache.hpp',
     'src/transceiver/SCReceiver.hpp',
-    'src/transceiver/ReceiverBF.hpp',
     'src/transceiver/receiver.hpp',
     'src/transceiver/tests/TransmitterDropIn.hpp',
     'src/transceiver/tests/SCTransmitterDropIn.hpp',
