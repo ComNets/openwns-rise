@@ -65,7 +65,6 @@ TransmissionObjectBF::~TransmissionObjectBF()
 
 wns::Ratio TransmissionObjectBF::getTransmittersAntennaGain(const wns::Position& receiverPosition) const
 {
-    wns::Ratio sectorPattern = getTransmitter()->getAntenna()->getGain(receiverPosition, rise::antenna::PatternPtr());
     wns::Ratio bfPattern = antennaBF->getGain(receiverPosition, pattern);
-    return sectorPattern + bfPattern;
+    return bfPattern;
 }

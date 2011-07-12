@@ -107,10 +107,11 @@ Beamforming::getGain(const wns::Position& pos,
 	assure(index < pattern->getSize(), "pattern index out of range");
 
 	wns::Ratio a_directivity = pd_getGainEntry(index, pattern);
+        wns::Ratio sectorGain = getStation()->getAntenna()->getGain(pos, PatternPtr());
 	MESSAGE_BEGIN(NORMAL, log, m,"Beamforming Directivity in (");
-	m << pos.getX() << "," << pos.getY() <<  "," << pos.getZ() << "): " << a_directivity.get_dB();
+	m << pos.getX() << "," << pos.getY() <<  "," << pos.getZ() << "): " << a_directivity.get_dB() << " + sectorGain: " << sectorGain.get_dB()<< " = "<< (sectorGain + a_directivity).get_dB();
 	MESSAGE_END();
-    return a_directivity;
+    return a_directivity + sectorGain;
 }
 
 wns::Ratio
@@ -194,6 +195,7 @@ Beamforming::calculateCandIsTx(const std::map<Station*, wns::Power>& station2iIn
 			sumPattern.add(outpattern[*s]);
 			MESSAGE_SINGLE(VERBOSE, log, "current maximum gain of pattern: " << sumPattern.getMaxGain());
 		}
+		//todo: sector pattern considered in the normalization
 		txPowerReduction = sumPattern.getMaxGain().get_factor();
 		MESSAGE_SINGLE(NORMAL, log, "Tx power reduction per concurrent stream due to EIRP 1/" << txPowerReduction);
 	}
@@ -216,13 +218,13 @@ Beamforming::calculateCandIsTx(const std::map<Station*, wns::Power>& station2iIn
 		if (grad == 360) grad = 0;
 		assure(grad < outpattern[*s]->getSize(), "pattern index (grad) out of range");
 
+                wns::Ratio sectorGain = getStation()->getAntenna()->getGain((*s)->getAntenna()->getPosition(), PatternPtr());
 		float pathloss = pd_lastTxPower[*s].get_mW() / pd_lastPowerReceived[*s].get_mW();
 
 		for (std::vector<Station*>::const_iterator interferer = combination.begin(); interferer != combination.end(); interferer++)
 		{
 			assure(pd_lastTxPower.find(*interferer) != pd_lastTxPower.end(),
 				   "TX power of station not yet registred at this antenna!");
-                        wns::Ratio sectorGain = getStation()->getAntenna()->getGain((*s)->getAntenna()->getPosition(), PatternPtr());
 			if ((*s) == (*interferer))
 				signal = outpattern[*s]->pattern.at(grad) * outpattern[*s]->pattern.at(grad) *
 					txPower.get_mW() * sectorGain.get_factor() / pathloss / txPowerReduction;
@@ -284,7 +286,7 @@ Beamforming::calculateCandIsRx(const std::vector<Station*>& combination,
 			grad = (unsigned long int)(pd_azimuthAngles[*interferer]*180/M_PI +0.5); //0.5 to round
 			if(grad == 360) grad = 0;
 			assure(grad < outpattern[*s]->getSize(), "pattern index (grad) out of range");
-                        wns::Ratio sectorGain = getStation()->getAntenna()->getGain((*s)->getAntenna()->getPosition(), PatternPtr());
+                        wns::Ratio sectorGain = getStation()->getAntenna()->getGain((*interferer)->getAntenna()->getPosition(), PatternPtr());
 			if ((*s) == (*interferer))
 			{
 				MESSAGE_BEGIN(VERBOSE, log, m, "");
@@ -295,11 +297,10 @@ Beamforming::calculateCandIsRx(const std::vector<Station*>& combination,
 			}
 			else
 			{
-				MESSAGE_BEGIN(VERBOSE, log, m, "");
-				m << "amplitude factor to interferer: " << outpattern[*s]->pattern.at(grad) 
-				  << " with a sector gain: " << sectorGain;
+                                iIntra += outpattern[*s]->pattern.at(grad) * outpattern[*s]->pattern.at(grad) * pd_lastPowerReceived[*interferer].get_mW() * sectorGain.get_factor();
+				MESSAGE_BEGIN(NORMAL, log, m, "");
+				m << "amplitude factor to interferer: " << outpattern[*s]->pattern.at(grad)<< " with a sector gain: " << sectorGain;;
 				MESSAGE_END();
-				iIntra += outpattern[*s]->pattern.at(grad) * outpattern[*s]->pattern.at(grad) * pd_lastPowerReceived[*interferer].get_mW() * sectorGain.get_factor();
 			}
 		}
 		//sum up the entire interference
@@ -308,7 +309,11 @@ Beamforming::calculateCandIsRx(const std::vector<Station*>& combination,
 		interference += iInterPlusNoise.get_mW();
 		//add intra-cell interference
 		interference += iIntra;
-
+                MESSAGE_BEGIN(VERBOSE, log, m, "Beamforming::calculateCandIsRx ");
+                    m<< " from station: " << (*s)->getStationId()+1 
+                    << " iInterPlusNoise: "<< iInterPlusNoise.get_dBm()<< " + iIntra: "<< wns::Power::from_mW(iIntra).get_dBm() 
+                    << " = "<< (wns::Power::from_mW(iIntra) + iInterPlusNoise).get_dBm();
+                MESSAGE_END();
 		assure(interference > 0.0, "Interference is not positive!");
 		assure(signal > 0.0, "Carrier Signal is not greater than zero!");
 
