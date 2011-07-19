@@ -59,7 +59,6 @@ PhyModeMapper::PhyModeMapper(const wns::pyconfig::View& config)
 	  logger(std::string("RISE"), std::string("PhyModeMapper"))
 	  //logger(config.get("logger")) // TODO
 {
-	MESSAGE_SINGLE(NORMAL, logger, "PhyModeMapper::Constructor: I am object "<<this);
 	// phyModeRangeMap is empty here
 	// iterate through the SINR-2-PhyMode table
 	for (unsigned int phymodeIndex=0; phymodeIndex < phyModeCount; ++phymodeIndex) {
