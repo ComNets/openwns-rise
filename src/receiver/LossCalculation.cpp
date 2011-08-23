@@ -30,6 +30,10 @@
 #include <RISE/stations/station.hpp>
 #include <RISE/transceiver/transmitter.hpp>
 
+#include <RISE/scenario/pathloss/Pathloss.hpp>
+#include <RISE/scenario/shadowing/Shadowing.hpp>
+#include <RISE/scenario/fastfading/FastFading.hpp>
+
 #include <WNS/pyconfig/View.hpp>
 #include <WNS/Singleton.hpp>
 
@@ -57,8 +61,14 @@ wns::Ratio LossCalculation::getShadowing(const Transmitter& t) const
     return shadowing.getShadowing(*(getStation()->getAntenna()), *(t.getAntenna()));
 }
 
-wns::Ratio LossCalculation::getFastFading(const Transmitter& t) const
+wns::Ratio LossCalculation::getFastFading(const Transmitter& t, const wns::Frequency& frequency) const
 {
     const scenario::fastfading::FastFading& fastFading = propagation.getFastFadingModel(getPropagationCharacteristicId(), t.getPropagationCharacteristicId());
-    return fastFading.getFastFading();
+    return fastFading.getFastFading(*(getStation()->getAntenna()), *(t.getAntenna()), frequency);
+}
+
+void
+LossCalculation::initPropagation()
+{
+    const_cast<rise::scenario::Propagation&>(propagation).onWorldCreated();
 }

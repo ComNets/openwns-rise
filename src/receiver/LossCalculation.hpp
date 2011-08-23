@@ -52,7 +52,11 @@ namespace rise { namespace receiver {
 
 	virtual wns::Ratio getPathloss(const Transmitter& t, const wns::Frequency& frequency) const;
 	virtual wns::Ratio getShadowing(const Transmitter& t) const;
-	virtual wns::Ratio getFastFading(const Transmitter& t) const;
+	virtual wns::Ratio getFastFading(const Transmitter& t, const wns::Frequency& frequency) const;
+
+    virtual void
+    initPropagation();
+
     private:
 	const scenario::Propagation& propagation;
     };
