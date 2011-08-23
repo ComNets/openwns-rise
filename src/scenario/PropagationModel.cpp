@@ -25,37 +25,60 @@
  *
  ******************************************************************************/
 
-#ifndef _RISE_SCENARIO_FASTFADING_HPP
-#define _RISE_SCENARIO_FASTFADING_HPP
-
-#include <RISE/scenario/Scenario.hpp>
 #include <RISE/scenario/PropagationModel.hpp>
 
-#include <WNS/PowerRatio.hpp>
+#include <sstream>
 
-namespace rise { namespace scenario { namespace fastfading {
+using namespace rise::scenario;
 
-    //! Interface for fast fading models
-    class FastFading :
-        public rise::scenario::PropagationModel
-    {
-    public:
-	virtual wns::Ratio getFastFading(const antenna::Antenna& source,
-					                 const antenna::Antenna& target,
-					                 const wns::Frequency& frequency) const = 0;
+PropagationModel::PropagationModel() : 
+    parent_(NULL)
+{
+}
 
-	virtual ~FastFading() {};
+PropagationModel::~PropagationModel()
+{
+}
 
-    virtual void
-    onWorldCreated(){};
+void
+PropagationModel::setParentAndTypeIDs(Propagation* parent, 
+                            Propagation::IdType transmitterType, 
+                            Propagation::IdType receiverType)
+{
+    assure(parent != NULL, "Propagation cannot be NULL");
+    parent_ = parent;
+    transmitterType_ = transmitterType;
+    receiverType_ = receiverType;
+}
 
-    protected:
-	FastFading()
-	{}
-    };
+Propagation*
+PropagationModel::getParent() const
+{
+    return parent_;
+}
 
-} // fastfading
-} // scenario
-} // rise
+Propagation::IdType
+PropagationModel::getTransmitterType() const
+{
+    return transmitterType_;
+}
 
-#endif // NOT defined _RISE_SCENARIO_FASTFADING_HPP
+Propagation::IdType
+PropagationModel::getReceiverType() const
+{
+    return receiverType_;
+}
+
+std::string
+PropagationModel::getLinkTypeString() const
+{
+    assure(getParent() != NULL, "Parent not set");
+
+    std::stringstream s;
+    s << getParent()->getName(transmitterType_);
+    s << "->" << getParent()->getName(receiverType_);
+    return s.str();
+}
+
+
+

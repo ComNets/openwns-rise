@@ -29,6 +29,7 @@
 #define _RISE_SCENARIO_PATHLOSS_PATHLOSS_HPP
 
 #include <RISE/antenna/Antenna.hpp>
+#include <RISE/scenario/PropagationModel.hpp>
 
 #include <WNS/PowerRatio.hpp>
 #include <WNS/Types.hpp>
@@ -44,7 +45,8 @@ namespace rise { namespace scenario { namespace pathloss {
      * Pathloss models are expected to either derive from
      * DistanceDependent or DistanceIndependent.
      */
-    class Pathloss
+    class Pathloss :
+        public rise::scenario::PropagationModel
     {
 	friend class RangeChecked;
     public:
@@ -68,6 +70,9 @@ namespace rise { namespace scenario { namespace pathloss {
 			       const wns::Frequency& frequency) const;
 
 	virtual ~Pathloss();
+
+    virtual void
+    onWorldCreated(){};
 
     protected:
 		Pathloss(const ReturnValueTransformation* rvt);

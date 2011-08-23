@@ -28,6 +28,7 @@
 #include <RISE/scenario/tests/ScenarioTestsBase.hpp>
 #include <RISE/scenario/fastfading/NoFastFading.hpp>
 #include <RISE/scenario/fastfading/FastFading.hpp>
+#include <RISE/scenario/pathloss/Deny.hpp>
 
 #include <WNS/Types.hpp>
 #include <WNS/CppUnit.hpp>
@@ -49,7 +50,7 @@ namespace rise { namespace scenario { namespace fastfading { namespace tests {
 	virtual void cleanup();
 	void testOutput();
     private:
-	FastFading* fastFading;
+	None* fastFading;
 	bool deleteFastFading;
     };
 

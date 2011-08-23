@@ -33,6 +33,8 @@
 #include <WNS/CppUnit.hpp>
 #include <WNS/pyconfig/helper/Functions.hpp>
 
+#include <RISE/scenario/pathloss/Deny.hpp>
+
 #include <cppunit/extensions/HelperMacros.h>
 
 namespace rise { namespace scenario { namespace fastfading { namespace tests {
@@ -49,7 +51,7 @@ namespace rise { namespace scenario { namespace fastfading { namespace tests {
 	virtual void cleanup();
 	void testOutput();
     private:
-	FastFading* fastFading;
+	Rice* fastFading;
 	bool deleteFastFading;
     };
 

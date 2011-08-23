@@ -25,37 +25,26 @@
  *
  ******************************************************************************/
 
-#ifndef _RISE_SCENARIO_FASTFADING_HPP
-#define _RISE_SCENARIO_FASTFADING_HPP
+#ifndef RISE_SCENARIO_PATHLOSS_LOSDEPENDENT_HPP
+#define RISE_SCENARIO_PATHLOSS_LOSDEPENDENT_HPP
 
-#include <RISE/scenario/Scenario.hpp>
-#include <RISE/scenario/PropagationModel.hpp>
+#include <RISE/antenna/Antenna.hpp>
+#include <WNS/Types.hpp>
 
-#include <WNS/PowerRatio.hpp>
+namespace rise { namespace scenario { namespace pathloss {
 
-namespace rise { namespace scenario { namespace fastfading {
+class ILoSDependent
+{
+public:
+    virtual bool
+    isLoS(const rise::antenna::Antenna& source,
+          const rise::antenna::Antenna& target,
+          const wns::Frequency& frequency,
+          const wns::Distance& distance) const = 0;
+};
 
-    //! Interface for fast fading models
-    class FastFading :
-        public rise::scenario::PropagationModel
-    {
-    public:
-	virtual wns::Ratio getFastFading(const antenna::Antenna& source,
-					                 const antenna::Antenna& target,
-					                 const wns::Frequency& frequency) const = 0;
-
-	virtual ~FastFading() {};
-
-    virtual void
-    onWorldCreated(){};
-
-    protected:
-	FastFading()
-	{}
-    };
-
-} // fastfading
+} // pathloss
 } // scenario
 } // rise
 
-#endif // NOT defined _RISE_SCENARIO_FASTFADING_HPP
+#endif // RISE_SCENARIO_PATHLOSS_LOSDEPENDENT_HPP

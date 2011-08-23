@@ -28,6 +28,7 @@
 #ifndef _RISE_SCENARIO_SHADOWING_HPP
 #define _RISE_SCENARIO_SHADOWING_HPP
 
+#include <RISE/scenario/PropagationModel.hpp>
 #include <WNS/PowerRatio.hpp>
 
 namespace rise { namespace antenna {
@@ -36,13 +37,18 @@ namespace rise { namespace antenna {
 
 namespace rise { namespace scenario { namespace shadowing {
 	//! Base class and interface for all shadowing models
-	class Shadowing
+	class Shadowing :
+        public rise::scenario::PropagationModel
 	{
 	public:
 
 		virtual wns::Ratio getShadowing(const antenna::Antenna& source,
 						const antenna::Antenna& target) const = 0;
-		virtual ~Shadowing() {}
+		virtual ~Shadowing() {};
+
+        virtual void
+        onWorldCreated(){};
+
 	protected:
 		Shadowing()
 		{}

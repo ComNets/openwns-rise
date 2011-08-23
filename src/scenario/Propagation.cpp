@@ -26,6 +26,9 @@
  ******************************************************************************/
 
 #include <RISE/scenario/Propagation.hpp>
+#include <RISE/scenario/pathloss/Pathloss.hpp>
+#include <RISE/scenario/shadowing/Shadowing.hpp>
+#include <RISE/scenario/fastfading/FastFading.hpp>
 
 #include <WNS/pyconfig/helper/Functions.hpp>
 #include <WNS/Ttos.hpp>
@@ -41,7 +44,9 @@ Propagation::NoModelError::NoModelError(const std::string& modelType,
 }
 
 Propagation::Propagation(const wns::pyconfig::View& config)
-    : config(config)
+    : config(config),
+    initialized_(false),
+    logger_(wns::logger::Logger("RISE", "Propagation"))
 {
     PathlossMatrix::SizeType sizes[2];
     sizes[0] = sizes[1] = config.get<std::size_t>("maxId()");
@@ -59,6 +64,10 @@ Propagation::Propagation(const wns::pyconfig::View& config)
 				pathlossMatrix[i][j] = create<pathloss::Pathloss>(pairView.getView("pathloss"));
 				shadowingMatrix[i][j] = create<shadowing::Shadowing>(pairView.getView("shadowing"));
 				fastFadingMatrix[i][j] = create<fastfading::FastFading>(pairView.getView("fastFading"));
+
+                pathlossMatrix[i][j]->setParentAndTypeIDs(this, i, j);
+                shadowingMatrix[i][j]->setParentAndTypeIDs(this, i, j);
+                fastFadingMatrix[i][j]->setParentAndTypeIDs(this, i, j);
 			}
 	    }
 	}
@@ -66,6 +75,30 @@ Propagation::Propagation(const wns::pyconfig::View& config)
 
 Propagation::~Propagation()
 {
+}
+
+void
+Propagation::onWorldCreated()
+{    
+    if(initialized_)
+        return;
+
+    for (PathlossMatrix::SizeType i = 0; i < config.get<std::size_t>("maxId()"); ++i)
+    {
+        for (PathlossMatrix::SizeType j = 0; j < config.get<std::size_t>("maxId()"); ++j) 
+    	{
+			if (config.get<bool>("knowsPairById(" + wns::Ttos(i) + ", " + wns::Ttos(j) + ")")) 
+			{
+                MESSAGE_SINGLE(NORMAL, logger_, "Initializing models for [" 
+                    << getName(i) << ";" << getName(j) << "]");
+
+                pathlossMatrix[i][j]->onWorldCreated();
+                shadowingMatrix[i][j]->onWorldCreated();            
+                fastFadingMatrix[i][j]->onWorldCreated();
+            }
+        }
+    }
+    initialized_ = true;	
 }
 
 const pathloss::Pathloss&

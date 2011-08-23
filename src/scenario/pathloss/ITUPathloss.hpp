@@ -29,7 +29,9 @@
 #define RISE_SCENARIO_PATHLOSS_ITUPATHLOSS_HPP
 
 #include <RISE/scenario/pathloss/DistanceDependent.hpp>
+#include <RISE/scenario/pathloss/ILoSDependent.hpp>
 #include <WNS/probe/bus/ContextCollector.hpp>
+#include <WNS/distribution/Uniform.hpp>
 #include <RISE/scenario/pathloss/HashRNG.hpp>
 
 namespace rise { namespace scenario { namespace pathloss {
@@ -58,7 +60,8 @@ namespace rise { namespace scenario { namespace pathloss {
  * @author Daniel Bueltmann <openwns@doender.de>
  */
 class ITUPathloss:
-    public rise::scenario::pathloss::DistanceDependent
+    public rise::scenario::pathloss::DistanceDependent,
+    public rise::scenario::pathloss::ILoSDependent
 {
 public:
     ITUPathloss(const wns::pyconfig::View&);
@@ -67,6 +70,12 @@ public:
 
     virtual wns::Ratio
     calculatePathloss(const rise::antenna::Antenna& source,
+                        const rise::antenna::Antenna& target,
+                        const wns::Frequency& frequency,
+                        const wns::Distance& distance) const;
+
+    virtual bool
+    isLoS(const rise::antenna::Antenna& source,
                         const rise::antenna::Antenna& target,
                         const wns::Frequency& frequency,
                         const wns::Distance& distance) const;
@@ -124,6 +133,9 @@ private:
     wns::probe::bus::ContextCollector shadowingCC_;
     bool useShadowing_;
     bool useCarPenetration_;
+    
+    unsigned int
+    getInitialSeed() const;
 };
 
 } // pathloss

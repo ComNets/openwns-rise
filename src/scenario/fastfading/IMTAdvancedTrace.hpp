@@ -25,32 +25,59 @@
  *
  ******************************************************************************/
 
-#ifndef _RISE_SCENARIO_NOFASTFADING_HPP
-#define _RISE_SCENARIO_NOFASTFADING_HPP
+#ifndef _RISE_SCENARIO_IMTADVANCEDTRACE_HPP
+#define _RISE_SCENARIO_IMTADVANCEDTRACE_HPP
 
 #include <RISE/scenario/fastfading/FastFading.hpp>
+#include <RISE/scenario/pathloss/ILoSDependent.hpp>       
 
 #include <WNS/PowerRatio.hpp>
 #include <WNS/pyconfig/View.hpp>
 #include <WNS/StaticFactory.hpp>
+#include <WNS/logger/Logger.hpp>
+#include <WNS/container/Registry.hpp>
 
 namespace rise { namespace scenario { namespace fastfading {
 
-    //! Class without fading (returns 0.0)
-    class None : public FastFading
+    class IMTAdvancedTrace : 
+        public FastFading
     {
-    public:
-	None(const wns::pyconfig::View&);
+        public:
+            typedef std::pair<unsigned int, unsigned int> StationPair;
 
-	virtual wns::Ratio getFastFading(const antenna::Antenna& source,
-					                 const antenna::Antenna& target,
-					                 const wns::Frequency& frequency) const;
+    	    IMTAdvancedTrace(const wns::pyconfig::View&);
 
-	virtual wns::Ratio getFastFading() const;
+    	    virtual 
+            wns::Ratio 
+            getFastFading(const antenna::Antenna& source,
+		                 const antenna::Antenna& target,
+		                 const wns::Frequency& frequency) const;
+
+            virtual void
+            onWorldCreated();
+
+        private:
+            void
+            createNewLink(const StationPair& np,
+                         const antenna::Antenna& source,
+		                 const antenna::Antenna& target,
+		                 const wns::Frequency& frequency) const;
+
+            unsigned int
+            getSubchannelIndex(const wns::Frequency& frequency) const;
+
+            mutable unsigned int nextLinkId_;
+            mutable std::map<StationPair, unsigned int> links_;
+            mutable std::set<unsigned int> losLinks_;
+
+            /* Using double as key is dangerous, but should work */
+            mutable wns::container::Registry<double, unsigned int> frequencyToSubchannel_;
+
+            wns::logger::Logger logger_;
     };
 
 } // fastfading
 } // scenario
 } // rise
 
-#endif // NOT defined _RISE_SCENARIO_NOFASTFADING_HPP
+#endif // NOT defined _RISE_SCENARIO_IMTADVANCEDTRACE_HPP

@@ -32,15 +32,9 @@ class No:
 class Rice:
     def __init__(self, variance = 3.0):
         self.variance = variance
-        __plugin__ = 'Rice'
-        variance   = None
+        self.__plugin__ = 'Rice'
 
-### This cannot be done here, but in the OFDMA Receiver
-#class FTFading(Sealed):
-#    __plugin__ = 'FTFading'
-#    variance   = None
-#    whatever = None # TODO
-#    def __init__(self, variance = 3.0, whatever = 1.0):
-#	self.variance = variance
-#	self.whatever = whatever
+class IMTAdvancedTrace:
+    def __init__(self):
+        self.__plugin__ = 'IMTAdvancedTrace'
 

@@ -51,6 +51,11 @@ namespace rise { namespace scenario { namespace fastfading {
 
 		//# Public members
 		// Implementation of short term fading
+		virtual wns::Ratio getFastFading(const antenna::Antenna& source,
+					                 const antenna::Antenna& target,
+					                 const wns::Frequency& frequency) const;
+
+
 		virtual wns::Ratio getFastFading() const;
 
 	private:

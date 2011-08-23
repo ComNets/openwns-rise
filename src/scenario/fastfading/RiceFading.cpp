@@ -46,7 +46,15 @@ Rice::Rice(const wns::pyconfig::View& config)
 
 
 //! Returns short term fading
-wns::Ratio Rice::getFastFading() const
+wns::Ratio Rice::getFastFading(const antenna::Antenna&,
+			                 const antenna::Antenna&,
+			                 const wns::Frequency&) const
+{
+    return getFastFading();
+}
+
+wns::Ratio
+Rice::getFastFading() const
 {
     return wns::Ratio::from_dB(riceDistRNG());
 }

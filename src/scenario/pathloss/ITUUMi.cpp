@@ -30,7 +30,6 @@
 
 #include <WNS/StaticFactoryBroker.hpp>
 #include <RISE/scenario/pathloss/HashRNG.hpp>
-#include <WNS/distribution/Uniform.hpp>
 
 #include <boost/functional/hash.hpp>
 
@@ -53,8 +52,7 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
 			  const wns::Frequency& frequency,
 			  const wns::Distance& distance) const
 {
-    static wns::distribution::Uniform dis(0.0, 1.0, wns::simulator::getRNG());
-    static unsigned int initialSeed = dis() * pow(2, sizeof(unsigned int)*8);
+    unsigned int initialSeed = getInitialSeed();
 
     detail::HashRNG hrng(initialSeed,
                          source.getPosition(),
@@ -70,6 +68,9 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
     double sh = 0.0;
     if (hrng() < getLOSProbability(distance))
     {
+        assure(isLoS(source, target, frequency, distance), 
+            "calculatePathloss() and is isLoS() disagree");
+
         losProbabilityCC_.put(distance);
         pl = getLOSPathloss(source, target, frequency, distance);
         if (useShadowing_)
@@ -228,3 +229,31 @@ ITUUMi::getCarPenetrationMean() const
 {
     return 0.0;
 }
+
+/* This is not a nice way to do it since it is the same code as above */
+/* Still we do not want to loose performance by implementing a "getHashRNG()" */
+/* method. */
+bool
+ITUUMi::isLoS(const rise::antenna::Antenna& source,
+                               const rise::antenna::Antenna& target,
+                               const wns::Frequency& frequency,
+                               const wns::Distance& distance) const
+{   
+    detail::HashRNG hrng(getInitialSeed(),
+                         source.getPosition(),
+                         target.getPosition(),
+                         true, true);
+
+    return(hrng() < getLOSProbability(distance));
+}
+
+unsigned int 
+ITUUMi::getInitialSeed() const
+{
+    static wns::distribution::Uniform dis(0.0, 1.0, wns::simulator::getRNG());
+    static unsigned int initialSeed = dis() * pow(2, sizeof(unsigned int)*8);
+    return initialSeed;
+}
+
+
+

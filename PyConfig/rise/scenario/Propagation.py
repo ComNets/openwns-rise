@@ -63,6 +63,15 @@ class ChannelModelConfiguration():
         self.transceiverPair = transceiverPair
         self.channelmodel = channelmodel
 
+class PropagationSingleton:
+    __instance = None
+
+    @staticmethod
+    def getInstance():
+        if (PropagationSingleton.__instance == None):
+            PropagationSingleton.__instance = Propagation()
+        return PropagationSingleton.__instance
+
 class Propagation:
     """Class to hold the propagation configuration.
 

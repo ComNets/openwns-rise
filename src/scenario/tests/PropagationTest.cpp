@@ -31,6 +31,10 @@
 #include <RISE/transceiver/tests/ReceiverDropIn.hpp>
 #include <RISE/transceiver/tests/TransmitterDropIn.hpp>
 
+#include <RISE/scenario/pathloss/Pathloss.hpp>
+#include <RISE/scenario/shadowing/Shadowing.hpp>
+#include <RISE/scenario/fastfading/FastFading.hpp>
+
 #include <WNS/pyconfig/helper/Functions.hpp>
 #include <WNS/pyconfig/View.hpp>
 #include <WNS/CppUnit.hpp>

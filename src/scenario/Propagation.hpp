@@ -28,10 +28,6 @@
 #ifndef _RISE_SCENARIO_PROPAGATION_HPP
 #define _RISE_SCENARIO_PROPAGATION_HPP
 
-#include <RISE/scenario/pathloss/Pathloss.hpp>
-#include <RISE/scenario/shadowing/Shadowing.hpp>
-#include <RISE/scenario/fastfading/FastFading.hpp>
-
 #include <WNS/container/Matrix.hpp>
 #include <WNS/StaticFactoryBroker.hpp>
 #include <WNS/Broker.hpp>
@@ -40,9 +36,15 @@
 #include <WNS/Ttos.hpp>
 #include <WNS/Exception.hpp>
 
+#include <WNS/logger/Logger.hpp>
+
 #include <string>
 
 namespace rise { namespace scenario { 
+
+    namespace pathloss {class Pathloss;}
+    namespace shadowing {class Shadowing;}
+    namespace fastfading {class FastFading;}
 
     /**
      * @brief Propagation matrix.
@@ -51,84 +53,90 @@ namespace rise { namespace scenario {
      */
     class Propagation
     {
-	typedef wns::container::Matrix<pathloss::Pathloss*, 2> PathlossMatrix;
-	typedef wns::container::Matrix<shadowing::Shadowing*, 2> ShadowingMatrix;
-	typedef wns::container::Matrix<fastfading::FastFading*, 2> FastFadingMatrix;
+	    typedef wns::container::Matrix<pathloss::Pathloss*, 2> PathlossMatrix;
+	    typedef wns::container::Matrix<shadowing::Shadowing*, 2> ShadowingMatrix;
+	    typedef wns::container::Matrix<fastfading::FastFading*, 2> FastFadingMatrix;
     public:
 
-	typedef PathlossMatrix::SizeType IdType;
+	    typedef PathlossMatrix::SizeType IdType;
 
-	/**
-	 * @brief Thrown, if a model for a not configured pair was requested.
-	 */
-	class NoModelError :
-	    public wns::Exception
-	{
-	public:
-	    NoModelError(const std::string& modelType,
-			 const std::string& transmitterName,
-			 const std::string& receiverName);
-	};
+	    /**
+	     * @brief Thrown, if a model for a not configured pair was requested.
+	     */
+	    class NoModelError :
+	        public wns::Exception
+	    {
+	    public:
+	        NoModelError(const std::string& modelType,
+			     const std::string& transmitterName,
+			     const std::string& receiverName);
+	    };
 
-	Propagation(const wns::pyconfig::View& config);
+	    Propagation(const wns::pyconfig::View& config);
 
-	virtual
-	~Propagation();
+	    virtual
+	    ~Propagation();
 
-	/**
-	 * @brief Return model for (transmitterid, receiverId).
-	 *
-	 * Throws NoModelError, if no model was configured.
-	 */
-	const pathloss::Pathloss&
-	getPathlossModel(const IdType& transmitterId, const IdType& receiverId) const;
+        void
+        onWorldCreated();
 
-	/**
-	 * @brief Return model for (transmitterid, receiverId).
-	 *
-	 * Throws NoModelError, if no model was configured.
-	 */
-	const shadowing::Shadowing&
-	getShadowingModel(const IdType& transmitterId, const IdType& receiverId) const;
+	    /**
+	     * @brief Return model for (transmitterid, receiverId).
+	     *
+	     * Throws NoModelError, if no model was configured.
+	     */
+	    const pathloss::Pathloss&
+	    getPathlossModel(const IdType& transmitterId, const IdType& receiverId) const;
 
-	/**
-	 * @brief Return model for (transmitterid, receiverId).
-	 *
-	 * Throws NoModelError, if no model was configured.
-	 */
-	const fastfading::FastFading&
-	getFastFadingModel(const IdType& transmitterId, const IdType& receiverId) const;
+	    /**
+	     * @brief Return model for (transmitterid, receiverId).
+	     *
+	     * Throws NoModelError, if no model was configured.
+	     */
+	    const shadowing::Shadowing&
+	    getShadowingModel(const IdType& transmitterId, const IdType& receiverId) const;
 
-	/**
-	 * @brief Create a propagation model using a StaticFactoryBroker.
-	 */
-	template<class C>
-	static C*
-	create(const wns::pyconfig::View& config)
-	{
-	    const std::string model = config.get<std::string>("__plugin__");
- 	    return getBroker<C>().procure(model, config);
-	}
+	    /**
+	     * @brief Return model for (transmitterid, receiverId).
+	     *
+	     * Throws NoModelError, if no model was configured.
+	     */
+	    const fastfading::FastFading&
+	    getFastFadingModel(const IdType& transmitterId, const IdType& receiverId) const;
 
-	std::string
-	getName(const IdType& id) const;
+	    /**
+	     * @brief Create a propagation model using a StaticFactoryBroker.
+	     */
+	    template<class C>
+	    static C*
+	    create(const wns::pyconfig::View& config)
+	    {
+	        const std::string model = config.get<std::string>("__plugin__");
+     	    return getBroker<C>().procure(model, config);
+	    }
+
+	    std::string
+	    getName(const IdType& id) const;
 
     private:
-	PathlossMatrix pathlossMatrix;
-	ShadowingMatrix shadowingMatrix;
-	FastFadingMatrix fastFadingMatrix;
+	    PathlossMatrix pathlossMatrix;
+	    ShadowingMatrix shadowingMatrix;
+	    FastFadingMatrix fastFadingMatrix;
 
-	const wns::pyconfig::View config;
+	    const wns::pyconfig::View config;
 
- 	template<class C>
- 	static wns::StaticFactoryBroker<C, wns::PyConfigViewCreator<C> >&
- 	getBroker()
- 	{
- 	    static wns::StaticFactoryBroker<C, wns::PyConfigViewCreator<C> > broker;
- 	    return broker;
- 	}
+     	template<class C>
+     	static wns::StaticFactoryBroker<C, wns::PyConfigViewCreator<C> >&
+     	getBroker()
+     	{
+     	    static wns::StaticFactoryBroker<C, wns::PyConfigViewCreator<C> > broker;
+     	    return broker;
+     	}
 
+        bool initialized_;
+        wns::logger::Logger logger_;
     };
+
 
     typedef wns::Broker<Propagation> PropagationBroker;
     typedef wns::SingletonHolder<PropagationBroker> GlobalPropagationBroker;

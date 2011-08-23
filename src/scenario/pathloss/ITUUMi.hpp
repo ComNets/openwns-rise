@@ -29,7 +29,9 @@
 #define RISE_SCENARIO_PATHLOSS_ITUUMI_HPP
 
 #include <RISE/scenario/pathloss/DistanceDependent.hpp>
+#include <RISE/scenario/pathloss/ILoSDependent.hpp>
 #include <WNS/probe/bus/ContextCollector.hpp>
+#include <WNS/distribution/Uniform.hpp>
 
 namespace rise { namespace scenario { namespace pathloss {
 /**
@@ -38,7 +40,8 @@ namespace rise { namespace scenario { namespace pathloss {
  * @author Daniel Bueltmann <openwns@doender.de>
  */
 class ITUUMi:
-    public rise::scenario::pathloss::DistanceDependent
+    public rise::scenario::pathloss::DistanceDependent,
+    public rise::scenario::pathloss::ILoSDependent
 {
 public:
     ITUUMi(const wns::pyconfig::View&);
@@ -48,7 +51,13 @@ public:
 					 const antenna::Antenna& target,
 					 const wns::Frequency& frequency,
 					 const wns::Distance& distance) const;
-  //private:
+
+    virtual bool
+    isLoS(const rise::antenna::Antenna& source,
+          const rise::antenna::Antenna& target,
+          const wns::Frequency& frequency,
+          const wns::Distance& distance) const;
+
     virtual double
     getLOSProbability(double distance) const;
 
@@ -94,7 +103,9 @@ private:
     double outdoorProbability;
 
     bool useShadowing_;
-
+    
+    unsigned int
+    getInitialSeed() const;
 };
 
 } // pathloss
