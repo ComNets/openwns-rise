@@ -30,7 +30,7 @@
 
 #include <RISE/misc/RISELogger.hpp>
 
-#include <list>
+#include <vector>
 
 namespace rise { namespace medium {
 	class PhysicalResource;
@@ -45,7 +45,8 @@ namespace rise { namespace medium {
 	 * at simulation shutdown.
 	 */
 	class Medium {
-		typedef std::list<PhysicalResource*> PhysicalResourceContainer;
+		typedef std::vector<PhysicalResource*> PhysicalResourceContainer;
+
 		typedef PhysicalResourceContainer::iterator PhysicalResourceIterator;
 
 	public:
@@ -76,6 +77,15 @@ namespace rise { namespace medium {
 		 * freed if they are not needed by anyone any longer.
 		 */
 		PhysicalResource* getPhysicalResource(double f, double b);
+
+
+        /**
+         * @brief Returns the index of the Physical Resource containing the frequency
+         * usefull for implementations using integer sub channel indices
+         */
+        unsigned int
+        getPhysicalResourceIndex(double f);
+
 
 	private:
 		Medium();

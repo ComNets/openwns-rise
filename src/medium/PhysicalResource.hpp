@@ -163,6 +163,11 @@ namespace rise { namespace medium {
 		{
 			return !(*this==p);
 		}
+    
+        bool operator <(const PhysicalResource& p) const
+        {
+            return this->frequency < p.frequency;
+        }
 
 		/**
 		 * @brief get an iterator to the first TransmissionObject

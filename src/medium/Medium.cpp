@@ -30,6 +30,7 @@
 #include <RISE/RISE.hpp>
 
 #include <WNS/Exception.hpp>
+#include <WNS/DerefLess.hpp>
 
 #include <list>
 
@@ -85,6 +86,7 @@ PhysicalResource* Medium::getPhysicalResource(double f, double b)
 			throw wns::Exception("Overlapping PhysicalResources!");
 		}
 		prs.push_back(pr);
+        std::sort(prs.begin(), prs.end(), wns::DerefLess<PhysicalResource*>());
 		return pr;
 	} else {
 		MESSAGE_BEGIN(NORMAL, log, m, "Delivered new PhysicalResource f: ");
@@ -92,6 +94,25 @@ PhysicalResource* Medium::getPhysicalResource(double f, double b)
 		MESSAGE_END();
 		return *result;
 	}
+}
+
+unsigned int
+Medium::getPhysicalResourceIndex(double f)
+{
+    assure(f >= prs.front()->getFrequency(), "Below minimum frequency");
+    assure(f <= prs.back()->getFrequencyRange().max(), "Above maximum frequency");
+
+    for(int i = 0; i < prs.size(); i++)
+    {
+        /* Check vector is sorted */
+        assure(i == 0 || prs[i - 1]->getFrequency() < prs[i]->getFrequency(), 
+            "Physical Resource container must be sorted");
+
+        if(prs[i]->getFrequencyRange().contains(f))
+            return(i);
+    }
+
+    assure(false, "Frequency not in Physical Resource container");
 }
 
 Medium::Medium() :
