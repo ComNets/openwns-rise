@@ -30,6 +30,7 @@
 
 #include <RISE/misc/pointer.hpp>
 #include <RISE/scenario/Scenario.hpp>
+#include <RISE/scenario/Propagation.hpp>
 #include <RISE/scenario/scenerymap/SceneryMap.hpp>
 #include <RISE/scenario/mobility/Mobility.hpp>
 #include <RISE/manager/systemmanager.hpp>
@@ -204,6 +205,18 @@ namespace rise {
 			assure(false,"rise::station::receiveData(wns::osi::PDUPtr, wns::service::phy::power::PowerMeasurementPtr) called accidentially");
 		}
 
+        virtual void
+        setReceiverType(scenario::Propagation::IdType);
+
+        virtual scenario::Propagation::IdType
+        getReceiverType();
+
+        virtual void
+        setTransmitterType(scenario::Propagation::IdType);
+
+        virtual scenario::Propagation::IdType
+        getTransmitterType();
+
 	protected:
 
 		/**
@@ -264,6 +277,9 @@ namespace rise {
 		const scenario::scenerymap::Interpolation2D* interpolatedShadowingMap;
 
 		scenario::mobility::MobilityInterface* mobility;
+
+        scenario::Propagation::IdType receiverType_;
+        scenario::Propagation::IdType transmitterType_;
 	};
 
 }

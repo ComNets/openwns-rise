@@ -34,7 +34,9 @@ class Rice:
         self.variance = variance
         self.__plugin__ = 'Rice'
 
-class IMTAdvancedTrace:
-    def __init__(self):
-        self.__plugin__ = 'IMTAdvancedTrace'
+class PerLinkAndSubchannel:
+    def __init__(self, numberOfSubchannels, systemName = "ofdma"):
+        self.numberOfSubchannels = numberOfSubchannels
+        self.systemName = systemName
+
 

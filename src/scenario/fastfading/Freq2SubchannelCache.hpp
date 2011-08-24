@@ -25,53 +25,29 @@
  *
  ******************************************************************************/
 
-#ifndef _RISE_SCENARIO_IMTADVANCEDTRACE_HPP
-#define _RISE_SCENARIO_IMTADVANCEDTRACE_HPP
+#ifndef _RISE_SCENARIO_FREQ2SUBCHANNELCACHE_HPP
+#define _RISE_SCENARIO_FREQ2SUBCHANNELCACHE_HPP
 
-#include <RISE/scenario/fastfading/FastFading.hpp>
-#include <RISE/scenario/pathloss/ILoSDependent.hpp>       
-
-#include <WNS/PowerRatio.hpp>
-#include <WNS/pyconfig/View.hpp>
-#include <WNS/StaticFactory.hpp>
-#include <WNS/logger/Logger.hpp>
 #include <WNS/container/Registry.hpp>
+#include <WNS/Types.hpp>
+#include <WNS/logger/Logger.hpp>
 
 namespace rise { namespace scenario { namespace fastfading {
 
-    class IMTAdvancedTrace : 
-        public FastFading
+    class Freq2SubchannelCache
     {
         public:
-            typedef std::pair<unsigned int, unsigned int> StationPair;
-
-    	    IMTAdvancedTrace(const wns::pyconfig::View&);
-
-    	    virtual 
-            wns::Ratio 
-            getFastFading(const antenna::Antenna& source,
-		                 const antenna::Antenna& target,
-		                 const wns::Frequency& frequency) const;
-
-            virtual void
-            onWorldCreated();
-
-        private:
-            void
-            createNewLink(const StationPair& np,
-                         const antenna::Antenna& source,
-		                 const antenna::Antenna& target,
-		                 const wns::Frequency& frequency) const;
+            Freq2SubchannelCache(unsigned int numberOfSubchannels);
+            ~Freq2SubchannelCache();
 
             unsigned int
             getSubchannelIndex(const wns::Frequency& frequency) const;
 
-            mutable unsigned int nextLinkId_;
-            mutable std::map<StationPair, unsigned int> links_;
-            mutable std::set<unsigned int> losLinks_;
-
+        private:
             /* Using double as key is dangerous, but should work */
             mutable wns::container::Registry<double, unsigned int> frequencyToSubchannel_;
+
+            unsigned int numberOfSubchannels_;
 
             wns::logger::Logger logger_;
     };
@@ -80,4 +56,4 @@ namespace rise { namespace scenario { namespace fastfading {
 } // scenario
 } // rise
 
-#endif // NOT defined _RISE_SCENARIO_IMTADVANCEDTRACE_HPP
+#endif // NOT defined _RISE_SCENARIO_FREQ2SUBCHANNELCACHE_HPP

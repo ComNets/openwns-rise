@@ -59,7 +59,9 @@ SCReceiver::SCReceiver(const wns::pyconfig::View& config,
 					   wns::Ratio rnf)
 	: Receiver(s, a, demodulator, decoder, rnf),
 	  LossCalculation(config)
-{}
+{
+    s->setTransmitterType(getPropagationCharacteristicId());
+}
 
 SCReceiver::~SCReceiver()
 {}

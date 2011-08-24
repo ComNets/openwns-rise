@@ -282,3 +282,26 @@ void Station::initializeShadowingMap()
 	}
 }
 
+void
+Station::setReceiverType(scenario::Propagation::IdType rt)
+{
+    receiverType_ = rt;
+}
+
+scenario::Propagation::IdType
+Station::getReceiverType()
+{
+    return receiverType_;
+}
+
+void
+Station::setTransmitterType(scenario::Propagation::IdType tt)
+{
+    transmitterType_ = tt;
+}
+
+scenario::Propagation::IdType
+Station::getTransmitterType()
+{
+    return transmitterType_;
+}

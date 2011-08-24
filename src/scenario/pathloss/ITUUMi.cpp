@@ -68,7 +68,7 @@ ITUUMi::calculatePathloss(const antenna::Antenna& source,
     double sh = 0.0;
     if (hrng() < getLOSProbability(distance))
     {
-        assure(isLoS(source, target, frequency, distance), 
+        assure(isLoS(source, target, distance), 
             "calculatePathloss() and is isLoS() disagree");
 
         losProbabilityCC_.put(distance);
@@ -236,7 +236,6 @@ ITUUMi::getCarPenetrationMean() const
 bool
 ITUUMi::isLoS(const rise::antenna::Antenna& source,
                                const rise::antenna::Antenna& target,
-                               const wns::Frequency& frequency,
                                const wns::Distance& distance) const
 {   
     detail::HashRNG hrng(getInitialSeed(),

@@ -58,7 +58,7 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
 
     if (hrng() < getLOSProbability(distance))
     {
-        assure(isLoS(source, target, frequency, distance), 
+        assure(isLoS(source, target, distance), 
             "calculatePathloss() and is isLoS() disagree");
 
         losProbabilityCC_.put(distance);
@@ -112,7 +112,6 @@ ITUPathloss::calculatePathloss(const rise::antenna::Antenna& source,
 bool
 ITUPathloss::isLoS(const rise::antenna::Antenna& source,
                                const rise::antenna::Antenna& target,
-                               const wns::Frequency& frequency,
                                const wns::Distance& distance) const
 {   
     detail::HashRNG hrng(getInitialSeed(),

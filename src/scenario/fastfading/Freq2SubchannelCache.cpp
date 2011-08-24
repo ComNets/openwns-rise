@@ -25,25 +25,44 @@
  *
  ******************************************************************************/
 
-#ifndef RISE_SCENARIO_PATHLOSS_LOSDEPENDENT_HPP
-#define RISE_SCENARIO_PATHLOSS_LOSDEPENDENT_HPP
+#include <RISE/scenario/fastfading/Freq2SubchannelCache.hpp>
+#include <RISE/medium/Medium.hpp>
 
-#include <RISE/antenna/Antenna.hpp>
-#include <WNS/Types.hpp>
+using namespace rise::scenario::fastfading;
 
-namespace rise { namespace scenario { namespace pathloss {
-
-class ILoSDependent
+Freq2SubchannelCache::Freq2SubchannelCache(unsigned int numberOfSubchannels) : 
+    logger_(wns::logger::Logger("RISE", "FastFading.Freq2SubchannelCache")),
+    numberOfSubchannels_(numberOfSubchannels)
 {
-public:
-    virtual bool
-    isLoS(const rise::antenna::Antenna& source,
-          const rise::antenna::Antenna& target,
-          const wns::Distance& distance) const = 0;
-};
+}
 
-} // pathloss
-} // scenario
-} // rise
+Freq2SubchannelCache::~Freq2SubchannelCache()
+{
+}
 
-#endif // RISE_SCENARIO_PATHLOSS_LOSDEPENDENT_HPP
+unsigned int
+Freq2SubchannelCache::getSubchannelIndex(const wns::Frequency& frequency) const
+{
+    unsigned int sc;
+    try
+    {
+        sc = frequencyToSubchannel_.find(frequency);
+    }
+    catch(wns::container::Registry<double, unsigned int>::UnknownKeyValue&)
+    {
+        sc = rise::medium::Medium::getInstance()->getPhysicalResourceIndex(frequency);
+
+        /* For FDD we can have 2 x numSubchannels */
+        assure(sc < 2 * numberOfSubchannels_, "Subchannel out of range");
+        sc %= numberOfSubchannels_;
+
+        frequencyToSubchannel_.insert(frequency, sc);
+
+        MESSAGE_SINGLE(NORMAL, logger_, "Frequency " << frequency
+            << " mapped to subchannel index " << sc);
+    }
+    return sc;
+}
+
+
+

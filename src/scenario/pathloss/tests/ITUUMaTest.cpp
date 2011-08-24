@@ -361,7 +361,7 @@ ITUUMaTest::testCarPenetration()
     using namespace wns::evaluation::statistics;
     PDF carPenPDF(-20.0, 40.0, 1000, PDF::linear, StatEval::fixed, "rise.pathloss.ITUUMa.carPenetration", "Test CarPenetration");
 
-    for (int ii = 0; ii < 20000; ++ii)
+    for (int ii = 0; ii < 50000; ++ii)
     {
         station2_->moveTo(wns::Position(0.0, 0.0 + (d1plane/50000.0 * ii), 1.50));
         testee_->setCarPenetrationBehaviour(ITUUMaTester::NORMALCARPEN);

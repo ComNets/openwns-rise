@@ -55,7 +55,6 @@ public:
     virtual bool
     isLoS(const rise::antenna::Antenna& source,
           const rise::antenna::Antenna& target,
-          const wns::Frequency& frequency,
           const wns::Distance& distance) const;
 
     virtual double

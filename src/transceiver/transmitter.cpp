@@ -58,6 +58,8 @@ Transmitter::Transmitter(const wns::pyconfig::View& config, Station* s, antenna:
 
 	MESSAGE_SINGLE(NORMAL, log, "rise::Transmitter created");
 	this->startObserving(s);
+
+    s->setTransmitterType(getPropagationCharacteristicId());
 }
 
 Transmitter::~Transmitter() {
