@@ -53,7 +53,8 @@ namespace rise { namespace scenario { namespace fastfading {
             wns::Ratio 
             getFastFading(const antenna::Antenna& source,
 		                 const antenna::Antenna& target,
-		                 const wns::Frequency& frequency) const;
+		                 const wns::Frequency& frequency,
+                         const antenna::Antenna& sigSource) const;
 
             virtual void
             onWorldCreated();
@@ -65,7 +66,8 @@ namespace rise { namespace scenario { namespace fastfading {
 
         private:
             virtual wns::Ratio
-            doGetFastFading(const unsigned int link, const unsigned int sc) const = 0;
+            doGetFastFading(const unsigned int link, const unsigned int sc, 
+                const unsigned int servingLink) const = 0;
 
             virtual void
             setLinks(const LinkMap& links, const std::set<unsigned int>& losSet) = 0;

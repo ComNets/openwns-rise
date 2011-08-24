@@ -51,20 +51,20 @@ LossCalculation::~LossCalculation()
 
 wns::Ratio LossCalculation::getPathloss(const Transmitter& t, const wns::Frequency& frequency) const
 {
-    const scenario::pathloss::Pathloss& pathloss = propagation.getPathlossModel(getPropagationCharacteristicId(), t.getPropagationCharacteristicId());
-    return pathloss.getPathloss(*(getStation()->getAntenna()), *(t.getAntenna()), frequency);
+    const scenario::pathloss::Pathloss& pathloss = propagation.getPathlossModel(t.getPropagationCharacteristicId(), getPropagationCharacteristicId());
+    return pathloss.getPathloss(*(t.getAntenna()), *(getStation()->getAntenna()), frequency);
 }
 
 wns::Ratio LossCalculation::getShadowing(const Transmitter& t) const
 {
-    const scenario::shadowing::Shadowing& shadowing = propagation.getShadowingModel(getPropagationCharacteristicId(), t.getPropagationCharacteristicId());
-    return shadowing.getShadowing(*(getStation()->getAntenna()), *(t.getAntenna()));
+    const scenario::shadowing::Shadowing& shadowing = propagation.getShadowingModel(t.getPropagationCharacteristicId(), getPropagationCharacteristicId());
+    return shadowing.getShadowing(*(t.getAntenna()), *(getStation()->getAntenna()));
 }
 
-wns::Ratio LossCalculation::getFastFading(const Transmitter& t, const wns::Frequency& frequency) const
+wns::Ratio LossCalculation::getFastFading(const Transmitter& t, const wns::Frequency& frequency, const Transmitter& tsig) const
 {
-    const scenario::fastfading::FastFading& fastFading = propagation.getFastFadingModel(getPropagationCharacteristicId(), t.getPropagationCharacteristicId());
-    return fastFading.getFastFading(*(getStation()->getAntenna()), *(t.getAntenna()), frequency);
+    const scenario::fastfading::FastFading& fastFading = propagation.getFastFadingModel(t.getPropagationCharacteristicId(), getPropagationCharacteristicId());
+    return fastFading.getFastFading(*(t.getAntenna()), *(getStation()->getAntenna()), frequency, *(tsig.getAntenna()));
 }
 
 void

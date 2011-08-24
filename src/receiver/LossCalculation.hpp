@@ -50,9 +50,13 @@ namespace rise { namespace receiver {
 
 	virtual ~LossCalculation();
 
-	virtual wns::Ratio getPathloss(const Transmitter& t, const wns::Frequency& frequency) const;
+	virtual wns::Ratio getPathloss(const Transmitter& t, 
+        const wns::Frequency& frequency) const;
+
 	virtual wns::Ratio getShadowing(const Transmitter& t) const;
-	virtual wns::Ratio getFastFading(const Transmitter& t, const wns::Frequency& frequency) const;
+
+	virtual wns::Ratio getFastFading(const Transmitter& t, 
+        const wns::Frequency& frequency, const Transmitter& tsig) const;
 
     virtual void
     initPropagation();

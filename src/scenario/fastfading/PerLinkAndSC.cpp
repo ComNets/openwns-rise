@@ -108,18 +108,23 @@ PerLinkAndSC::onWorldCreated()
 wns::Ratio 
 PerLinkAndSC::getFastFading(const antenna::Antenna& source,
 				                 const antenna::Antenna& target,
-				                 const wns::Frequency& frequency) const
+				                 const wns::Frequency& frequency,
+                                 const antenna::Antenna& signalSource) const
 {
     unsigned int sourceId = source.getStation()->getStationId();
     unsigned int targetId = target.getStation()->getStationId();            
+    unsigned int signalSourceId = signalSource.getStation()->getStationId();
 
     StationPair sp(sourceId, targetId);
+    StationPair spSig(signalSourceId, targetId);
+    
 
     assure(links_.find(sp) != links_.end(), "No link " << sourceId << "->" << targetId);
+    assure(links_.find(spSig) != links_.end(), "No link " << signalSourceId << "->" << targetId);
 
     unsigned int sc = f2ScCache_.getSubchannelIndex(frequency);
 
-    return doGetFastFading(links_.find(sp)->second, sc);
+    return doGetFastFading(links_.find(sp)->second, sc, links_.find(spSig)->second);
 }
 
 void

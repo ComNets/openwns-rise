@@ -44,9 +44,13 @@ namespace rise { namespace receiver {
 
 	virtual ~LossCalculationInterface() {};
 
-	virtual wns::Ratio getPathloss(const Transmitter& t, const wns::Frequency& frequency) const = 0;
+	virtual wns::Ratio getPathloss(const Transmitter& t, 
+        const wns::Frequency& frequency) const = 0;
+
 	virtual wns::Ratio getShadowing(const Transmitter& t) const = 0;
-	virtual wns::Ratio getFastFading(const Transmitter& t, const wns::Frequency& frequency) const = 0;
+
+	virtual wns::Ratio getFastFading(const Transmitter& t, 
+        const wns::Frequency& frequency, const Transmitter& tsig) const = 0;
 
     protected:
 	virtual Station* getStation() const = 0;

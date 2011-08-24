@@ -40,7 +40,8 @@ None::None(const wns::pyconfig::View&)
 
 wns::Ratio None::getFastFading(const antenna::Antenna&,
 			                 const antenna::Antenna&,
-			                 const wns::Frequency&) const
+			                 const wns::Frequency&,
+                             const antenna::Antenna&) const
 {
     return getFastFading();
 }
