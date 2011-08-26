@@ -29,22 +29,18 @@ from openwns.pyconfig import attrsetter
 from openwns.logger import Logger
 from rise.scenario.Propagation import Propagation, DropInPropagation
 
-from rise.scenario.FTFading import *
-
 class Receiver(object):
     propagation = None
     propagationCharacteristicName = None
     propagationCharacteristicId = None
     receiverNoiseFigure = None
     logger = None
-    FTFadingStrategy = None # None will switch fading off; FTFadingOff() at least gives measurements
     wraparaoundShiftVectors = None # None or empty list means wraparound off
 
     def __init__(self, propagation, propagationCharacteristicName, parentLogger = None, **kwds):
         self.propagation = propagation
         self.propagationCharacteristicName = propagationCharacteristicName
         self.propagationCharacteristicId = propagation.getId(propagationCharacteristicName)
-        self.FTFadingStrategy = FTFadingOff(parentLogger = parentLogger)
         self.logger = Logger("RISE", "PHY.Receiver", True, parentLogger)
         attrsetter(self, kwds)
 
@@ -53,7 +49,6 @@ class ReceiverDropIn(Receiver):
     def __init__(self, propagation = DropInPropagation.getInstance(), propagationCharacteristicName = "DropIn", parentLogger = None):
         super(ReceiverDropIn, self).__init__(propagation , propagationCharacteristicName, parentLogger)
         self.logger = Logger("RISE", "PHY.ReceiverDropIn", True, parentLogger)
-        self.FTFadingStrategy = FTFadingOff(parentLogger = parentLogger)
         self.receiverNoiseFigure = "0 dB"
 
 class SCReceiverDropIn(ReceiverDropIn):
