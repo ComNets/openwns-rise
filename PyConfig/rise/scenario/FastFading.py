@@ -70,6 +70,7 @@ class FTFadingJakes(object):
         self.numWaves = numWaves
         self.numSubCarriers = numSubCarriers
         self.samplingTime = samplingTime
+	self.logger = openwns.logger.Logger("RISE", "FTFadingJakes", True)
 
 
 class FTFadingFflat(FTFadingJakes):
