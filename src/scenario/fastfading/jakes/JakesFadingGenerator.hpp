@@ -34,7 +34,7 @@
 #include <complex>
 
 
-namespace rise { namespace scenario { namespace ftfading {
+namespace rise { namespace scenario { namespace fastfading { namespace jakes {
 
 	class JakesFadingGenerator
 	{
@@ -81,6 +81,6 @@ namespace rise { namespace scenario { namespace ftfading {
 		double              thetaInitial;
 	};
 
-}}}
+}}}}
 
 #endif

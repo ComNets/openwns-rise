@@ -25,53 +25,35 @@
  *
  ******************************************************************************/
 
-#include <RISE/scenario/ftfading/FTFading.hpp>
+#include <RISE/scenario/fastfading/jakes/FTFading.hpp>
 
 #include <math.h>
 
 using namespace rise;
 using namespace rise::scenario;
-using namespace rise::scenario::ftfading;
+using namespace rise::scenario::fastfading;
+using namespace rise::scenario::fastfading::jakes;
 
+STATIC_FACTORY_REGISTER_WITH_CREATOR(FTFadingFflat, FTFadingJakes, 
+    "rise.scenario.ftfading.FTFadingFflat",  wns::PyConfigViewCreator);
+STATIC_FACTORY_REGISTER_WITH_CREATOR(FTFadingFuncorrelated, FTFadingJakes, 
+    "rise.scenario.ftfading.FTFadingFuncorrelated",  wns::PyConfigViewCreator);
+STATIC_FACTORY_REGISTER_WITH_CREATOR( FTFadingFneighbourCorrelation, FTFadingJakes, 
+    "rise.scenario.ftfading.FTFadingFNCorr",  wns::PyConfigViewCreator);
 
-
-STATIC_FACTORY_REGISTER_WITH_CREATOR( FTFadingOff, FTFading, "rise.scenario.ftfading.FTFadingOff",  wns::PyConfigViewCreator);
-STATIC_FACTORY_REGISTER_WITH_CREATOR( FTFadingFflat, FTFading, "rise.scenario.ftfading.FTFadingFflat",  wns::PyConfigViewCreator);
-STATIC_FACTORY_REGISTER_WITH_CREATOR( FTFadingFuncorrelated, FTFading, "rise.scenario.ftfading.FTFadingFuncorrelated",  wns::PyConfigViewCreator);
-STATIC_FACTORY_REGISTER_WITH_CREATOR( FTFadingFneighbourCorrelation, FTFading, "rise.scenario.ftfading.FTFadingFneighbourCorrelation",  wns::PyConfigViewCreator);
-
-FTFading::FTFading(const wns::pyconfig::View& config)
-	: logger(config.getView("logger")),
-	  numberOfSubChannels(config.get<int>("numSubCarriers"))
-{
-	assure(!config.isNone("samplingTime"),"FTFading: samplingTime is None");
-	samplingTime = config.get<double>("samplingTime");
-	assure(samplingTime>=0.0,"samplingTime must be positive: t="<<samplingTime);
-	//samplingFrequency = 1.0/samplingTime;
-	// numberOfSubChannels can be 0, e.g. for FTFadingOff
-}
-
-FTFadingOff::FTFadingOff(const wns::pyconfig::View& config)
-	: FTFading(config)
-{
-	MESSAGE_SINGLE(NORMAL, logger, "Using FTFadingOff strategy" );
-}
-
-wns::Ratio
-FTFadingOff::getFTFading(int /*subCarrier*/)
-{
-	wns::Ratio OneFading = wns::Ratio(); // ::from_factor(1);
-	return OneFading;
-}
-
-FTFadingJakes::FTFadingJakes(const wns::pyconfig::View& config)
-	: FTFading(config),
+FTFadingJakes::FTFadingJakes(const wns::pyconfig::View& config) : 
+      logger(config.getView("logger")),
+	  numberOfSubChannels(config.get<int>("numSubCarriers")),
 	  _dopFreq(config.get<double>("dopFreq")),
-	  //_sampFreq(config.get<double>("sampFreq")),
 	  _numWaves(config.get<int>("numWaves")),
 	  scheduler(wns::simulator::getEventScheduler())
 {
 	assure(numberOfSubChannels>0,"wrong numberOfSubChannels="<<numberOfSubChannels);
+	assure(!config.isNone("samplingTime"),"FTFading: samplingTime is None");
+
+	samplingTime = config.get<double>("samplingTime");
+
+	assure(samplingTime>=0.0,"samplingTime must be positive: t="<<samplingTime);
 }
 
 FTFadingFflat::FTFadingFflat(const wns::pyconfig::View& config)

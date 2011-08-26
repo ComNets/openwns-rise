@@ -28,7 +28,7 @@
 #ifndef _FTFADING_STRATEGY_HPP
 #define _FTFADING_STRATEGY_HPP
 
-#include <RISE/scenario/ftfading/JakesFadingGenerator.hpp>
+#include <RISE/scenario/fastfading/jakes/JakesFadingGenerator.hpp>
 
 #include <WNS/PyConfigViewCreator.hpp>
 #include <WNS/logger/Logger.hpp>
@@ -36,52 +36,46 @@
 #include <WNS/PowerRatio.hpp>
 #include <WNS/simulator/Time.hpp>
 
-namespace rise { namespace scenario { namespace ftfading {
+namespace rise { namespace scenario { namespace fastfading { namespace jakes {
 	namespace tests { class FTFadingTest; } // declaration for friend
 	/** @brief abstract base class to support fading strategy (Python: rise.scenario.FTFading) */
-	class FTFading
+	class FTFadingJakes
 	{
-		friend class rise::scenario::ftfading::tests::FTFadingTest;
+		friend class rise::scenario::fastfading::jakes::tests::FTFadingTest;
 	public:
-		FTFading(const wns::pyconfig::View& config);
-		virtual ~FTFading(){};
+		typedef wns::PyConfigViewCreator<FTFadingJakes> FTFadingCreator;
+		typedef wns::StaticFactory<FTFadingCreator> FTFadingFactory;
+
+		FTFadingJakes(const wns::pyconfig::View& config);
+		virtual 
+        ~FTFadingJakes(){};
+
+		virtual 
+        wns::simulator::Time Now() 
+        { 
+            return scheduler->getTime(); 
+        };
 
 		/** @brief function prototype: return the fading value at a certain subCarrier */
-		virtual wns::Ratio getFTFading(int _subCarrier) = 0;
+		virtual wns::Ratio 
+        getFTFading(int _subCarrier) = 0;
+		
+        double 
+        getSamplingTime() 
+        { 
+            return samplingTime; 
+        }
+		
+        int 
+        getNumberOfSubChannels() 
+        { 
+            return numberOfSubChannels; 
+        }
 
-		typedef wns::PyConfigViewCreator<FTFading> FTFadingCreator;
-		typedef wns::StaticFactory<FTFadingCreator> FTFadingFactory;
-		double getSamplingTime() { return samplingTime; }
-		int getNumberOfSubChannels() { return numberOfSubChannels; }
 	protected:
 		wns::logger::Logger logger;
 		double samplingTime;
-		//simTimeType samplingTime;
-		//double samplingFrequency; // = 1.0/samplingTime
 		int numberOfSubChannels;
-	};
-
-	/** @brief no FTFading strategy is applied */
-	class FTFadingOff :
-		public FTFading
-	{
-	public:
-		FTFadingOff(const wns::pyconfig::View& config);
-		virtual ~FTFadingOff(){};
-		virtual wns::Ratio getFTFading(int);
-	};
-
-	/** @brief Frequency and Time dependent Fading; Time correlation based on the Jakes model */
-	class FTFadingJakes :
-		public FTFading
-	{
-		friend class rise::scenario::ftfading::tests::FTFadingTest;
-	public:
-		FTFadingJakes(const wns::pyconfig::View& config);
-		virtual ~FTFadingJakes(){};
-		virtual wns::Ratio getFTFading(int _subCarrier) = 0;
-		virtual wns::simulator::Time Now() { return scheduler->getTime(); };
-	protected:
 		double _dopFreq;
 		int _numWaves;
 		int _maxSamples;
@@ -147,7 +141,7 @@ namespace rise { namespace scenario { namespace ftfading {
 		 * used to build the neighbour frequency correlation */
 		double _neighbourCorrelationFactor;
 	};
-}}}
+}}}}
 
 #endif
 

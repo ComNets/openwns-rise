@@ -25,14 +25,15 @@
  *
  ******************************************************************************/
 
-#include <RISE/scenario/ftfading/JakesFadingGenerator.hpp>
+#include <RISE/scenario/fastfading/jakes/JakesFadingGenerator.hpp>
 #include <WNS/module/Base.hpp>
 #include <WNS/distribution/Uniform.hpp>
 #include <WNS/rng/RNGen.hpp>
 
 using namespace rise;
 using namespace rise::scenario;
-using namespace rise::scenario::ftfading;
+using namespace rise::scenario::fastfading;
+using namespace rise::scenario::fastfading::jakes;
 
 JakesFadingGenerator::JakesFadingGenerator()
 {

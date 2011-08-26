@@ -42,7 +42,7 @@ using namespace rise::scenario::fastfading;
 PerLinkAndSC::PerLinkAndSC(const wns::pyconfig::View& config) : 
     FastFading(),
     nextLinkId_(0),
-    logger_(wns::logger::Logger("RISE", std::string("FastFading.PerLinkAndSC"))),
+    logger_(config.get("baseLogger")),
     f2ScCache_(config.get<unsigned int>("numberOfSubchannels")),
     systemName_(config.get<std::string>("systemName")),
     usedBy_(0)
