@@ -31,4 +31,4 @@ class Table:
 class Formula:
     nameInSNR2MIFactory = "rise.SNR2MI.Formula"
 
-default = Table()
+default = Formula()
