@@ -210,6 +210,9 @@ TableCoder::mapMI2PER(double mi,
 	// NEW: interpolation:
 	int MI1 = int(1000.0*mi);
 	int MI2 = int(1000.0*mi)+1;
+    if(MI2 > table.size() - 1)
+        return 0.0;
+
 	double PER1= table[MI1];
 	double PER2= table[MI2];
 	double PER = PER1 + (PER2-PER1)*(mi*1000.0-(double)MI1); // linear interpolation
