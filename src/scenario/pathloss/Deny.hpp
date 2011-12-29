@@ -51,6 +51,7 @@ namespace rise { namespace scenario { namespace pathloss {
 	{
 	public:
 	    Exception(const std::string& s);
+        ~Exception() throw () {};
 	};
 
 	Deny();

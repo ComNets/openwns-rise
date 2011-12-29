@@ -68,7 +68,9 @@ namespace rise { namespace scenario {
 	    NoModelError(const std::string& modelType,
 			 const std::string& transmitterName,
 			 const std::string& receiverName);
-	};
+	
+        virtual ~NoModelError() throw() {};
+    };
 
 	Propagation(const wns::pyconfig::View& config);
 
