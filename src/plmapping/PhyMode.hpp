@@ -111,6 +111,8 @@ namespace tests {
             public:
                 UndefinedException() :
                     wns::Exception("Undefined PhyMode") {};
+                    
+                ~UndefinedException() throw() {};
             };
 
             /** @brief Construct empty=undefined PhyMode. Means: "feature not used" */
