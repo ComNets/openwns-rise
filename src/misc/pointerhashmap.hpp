@@ -99,7 +99,7 @@ namespace rise {
 		virtual ~PointerHashMap() {};
 
 		virtual bool contains(Key k) const {
-			return find(k)!=this->end();
+			return this->find(k)!=this->end();
 		};
 };
 
