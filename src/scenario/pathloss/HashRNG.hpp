@@ -45,6 +45,8 @@ namespace detail {
 class HashRNG
 {
 public:
+    typedef double result_type;
+
     HashRNG(unsigned int initialSeed,
             wns::Position p1,
             wns::Position p2,
